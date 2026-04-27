@@ -37,7 +37,13 @@ import {
   XCircle,
   Heart,
   Info,
-  FileText
+  FileText,
+  AlertCircle,
+  ArrowRightCircle,
+  ClipboardCheck,
+  User,
+  Target,
+  Search
 } from 'lucide-react';
 import {
   DndContext,
@@ -379,10 +385,36 @@ async function generateCompletePDF(appState: AppState, getModuleAnswers: (id: st
             <p style="margin: 8px 0 0 0; font-size: 12px; line-height: 1.5;"><strong>Alasan:</strong> ${answers.hypothesisTesting.reason || '-'}</p>
           </div>
 
-          <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 15px; border-radius: 12px;">
+          <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
             <h4 style="margin-top: 0; margin-bottom: 8px; color: #1e40af; font-size: 11px; text-transform: uppercase;">E. Kesimpulan</h4>
             <p style="margin: 0; font-size: 12px; line-height: 1.6; font-style: italic;">${answers.conclusion || '<span style="color: #94a3b8;">Belum ada kesimpulan</span>'}</p>
           </div>
+
+          ${answers.reflection ? `
+          <div style="margin-top: 20px;">
+            <h4 style="margin-bottom: 12px; color: #1e40af; font-size: 12px; text-transform: uppercase; font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px;">
+               Refleksi Belajar Tim
+            </h4>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+              <div style="background: #fdf2f8; border: 1px inset #fbcfe8; padding: 12px; border-radius: 12px;">
+                <p style="font-weight: 700; font-size: 9px; color: #db2777; text-transform: uppercase; margin-bottom: 5px;">Apa yang paling penting kami pelajari hari ini?</p>
+                <p style="font-size: 11px; color: #475569;">${answers.reflection.whatLearned || '-'}</p>
+              </div>
+              <div style="background: #f0fdf4; border: 1px inset #bbf7d0; padding: 12px; border-radius: 12px;">
+                <p style="font-weight: 700; font-size: 9px; color: #16a34a; text-transform: uppercase; margin-bottom: 5px;">Bagaimana perasaan tim saat melakukan praktikum?</p>
+                <p style="font-size: 11px; color: #475569;">${answers.reflection.feelings || '-'}</p>
+              </div>
+              <div style="background: #fffbeb; border: 1px inset #fef3c7; padding: 12px; border-radius: 12px;">
+                <p style="font-weight: 700; font-size: 9px; color: #d97706; text-transform: uppercase; margin-bottom: 5px;">Kesulitan apa yang kami hadapi dan bagaimana kami mengatasinya?</p>
+                <p style="font-size: 11px; color: #475569;">${answers.reflection.difficulties || '-'}</p>
+              </div>
+              <div style="background: #eff6ff; border: 1px inset #dbeafe; padding: 12px; border-radius: 12px;">
+                <p style="font-weight: 700; font-size: 9px; color: #2563eb; text-transform: uppercase; margin-bottom: 5px;">Apa yang ingin kami pelajari lebih lanjut?</p>
+                <p style="font-size: 11px; color: #475569;">${answers.reflection.nextSteps || '-'}</p>
+              </div>
+            </div>
+          </div>
+          ` : ''}
         </div>
       `;
     }).join('')}
@@ -1463,102 +1495,6 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
   );
 };
 
-const RoleAssignmentModal = ({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
-  groupInfo, 
-  moduleTitle,
-  existingAssignments
-}: { 
-  isOpen: boolean; 
-  onClose: () => void; 
-  onConfirm: (assignments: { name: string; role: string }[]) => void;
-  groupInfo: GroupInfo | null;
-  moduleTitle: string;
-  existingAssignments?: { name: string; role: string }[];
-}) => {
-  const allMembers = [groupInfo?.leaderName, ...(groupInfo?.members || [])].filter(Boolean) as string[];
-  const [assignments, setAssignments] = useState<{ name: string; role: string }[]>(() => {
-    if (existingAssignments && existingAssignments.length > 0) return existingAssignments;
-    return allMembers.map(name => ({ name, role: '' }));
-  });
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-6 bg-slate-900/60 backdrop-blur-md">
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col max-h-[90vh]"
-      >
-        <div className="bg-primary p-8 text-white relative">
-          <button 
-            type="button"
-            onClick={onClose}
-            className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors"
-          >
-            <X size={20} />
-          </button>
-          <div className="flex items-center gap-4 mb-2">
-            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white">
-              <Users size={24} />
-            </div>
-            <div>
-              <p className="text-[0.6rem] font-bold uppercase tracking-[0.2em] opacity-80">Pembagian Tugas Modul</p>
-              <h2 className="text-2xl font-black">{moduleTitle}</h2>
-            </div>
-          </div>
-          <p className="text-blue-100 text-xs font-medium">Tentukan peran setiap anggota tim sebelum memulai praktikum ini.</p>
-        </div>
-
-        <div className="flex-grow overflow-y-auto p-8 space-y-6">
-          <div className="space-y-4">
-            {assignments.map((member, idx) => (
-              <div key={idx} className="space-y-2">
-                <label className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest ml-1 tracking-wider">{member.name}</label>
-                <div className="relative group">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40 group-focus-within:text-primary transition-colors">
-                    <BookOpen size={18} />
-                  </div>
-                  <input 
-                    type="text"
-                    value={member.role}
-                    onChange={(e) => {
-                      const newAssignments = [...assignments];
-                      newAssignments[idx].role = e.target.value;
-                      setAssignments(newAssignments);
-                    }}
-                    placeholder="Contoh: Pengamat PhET / Pencatat Data"
-                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-primary focus:bg-white font-bold text-slate-800 transition-all text-sm"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="bg-amber-50 border border-amber-100 p-4 rounded-2xl flex gap-3">
-             <Info className="text-amber-500 shrink-0" size={18} />
-             <p className="text-[0.7rem] font-bold text-amber-700 leading-relaxed italic">
-               Pembagian tugas ini penting agar kerja sama tim berjalan efektif dan semua anggota terlibat dalam penemuan konsep.
-             </p>
-          </div>
-        </div>
-
-        <div className="p-8 bg-slate-50 border-t border-slate-100">
-          <Button 
-            onClick={() => onConfirm(assignments)}
-            className="w-full py-5 rounded-2xl text-lg font-black shadow-primary/30"
-          >
-            Konfirmasi & Mulai Lab <ArrowRight size={20} />
-          </Button>
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
 const MainMenu = ({ 
   appState, 
   setActiveModuleIndex, 
@@ -1716,46 +1652,30 @@ const MainMenu = ({
               const answers = getModuleAnswers(m.id);
               const calculateModuleProgress = () => {
                 let filled = 0;
-                const total = 6;
+                const total = 8;
+                if (answers.roleAssignments && answers.roleAssignments.some(r => r.role)) filled++;
                 if (answers.problemFormulation) filled++;
                 if (answers.hypothesis) filled++;
                 if (answers.tableData.length > 0 || (answers.subTableData && Object.values(answers.subTableData).some(d => d.length > 0))) filled++;
                 if (answers.hypothesisTesting.isCorrect !== null) filled++;
                 if (answers.conclusion) filled++;
                 if (answers.evaluationScore !== undefined) filled++;
+                if (answers.reflection && answers.reflection.whatLearned) filled++;
                 return Math.round((filled / total) * 100);
               };
               const moduleProgressPercent = calculateModuleProgress();
               const isCompleted = moduleProgressPercent === 100;
               const hasRoles = answers.roleAssignments && answers.roleAssignments.length > 0;
-              
               return (
                 <motion.div
                   key={m.id}
-                  whileHover={{ y: -5 }}
+                  whileHover={{ y: -8 }}
                   onClick={() => {
-                    if (hasRoles) {
-                      setActiveModuleIndex(idx);
-                      setView('MODULE');
-                    } else {
-                      setSelectedModuleForRoles(idx);
-                    }
+                    setActiveModuleIndex(idx);
+                    setView('MODULE');
                   }}
                   className="bento-card cursor-pointer group relative overflow-hidden bg-white hover:border-primary/30 transition-all shadow-sm"
                 >
-                  <RoleAssignmentModal 
-                    isOpen={selectedModuleForRoles === idx}
-                    onClose={() => setSelectedModuleForRoles(null)}
-                    onConfirm={(assignments) => {
-                      onSaveRoleAssignments(m.id, assignments);
-                      setSelectedModuleForRoles(null);
-                      setActiveModuleIndex(idx);
-                      setView('MODULE');
-                    }}
-                    groupInfo={appState.groupInfo}
-                    moduleTitle={m.title}
-                    existingAssignments={answers.roleAssignments}
-                  />
                   <div className="absolute top-0 right-0 p-4">
                     {isCompleted ? (
                       <div className="p-1 px-2.5 bg-green-500 text-white rounded-full flex items-center gap-1.5 text-[0.6rem] font-black uppercase tracking-widest shadow-lg shadow-green-500/20">
@@ -1794,21 +1714,25 @@ const MainMenu = ({
                     <p className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-widest">Detail Progres Praktikum</p>
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                       {[
+                        { name: 'Pembagian Tugas', key: 'roleAssignments' },
                         { name: 'Rumusan Masalah', key: 'problemFormulation' },
                         { name: 'Hipotesis', key: 'hypothesis' },
                         { name: 'Pengamatan Data', key: 'data' },
                         { name: 'Uji Hipotesis', key: 'hypothesisTesting' },
                         { name: 'Kesimpulan', key: 'conclusion' },
-                        { name: 'Evaluasi', key: 'evaluationScore' }
+                        { name: 'Evaluasi', key: 'evaluationScore' },
+                        { name: 'Refleksi', key: 'reflection' }
                       ].map((item) => {
                         const answers = getModuleAnswers(m.id);
                         let isDone = false;
+                        if (item.key === 'roleAssignments') isDone = !!(answers.roleAssignments && answers.roleAssignments.some(r => r.role));
                         if (item.key === 'problemFormulation') isDone = !!answers.problemFormulation;
                         if (item.key === 'hypothesis') isDone = !!answers.hypothesis;
                         if (item.key === 'data') isDone = answers.tableData.length > 0 || (answers.subTableData && Object.keys(answers.subTableData).length > 0);
                         if (item.key === 'hypothesisTesting') isDone = answers.hypothesisTesting.isCorrect !== null;
                         if (item.key === 'conclusion') isDone = !!answers.conclusion;
                         if (item.key === 'evaluationScore') isDone = answers.evaluationScore !== undefined;
+                        if (item.key === 'reflection') isDone = !!(answers.reflection && answers.reflection.whatLearned);
 
                         return (
                           <div key={item.name} className="flex items-center gap-2">
@@ -2598,19 +2522,171 @@ const UjiSection = ({ hypothesis, value, onChange }: any) => (
   </div>
 );
 
+const RoleAssignmentSection = ({ 
+  groupInfo, 
+  moduleTitle,
+  value,
+  onChange,
+  onNext
+}: { 
+  groupInfo: GroupInfo | null;
+  moduleTitle: string;
+  value?: { name: string; role: string }[];
+  onChange: (assignments: { name: string; role: string }[]) => void;
+  onNext: () => void;
+}) => {
+  const allMembers = [groupInfo?.leaderName, ...(groupInfo?.members || [])].filter(Boolean) as string[];
+  const [assignments, setAssignments] = useState<{ name: string; role: string }[]>(() => {
+    if (value && value.length > 0) return value;
+    return allMembers.map(name => ({ name, role: '' }));
+  });
+
+  return (
+    <div className="space-y-12 max-w-4xl mx-auto pb-20">
+      <div className="text-center">
+        <p className="text-[0.6rem] font-black text-primary uppercase tracking-[0.2em] mb-4">Langkah 01</p>
+        <h2 className="text-5xl font-black text-slate-900 mb-4">Pembagian Tugas Tim</h2>
+        <p className="text-xl text-slate-500 font-medium">Tentukan peran setiap anggota tim untuk modul <span className="text-slate-900 font-bold">"{moduleTitle}"</span></p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {assignments.map((member, idx) => (
+          <motion.div 
+            key={idx}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.1 }}
+            className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col gap-6"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-primary/5 text-primary flex items-center justify-center font-black text-xl">
+                {member.name.charAt(0)}
+              </div>
+              <div>
+                <p className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest">Nama Anggota</p>
+                <h4 className="text-lg font-black text-slate-800">{member.name} {idx === 0 && <span className="ml-2 text-[0.6rem] bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-tighter">Ketua</span>}</h4>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-widest ml-1">Peran / Tugas dalam Praktikum</label>
+              <div className="relative">
+                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-primary">
+                  <User size={18} />
+                </div>
+                <input 
+                  type="text"
+                  value={member.role}
+                  onChange={(e) => {
+                    const newAssignments = [...assignments];
+                    newAssignments[idx].role = e.target.value;
+                    setAssignments(newAssignments);
+                    onChange(newAssignments);
+                  }}
+                  placeholder="Contoh: Pengamat PhET / Pencatat Data"
+                  className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl outline-none font-bold text-slate-800 transition-all text-sm shadow-inner"
+                />
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="bg-amber-50 border-2 border-amber-100 p-8 rounded-[2.5rem] flex items-center gap-8">
+         <div className="w-16 h-16 bg-amber-500 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20">
+            <Info size={32} />
+         </div>
+         <div>
+            <h4 className="text-xl font-bold text-amber-900">Mengapa Ini Penting?</h4>
+            <p className="text-amber-700 text-sm opacity-80 italic leading-relaxed">
+              Pembagian tugas ini memastikan setiap anggota tim aktif berkontribusi. Misalnya, ada yang fokus mengoperasikan Phet Simulation, ada yang bertugas mencatat hasil pengamatan ke tabel, dan ada yang bertugas merumuskan kesimpulan bersama.
+            </p>
+         </div>
+      </div>
+
+      <div className="flex justify-center pt-8">
+        <Button 
+          onClick={onNext}
+          disabled={assignments.some(a => !a.role)}
+          className="w-full md:w-auto px-12 py-6 text-2xl rounded-2xl bg-primary hover:bg-primary/90 shadow-xl shadow-primary/30 flex items-center gap-3 disabled:opacity-50"
+        >
+          Konfirmasi & Mulai <ArrowRight size={24} />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+const ReflectionSection = ({ value, onChange, onFinish }: any) => {
+  const fields = [
+    { key: 'whatLearned', label: 'Apa yang paling penting kami pelajari hari ini?', icon: <BookOpen className="text-pink-500" /> },
+    { key: 'feelings', label: 'Bagaimana perasaan tim saat melakukan praktikum?', icon: <Heart className="text-green-500" /> },
+    { key: 'difficulties', label: 'Kesulitan apa yang kami hadapi dan bagaimana kami mengatasinya?', icon: <AlertCircle className="text-amber-500" /> },
+    { key: 'nextSteps', label: 'Apa yang ingin kami pelajari lebih lanjut?', icon: <ArrowRightCircle className="text-blue-500" /> },
+  ];
+
+  const reflection = value || { whatLearned: '', feelings: '', difficulties: '', nextSteps: '' };
+
+  return (
+    <div className="space-y-12 max-w-4xl mx-auto pb-20">
+      <div className="text-center">
+        <h2 className="text-5xl font-black text-slate-900 mb-4">Refleksi Belajar</h2>
+        <p className="text-xl text-slate-500 font-medium">Lengkapi refleksi tim Anda untuk mengakhiri praktikum ini.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {fields.map((field) => (
+          <div key={field.key} className="space-y-4">
+            <div className="flex items-center gap-3 ml-2">
+              <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center">
+                {React.cloneElement(field.icon as React.ReactElement, { size: 18 })}
+              </div>
+              <label className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-widest">{field.label}</label>
+            </div>
+            <textarea
+              value={reflection[field.key as keyof typeof reflection] || ''}
+              onChange={(e) => onChange({ ...reflection, [field.key]: e.target.value })}
+              className="w-full min-h-[120px] p-6 bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl text-sm font-medium outline-none transition-all shadow-inner resize-none leading-relaxed"
+              placeholder="Tuliskan di sini..."
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-blue-50 border-2 border-blue-100 p-8 rounded-[2.5rem] flex items-center gap-6">
+         <div className="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20">
+            <ClipboardCheck size={32} />
+         </div>
+         <div>
+            <h4 className="text-xl font-bold text-blue-900">Praktikum Selesai!</h4>
+            <p className="text-blue-700 text-sm opacity-80 italic">Pastikan seluruh data sudah terisi dengan benar. Evaluasi dan refleksi Anda akan terekam dalam laporan praktikum digital.</p>
+         </div>
+      </div>
+
+      <div className="flex justify-center pt-8">
+        <Button onClick={onFinish} className="w-full md:w-auto px-12 py-6 text-2xl rounded-2xl bg-green-600 hover:bg-green-700 shadow-xl shadow-green-500/30">
+          Simpan Progress & Selesai <Download />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const ModuleView = ({ 
   activeModuleIndex, 
   setView, 
+  appState,
   getModuleAnswers, 
   updateModuleAnswers 
 }: { 
   activeModuleIndex: number; 
   setView: (v: View) => void;
+  appState: AppState;
   getModuleAnswers: (id: string) => StudentAnswers;
   updateModuleAnswers: (id: string, ans: Partial<StudentAnswers>) => void;
 }) => {
   const module = APP_CONFIG.modules[activeModuleIndex];
-  const steps = ['Tujuan', 'Orientasi', 'Masalah', 'Hipotesis', 'Data', 'Uji', 'Kesimpulan', 'Evaluasi'];
+  const steps = ['Tugas', 'Tujuan', 'Orientasi', 'Masalah', 'Hipotesis', 'Data', 'Uji', 'Kesimpulan', 'Evaluasi', 'Refleksi'];
   const [step, setStep] = useState(0);
   const answers = getModuleAnswers(module.id);
 
@@ -2699,9 +2775,18 @@ const ModuleView = ({
             exit={{ opacity: 0, x: -20 }}
             className="max-w-5xl mx-auto"
           >
-            {step === 0 && <ObjectivesSection module={module} />}
-            {step === 1 && <OrientationSection module={module} />}
-            {step === 2 && (
+            {step === 0 && (
+              <RoleAssignmentSection 
+                groupInfo={appState.groupInfo}
+                moduleTitle={module.title}
+                value={answers.roleAssignments}
+                onChange={(roles) => updateModuleAnswers(module.id, { roleAssignments: roles })}
+                onNext={() => setStep(1)}
+              />
+            )}
+            {step === 1 && <ObjectivesSection module={module} />}
+            {step === 2 && <OrientationSection module={module} />}
+            {step === 3 && (
               <TextSection 
                 title="Merumuskan Masalah" 
                 description="Berdasarkan video orientasi, tuliskan pertanyaan ilmiah atau masalah yang ingin Anda teliti."
@@ -2710,7 +2795,7 @@ const ModuleView = ({
                 icon={<HelpCircle className="text-blue-600" />}
               />
             )}
-            {step === 3 && (
+            {step === 4 && (
               <TextSection 
                 title="Merumuskan Hipotesis" 
                 description="Berikan jawaban sementara atau dugaan Anda terhadap rumusan masalah di atas."
@@ -2719,7 +2804,7 @@ const ModuleView = ({
                 icon={<Lightbulb className="text-purple-600" />}
               />
             )}
-            {step === 4 && (
+            {step === 5 && (
               <DataSection 
                 module={module}
                 data={answers.tableData}
@@ -2731,14 +2816,14 @@ const ModuleView = ({
                 }}
               />
             )}
-            {step === 5 && (
+            {step === 6 && (
               <UjiSection 
                 hypothesis={answers.hypothesis}
                 value={answers.hypothesisTesting}
                 onChange={(v: any) => updateModuleAnswers(module.id, { hypothesisTesting: v })}
               />
             )}
-            {step === 6 && (
+            {step === 7 && (
               <TextSection 
                 title="Kesimpulan" 
                 description="Apa yang dapat Anda simpulkan dari seluruh rangkaian praktikum yang telah dilakukan?"
@@ -2747,11 +2832,18 @@ const ModuleView = ({
                 icon={<CheckCircle2 className="text-green-600" />}
               />
             )}
-            {step === 7 && (
+            {step === 8 && (
               <EvaluationSection 
                 module={module}
                 evaluationScore={answers.evaluationScore}
                 onComplete={(score: number) => updateModuleAnswers(module.id, { evaluationScore: score })}
+              />
+            )}
+            {step === 9 && (
+              <ReflectionSection 
+                value={answers.reflection}
+                onChange={(v: any) => updateModuleAnswers(module.id, { reflection: v })}
+                onFinish={() => setView('MENU')}
               />
             )}
           </motion.div>
@@ -3028,6 +3120,7 @@ export default function App() {
       <ModuleView 
         activeModuleIndex={activeModuleIndex}
         setView={setView}
+        appState={appState}
         getModuleAnswers={getModuleAnswers}
         updateModuleAnswers={updateModuleAnswers}
       />

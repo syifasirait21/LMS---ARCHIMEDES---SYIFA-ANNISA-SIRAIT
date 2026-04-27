@@ -29,6 +29,12 @@ export interface StudentAnswers {
   conclusion: string;
   evaluationScore?: number;
   roleAssignments?: RoleAssignment[];
+  reflection?: {
+    whatLearned: string;
+    feelings: string;
+    difficulties: string;
+    nextSteps: string;
+  };
 }
 
 export interface EvaluationQuestion {
