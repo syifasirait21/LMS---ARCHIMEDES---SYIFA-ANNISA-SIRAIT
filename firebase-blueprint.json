@@ -1,0 +1,42 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and authentication data",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "groupName": { "type": "string" },
+        "leaderName": { "type": "string" },
+        "members": { "type": "array" },
+        "role": { "type": "string", "enum": ["student", "admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Progress": {
+      "title": "Student Progress",
+      "description": "Lab data and quiz results for a student/group",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "groupName": { "type": "string" },
+        "moduleProgress": { "type": "object" },
+        "quizResult": { "type": "object" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Internal user data"
+    },
+    "/progress/{userId}": {
+      "schema": "Progress",
+      "description": "Student lab progress and results"
+    }
+  }
+}
