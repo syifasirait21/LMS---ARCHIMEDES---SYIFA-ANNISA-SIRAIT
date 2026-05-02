@@ -6,6 +6,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
+  Award,
+  TrendingUp,
+  Database,
+  MessageSquare,
   Anchor, 
   Scale, 
   Droplets, 
@@ -180,57 +184,95 @@ async function loadProgressFromFirebase(userId: string) {
 const LabBackground = ({ variant = 'blue' }: { variant?: 'blue' | 'light' }) => {
   return (
     <div className={cn(
-      "fixed inset-0 z-0 overflow-hidden transition-colors duration-700",
-      variant === 'blue' ? "bg-blue-600" : "bg-transparent"
+      "fixed inset-0 z-0 overflow-hidden transition-colors duration-1000",
+      variant === 'blue' ? "bg-slate-900" : "bg-bg"
     )}>
+      {/* Dynamic Gradients */}
+      <div className={cn(
+        "absolute inset-0 transition-opacity duration-1000",
+        variant === 'blue' ? "opacity-40" : "opacity-20"
+      )}>
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/30 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-400/20 blur-[120px]" />
+      </div>
+
       {/* Grid Pattern */}
       <div className={cn(
         "absolute inset-0 transition-opacity duration-700",
-        variant === 'blue' ? "opacity-[0.05]" : "opacity-[0.02]"
-      )} style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        variant === 'blue' ? "opacity-[0.05]" : "opacity-[0.1]"
+      )} style={{ 
+        backgroundImage: variant === 'blue' 
+          ? 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)' 
+          : 'radial-gradient(circle, rgba(59,130,246,0.1) 1px, transparent 1px)', 
+        backgroundSize: '48px 48px' 
+      }} />
       
-      {/* Floating Bubbles */}
-      {[...Array(20)].map((_, i) => (
+      {/* Floating Orbits (Scientific Feel) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={`orbit-${i}`}
+            animate={{ 
+              rotate: 360,
+              scale: [1, 1.1, 1]
+            }}
+            transition={{ 
+              rotate: { duration: 20 + i * 10, repeat: Infinity, ease: "linear" },
+              scale: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+            }}
+            className={cn(
+              "absolute border rounded-full border-dashed",
+              variant === 'blue' ? "border-white/5" : "border-primary/5"
+            )}
+            style={{
+              width: `${400 + i * 200}px`,
+              height: `${400 + i * 200}px`,
+              top: '50%',
+              left: '50%',
+              marginTop: `-${200 + i * 100}px`,
+              marginLeft: `-${200 + i * 100}px`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Floating Bubbles/Particles */}
+      {[...Array(15)].map((_, i) => (
         <motion.div
           key={i}
           initial={{ y: "110vh", opacity: 0, x: `${Math.random() * 100}vw` }}
           animate={{
-            y: "-10vh",
-            opacity: [0, variant === 'blue' ? 0.3 : 0.15, 0],
+            y: "-20vh",
+            opacity: [0, variant === 'blue' ? 0.4 : 0.2, 0],
+            x: `${(Math.random() * 100) + (Math.sin(i) * 5)}vw`
           }}
           transition={{
-            duration: 15 + Math.random() * 25,
+            duration: 10 + Math.random() * 20,
             repeat: Infinity,
-            delay: Math.random() * 15,
-            ease: "linear"
+            delay: Math.random() * 10,
+            ease: "easeInOut"
           }}
           className={cn(
-            "absolute rounded-full blur-[2px]",
-            variant === 'blue' ? "bg-white" : "bg-primary"
+            "absolute rounded-full",
+            variant === 'blue' ? "bg-blue-300/30" : "bg-primary/20"
           )}
           style={{
-            width: `${10 + Math.random() * 40}px`,
-            height: `${10 + Math.random() * 40}px`,
+            width: `${4 + Math.random() * 12}px`,
+            height: `${4 + Math.random() * 12}px`,
+            filter: 'blur(1px)'
           }}
         />
       ))}
 
-      {/* Modern Wave Shapes */}
+      {/* Lab Silhouette Watermark */}
       <div className={cn(
-        "absolute bottom-0 left-0 right-0 h-[30vh] transition-opacity duration-700",
-        variant === 'blue' ? "opacity-10" : "opacity-5"
+        "absolute -bottom-20 -right-20 opacity-[0.03] select-none pointer-events-none",
+        variant === 'blue' ? "text-white" : "text-primary"
       )}>
-        <svg viewBox="0 0 1440 320" className="absolute bottom-0 w-full h-full preserve-3d">
-          <path 
-            fill={variant === 'blue' ? 'white' : 'currentColor'} 
-            d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          ></path>
+        <svg width="600" height="600" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.5 2h-13C4.67 2 4 2.67 4 3.5v17c0 .83.67 1.5 1.5 1.5h13c.83 0 1.5-.67 1.5-1.5v-17c0-.83-.67-1.5-1.5-1.5zM12 18c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
         </svg>
       </div>
-
-      {variant === 'blue' && (
-        <div className="absolute inset-0 bg-gradient-to-t from-blue-900/40 via-transparent to-blue-500/20" />
-      )}
     </div>
   );
 };
@@ -396,7 +438,7 @@ async function generateCompletePDF(appState: AppState, getModuleAnswers: (id: st
           ${answers.reflection ? `
           <div style="margin-top: 20px;">
             <h4 style="margin-bottom: 12px; color: #1e40af; font-size: 12px; text-transform: uppercase; font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px;">
-               Refleksi Belajar Tim
+               Refleksi Belajar Kelompok
             </h4>
             <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
               <div style="background: #fdf2f8; border: 1px inset #fbcfe8; padding: 12px; border-radius: 12px;">
@@ -404,7 +446,7 @@ async function generateCompletePDF(appState: AppState, getModuleAnswers: (id: st
                 <p style="font-size: 11px; color: #475569;">${answers.reflection.whatLearned || '-'}</p>
               </div>
               <div style="background: #f0fdf4; border: 1px inset #bbf7d0; padding: 12px; border-radius: 12px;">
-                <p style="font-weight: 700; font-size: 9px; color: #16a34a; text-transform: uppercase; margin-bottom: 5px;">Bagaimana perasaan tim saat melakukan praktikum?</p>
+                <p style="font-weight: 700; font-size: 9px; color: #16a34a; text-transform: uppercase; margin-bottom: 5px;">Bagaimana perasaan kelompok saat melakukan praktikum?</p>
                 <p style="font-size: 11px; color: #475569;">${answers.reflection.feelings || '-'}</p>
               </div>
               <div style="background: #fffbeb; border: 1px inset #fef3c7; padding: 12px; border-radius: 12px;">
@@ -460,77 +502,101 @@ const LandingPage = ({ setView }: { setView: (v: View) => void }) => (
   <motion.div 
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
-    className="min-h-screen bg-bg flex flex-col items-center justify-center p-6 text-center relative overflow-hidden"
+    className="min-h-screen flex flex-col items-center justify-center p-6 text-center relative overflow-hidden"
   >
     <LabBackground variant="light" />
-      <div className="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center relative z-10">
+    <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center relative z-10">
       <motion.div
-        initial={{ x: -30, opacity: 0 }}
+        initial={{ x: -60, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        className="text-center md:text-left"
+        transition={{ duration: 0.8 }}
+        className="text-center lg:text-left"
       >
-         <motion.img 
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 4, repeat: Infinity }}
-          src={APP_CONFIG.university.logo} 
-          alt="Logo" 
-          className="w-24 h-24 md:w-32 md:h-32 object-contain mb-8 mx-auto md:mx-0" 
-        />
-        <h2 className="text-primary font-black uppercase tracking-[0.3em] text-[0.7rem] md:text-sm mb-4">
+         <motion.div
+           animate={{ y: [0, -20, 0] }}
+           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+           className="relative inline-block mb-10"
+         >
+           <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
+           <img 
+            src={APP_CONFIG.university.logo} 
+            alt="Logo" 
+            className="w-36 h-36 md:w-52 md:h-52 object-contain relative z-10 drop-shadow-[0_20px_50px_rgba(59,130,246,0.3)]" 
+           />
+         </motion.div>
+        
+        <h2 className="text-primary font-black uppercase tracking-[0.5em] text-[0.8rem] md:text-lg mb-6 flex items-center justify-center lg:justify-start gap-3">
+          <span className="w-8 h-[2px] bg-primary/30 hidden md:block" />
           {APP_CONFIG.university.name}
         </h2>
-        <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 leading-none tracking-tighter mb-6 text-balance">
+        
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[0.9] tracking-tighter mb-10 text-balance drop-shadow-sm">
           Praktikum<br/>
-          <span className="text-primary">Gaya Archimedes.</span>
+          <span className="bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">Gaya Archimedes.</span>
         </h1>
-        <p className="text-slate-500 text-base md:text-lg font-medium mb-10 max-w-md mx-auto md:mx-0">
-          LMS Interaktif berbasis Guided Inquiry untuk mengeksplorasi hukum-hukum fisika dengan cara yang menyenangkan.
+        
+        <p className="text-slate-500 text-base md:text-lg font-medium mb-14 max-w-2xl mx-auto lg:mx-0 leading-relaxed opacity-90">
+          LMS Interaktif berbasis <span className="text-primary font-black border-b-4 border-primary/20">Guided Inquiry</span> untuk eksplorasi hukum fisika secara mendalam.
         </p>
-        <Button onClick={() => setView('LOGIN')} className="w-full md:w-auto px-10 py-5 text-lg md:text-xl shadow-2xl shadow-primary/30">
-          Mulai Belajar Sekarang <ChevronRight />
+        
+        <Button onClick={() => setView('LOGIN')} className="w-full md:w-auto px-16 py-8 text-xl md:text-2xl shadow-[0_30px_60px_-15px_rgba(59,130,246,0.5)] rounded-[2.5rem] group bg-primary hover:bg-blue-700 transition-all">
+          Mulai Belajar Sekarang <ChevronRight className="group-hover:translate-x-3 transition-transform duration-300" size={32} />
         </Button>
       </motion.div>
 
       <motion.div 
-        initial={{ x: 30, opacity: 0 }}
+        initial={{ x: 60, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        className="grid grid-cols-2 gap-3 md:gap-4 mt-8 md:mt-0"
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="grid grid-cols-2 gap-4 md:gap-6"
       >
-        <div className="bento-card py-8 md:py-12 flex flex-col items-center justify-center bg-white shadow-xl shadow-slate-200/50">
-          <Anchor size={32} className="text-primary mb-4 md:size-10" />
-          <p className="font-bold text-slate-400 text-[0.6rem] uppercase tracking-widest">Praktikum</p>
-          <p className="font-black text-slate-800 text-lg md:text-2xl">Virtual</p>
+        <div className="bento-card p-6 md:p-10 flex flex-col items-center justify-center bg-white/80 backdrop-blur-md shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] rounded-[2.5rem] border border-white group hover:translate-y-[-8px] transition-all duration-500">
+          <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/5 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
+            <Anchor size={32} className="md:size-10" />
+          </div>
+          <p className="font-bold text-slate-400 text-[0.6rem] md:text-xs uppercase tracking-[0.3em] mb-2">Praktikum</p>
+          <p className="font-black text-slate-800 text-base md:text-lg tracking-tight">Virtual</p>
         </div>
-        <div className="bento-card py-8 md:py-12 flex flex-col items-center justify-center bg-primary text-white border-transparent shadow-xl shadow-primary/20">
-          <Trophy size={32} className="mb-4 md:size-10" />
-          <p className="font-bold opacity-60 text-[0.6rem] uppercase tracking-widest">LKPD</p>
-          <p className="font-black text-lg md:text-2xl">Interaktif</p>
+        
+        <div className="bento-card p-6 md:p-10 flex flex-col items-center justify-center bg-primary text-white border-transparent shadow-[0_30px_60px_-15px_rgba(59,130,246,0.3)] rounded-[2.5rem] group hover:translate-y-[-8px] transition-all duration-500">
+          <div className="w-16 h-16 md:w-20 md:h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-primary transition-all duration-500 shadow-lg">
+            <Trophy size={32} className="md:size-10" />
+          </div>
+          <p className="font-bold opacity-60 text-[0.6rem] md:text-xs uppercase tracking-[0.3em] mb-2">LKPD</p>
+          <p className="font-black text-base md:text-lg tracking-tight">Interaktif</p>
         </div>
-        <div className="bento-card py-8 md:py-12 flex flex-col items-center justify-center bg-slate-100 border-dashed border-slate-300">
-          <Users size={32} className="text-slate-400 mb-4 md:size-10" />
-          <p className="font-bold text-slate-400 text-[0.6rem] uppercase tracking-widest">Kolaborasi</p>
-          <p className="font-black text-slate-800 text-lg md:text-2xl">Kelompok</p>
+        
+        <div className="bento-card p-6 md:p-10 flex flex-col items-center justify-center bg-slate-50/50 backdrop-blur-sm border-2 border-dashed border-slate-200 rounded-[2.5rem] group hover:translate-y-[-8px] transition-all duration-500">
+          <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-200/50 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-slate-800 group-hover:text-white transition-all duration-500">
+            <Users size={32} className="text-slate-400 md:size-10 transition-colors" />
+          </div>
+          <p className="font-bold text-slate-400 text-[0.6rem] md:text-xs uppercase tracking-[0.3em] mb-2">Kolaborasi</p>
+          <p className="font-black text-slate-800 text-base md:text-lg tracking-tight">Kelompok</p>
         </div>
-        <div className="bento-card py-8 md:py-12 flex flex-col items-center justify-center bg-white shadow-xl shadow-slate-200/50">
-          <Scale size={32} className="text-amber-500 mb-4 md:size-10" />
-          <p className="font-bold text-slate-400 text-[0.6rem] uppercase tracking-widest">Data</p>
-          <p className="font-black text-slate-800 text-lg md:text-2xl">Akurat</p>
+        
+        <div className="bento-card p-6 md:p-10 flex flex-col items-center justify-center bg-white/80 backdrop-blur-md shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] rounded-[2.5rem] border border-white group hover:translate-y-[-8px] transition-all duration-500">
+          <div className="w-16 h-16 md:w-20 md:h-20 bg-amber-50 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-amber-500 group-hover:text-white transition-all duration-500 shadow-inner">
+            <Scale size={32} className="md:size-10" />
+          </div>
+          <p className="font-bold text-slate-400 text-[0.6rem] md:text-xs uppercase tracking-[0.3em] mb-2">Data</p>
+          <p className="font-black text-slate-800 text-base md:text-lg tracking-tight">Akurat</p>
         </div>
       </motion.div>
     </div>
 
-    <div className="mt-20 pt-10 border-t border-slate-200 w-full max-w-4xl flex flex-wrap justify-center gap-x-12 gap-y-6">
-      <div className="text-left">
-        <p className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-widest mb-1">Dosen Pengampu</p>
-        <p className="text-sm font-extrabold text-slate-800">{APP_CONFIG.author.lecturer}</p>
+    <div className="mt-24 pt-12 border-t border-slate-200/50 w-full max-w-6xl flex flex-wrap justify-between gap-12 relative z-10">
+      <div className="text-left bg-white/40 backdrop-blur-md p-6 rounded-3xl border border-white/50">
+        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Dosen Pengampu</p>
+        <p className="text-lg font-black text-slate-800">{APP_CONFIG.author.lecturer}</p>
       </div>
-      <div className="text-left">
-        <p className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-widest mb-1">Oleh</p>
-        <p className="text-sm font-extrabold text-slate-800">{APP_CONFIG.author.name} ({APP_CONFIG.author.npm})</p>
+      <div className="text-left bg-white/40 backdrop-blur-md p-6 rounded-3xl border border-white/50">
+        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Penulis & Pengembang</p>
+        <p className="text-lg font-black text-slate-800">{APP_CONFIG.author.name}</p>
+        <p className="text-xs font-bold text-primary mt-1">NPM: {APP_CONFIG.author.npm}</p>
       </div>
-      <div className="text-left">
-        <p className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-widest mb-1">Mata Kuliah</p>
-        <p className="text-sm font-extrabold text-slate-800">{APP_CONFIG.author.course}</p>
+      <div className="text-left bg-white/40 backdrop-blur-md p-6 rounded-3xl border border-white/50">
+        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Laboratorium Fisika</p>
+        <p className="text-lg font-black text-slate-800">{APP_CONFIG.author.course}</p>
       </div>
     </div>
   </motion.div>
@@ -550,7 +616,6 @@ const LoginPage = ({
 
   const getInternalEmail = (identifier: string, role: string) => {
     if (role === 'admin') return identifier.trim();
-    // Consistent sanitization: lowercase, spaces to underscores, remove special chars
     const sanitized = identifier.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
     return sanitized + "@archimedes.lms";
   };
@@ -579,91 +644,105 @@ const LoginPage = ({
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 relative">
-      <LabBackground />
+      <LabBackground variant={role === 'admin' ? 'blue' : 'light'} />
       <motion.div 
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="bg-white/95 backdrop-blur-xl p-10 md:p-14 rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] w-full max-w-md border border-white/20 relative z-10"
+        key={role}
+        initial={{ y: 40, opacity: 0, scale: 0.95 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, type: "spring" }}
+        className="bg-white/90 backdrop-blur-3xl p-10 md:p-16 rounded-[4rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] w-full max-w-xl border border-white/50 relative z-10"
       >
-        <div className="flex items-center gap-4 mb-2">
-          <div className={cn(
-            "w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg transition-all",
-            role === 'admin' ? "bg-slate-900 rotate-[-5deg]" : "bg-blue-500 rotate-[5deg]"
-          )}>
-            {role === 'admin' ? <Shield size={28} /> : <Droplets size={28} />}
-          </div>
-          <div>
-            <h2 className="text-3xl font-black text-slate-900 leading-tight">Virtual Lab</h2>
-            <p className="text-blue-500 text-xs font-black uppercase tracking-[0.2em]">Archimedes LMS</p>
-          </div>
+        <div className="flex flex-col items-center text-center mb-12">
+          <motion.div 
+            whileHover={{ rotate: role === 'admin' ? -10 : 10 }}
+            className={cn(
+              "w-24 h-24 rounded-[2.5rem] flex items-center justify-center text-white shadow-2xl mb-8 mb-6 transition-all duration-500",
+              role === 'admin' ? "bg-slate-900 border-4 border-slate-700" : "bg-primary border-4 border-blue-400"
+            )}>
+            {role === 'admin' ? <Shield size={42} /> : <Droplets size={42} />}
+          </motion.div>
+          
+          <h2 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight tracking-tighter mb-2">
+            Laboratorium <span className={role === 'admin' ? "text-slate-700" : "text-primary"}>Virtual</span>
+          </h2>
+          <p className="text-slate-400 text-sm font-black uppercase tracking-[0.4em]">Archimedes Learning System</p>
         </div>
 
-        {/* Role Toggle */}
-        <div className="flex bg-slate-100/50 p-1.5 rounded-2xl mb-8 mt-8 border border-slate-200">
+        {/* Improved Role Toggle */}
+        <div className="bg-slate-100/80 p-2 rounded-[2rem] flex mb-12 border border-slate-200 shadow-inner">
           <button 
             type="button"
             onClick={() => setRole('student')}
             className={cn(
-              "flex-1 py-3 rounded-xl text-[0.65rem] font-black uppercase tracking-widest transition-all",
-              role === 'student' ? "bg-white text-blue-600 shadow-md" : "text-slate-400 hover:text-slate-600"
+              "flex-1 py-4 rounded-[1.5rem] text-[0.75rem] font-black uppercase tracking-widest transition-all duration-300",
+              role === 'student' ? "bg-white text-primary shadow-[0_10px_20px_rgba(0,0,0,0.05)]" : "text-slate-400 hover:text-slate-600"
             )}
           >
-            Siswa
+            Siswa / Kelompok
           </button>
           <button 
             type="button"
             onClick={() => setRole('admin')}
             className={cn(
-              "flex-1 py-3 rounded-xl text-[0.65rem] font-black uppercase tracking-widest transition-all",
-              role === 'admin' ? "bg-slate-900 text-white shadow-md" : "text-slate-400 hover:text-slate-600"
+              "flex-1 py-4 rounded-[1.5rem] text-[0.75rem] font-black uppercase tracking-widest transition-all duration-300",
+              role === 'admin' ? "bg-slate-900 text-white shadow-[0_10px_20px_rgba(0,0,0,0.2)]" : "text-slate-400 hover:text-slate-600"
             )}
           >
-            Admin
+            Administrator
           </button>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
-          {error && <p className="text-red-500 text-xs font-bold bg-red-50 p-4 rounded-xl border border-red-100 animate-shake">{error}</p>}
+        <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8 text-left">
+          {error && (
+            <motion.div 
+              initial={{ x: -10, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              className="bg-red-50 text-red-600 p-6 rounded-3xl border border-red-100 flex items-center gap-4 shadow-sm"
+            >
+              <AlertTriangle size={24} className="shrink-0" />
+              <p className="text-sm font-bold">{error}</p>
+            </motion.div>
+          )}
           
-          <div>
-            <label className="block text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-2.5 ml-1">
-              {role === 'student' ? 'Identitas Kelompok' : 'Email Admin'}
+          <div className="space-y-3">
+            <label className="block text-[0.75rem] font-black text-slate-500 uppercase tracking-[0.2em] ml-2">
+              {role === 'student' ? 'Identitas Kelompok' : 'Email Administrator'}
             </label>
             <div className="relative group">
-               {role === 'student' ? (
-                 <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-500" size={18} />
-               ) : (
-                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-500" size={18} />
-               )}
+               <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+                 {role === 'student' ? <Users size={24} /> : <Mail size={24} />}
+               </div>
                <input 
                 type={role === 'student' ? "text" : "email"}
                 value={identifier}
                 onChange={e => setIdentifier(e.target.value)}
-                className="w-full p-4 pl-12 bg-slate-50 border-2 border-slate-100 focus:border-blue-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-800"
-                placeholder={role === 'student' ? "Contoh: Kelompok A" : "admin@lab.id"}
+                className="w-full p-6 pl-16 bg-slate-50 border-2 border-slate-100 focus:border-primary focus:bg-white rounded-[2rem] outline-none transition-all font-bold text-slate-800 text-lg shadow-sm"
+                placeholder={role === 'student' ? "Masukkan Nama Kelompok Anda" : "admin@lab.ac.id"}
                 required
               />
             </div>
           </div>
           
-          <div>
-            <label className="block text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-2.5 ml-1">Sandi Rahasia</label>
+          <div className="space-y-3">
+            <label className="block text-[0.75rem] font-black text-slate-500 uppercase tracking-[0.2em] ml-2">Sandi Pengamanan</label>
             <div className="relative group">
-               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-500" size={18} />
+               <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+                 <Lock size={24} />
+               </div>
                <input 
                 type={showPassword ? "text" : "password"} 
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full p-4 pl-12 pr-12 bg-slate-50 border-2 border-slate-100 focus:border-blue-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-800"
-                placeholder="••••••••"
+                className="w-full p-6 pl-16 pr-16 bg-slate-50 border-2 border-slate-100 focus:border-primary focus:bg-white rounded-[2rem] outline-none transition-all font-bold text-slate-800 text-lg shadow-sm"
+                placeholder="••••••••••••"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-500 transition-colors"
+                className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <EyeOff size={24} /> : <Eye size={24} />}
               </button>
             </div>
           </div>
@@ -671,26 +750,32 @@ const LoginPage = ({
           <Button 
             disabled={loading} 
             className={cn(
-              "w-full py-5 text-xl font-black tracking-tight mt-6 rounded-2xl shadow-xl transition-all active:scale-95",
-              role === 'admin' ? "bg-slate-900 hover:bg-black shadow-slate-900/20" : "bg-blue-600 hover:bg-blue-700 shadow-blue-600/30"
+              "w-full py-8 text-2xl font-black rounded-[2rem] shadow-2xl transition-all active:scale-95 mt-4",
+              role === 'admin' ? "bg-slate-900 hover:bg-black shadow-slate-900/30" : "bg-primary hover:bg-blue-700 shadow-primary/30"
             )}
           >
-            {loading ? 'Memvalidasi...' : 'Masuk Laboratorium'} <ArrowRight size={20} />
+            {loading ? (
+              <RefreshCw className="animate-spin" size={28} />
+            ) : (
+              <>Masuk Laboratorium <ArrowRight size={28} /></>
+            )}
           </Button>
 
-          <div className="pt-4 flex flex-col items-center gap-4">
+          <div className="pt-8 flex flex-col items-center gap-6">
             <button 
               type="button"
               onClick={() => setView('LANDING')} 
-              className="text-xs font-black text-slate-400 hover:text-blue-500 transition-colors flex items-center gap-2 uppercase tracking-widest"
+              className="text-[0.75rem] font-black text-slate-400 hover:text-primary transition-colors flex items-center gap-3 uppercase tracking-[0.2em]"
             >
-              <Home size={14} /> Kembali ke Beranda
+              <Home size={18} /> Kembali ke Beranda
             </button>
             
             {role === 'student' && (
-              <p className="text-slate-400 text-xs font-bold">
-                Belum punya akun? <button type="button" onClick={() => setView('REGISTER')} className="text-blue-600 hover:underline">Daftarkan Kelompok</button>
-              </p>
+              <div className="bg-slate-50 px-8 py-4 rounded-full border border-slate-100">
+                <p className="text-slate-500 text-sm font-bold">
+                  Belum terdaftar? <button type="button" onClick={() => setView('REGISTER')} className="text-primary hover:underline font-black">Daftarkan Kelompok Baru</button>
+                </p>
+              </div>
             )}
           </div>
         </form>
@@ -793,8 +878,8 @@ const RegisterPage = ({ setView }: { setView: (v: View) => void }) => {
             <UserPlus size={28} />
           </div>
           <div>
-            <h2 className="text-3xl font-black text-slate-900 leading-tight">Daftar Kelompok</h2>
-            <p className="text-blue-500 text-xs font-black uppercase tracking-[0.2em]">Registrasi Tim Baru</p>
+            <h2 className="text-xl font-black text-slate-900 leading-tight">Daftar Kelompok</h2>
+            <p className="text-blue-500 text-xs font-black uppercase tracking-[0.2em]">Registrasi Kelompok Baru</p>
           </div>
         </div>
         
@@ -1068,114 +1153,147 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
     <div className="min-h-screen bg-bg relative overflow-hidden">
       <LabBackground variant="light" />
       <div className="relative z-10">
-        <header className="bg-white/80 backdrop-blur-md px-4 md:px-8 py-3 md:py-4 border-b border-slate-200 flex justify-between items-center sticky top-0 z-50">
-      <div className="flex items-center gap-3 md:gap-4">
-        <div className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-xl flex items-center justify-center p-1 shadow-sm border border-slate-100">
-          <img 
-            src={APP_CONFIG.university.logo} 
-            alt="USK Logo" 
-            className="w-full h-full object-contain" 
-          />
-        </div>
-        <div>
-          <h1 className="text-sm md:text-xl font-black text-slate-800">Admin Dashboard</h1>
-          <p className="text-[0.55rem] md:text-[0.65rem] uppercase font-bold text-slate-400 tracking-wider">Gaya Archimedes LMS</p>
-        </div>
-      </div>
-      
-      <div className="flex items-center gap-2 md:gap-6">
-        <button 
-          onClick={resetState}
-          className="px-3 md:px-4 py-2 bg-red-50 text-red-600 rounded-[0.5rem] text-xs md:text-sm font-semibold hover:bg-red-100 transition-colors flex items-center gap-2"
-        >
-          <LogOut size={16} /> <span className="hidden md:inline">Keluar Admin</span>
-        </button>
-      </div>
-    </header>
+        <header className="bg-white/80 backdrop-blur-3xl px-8 md:px-12 py-6 md:py-8 border-b border-white flex justify-between items-center sticky top-0 z-50 shadow-sm transition-all">
+          <div className="flex items-center gap-6">
+            <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-3xl flex items-center justify-center p-2 shadow-xl border border-slate-100 rotate-[-5deg] hover:rotate-0 transition-transform">
+              <img 
+                src={APP_CONFIG.university.logo} 
+                alt="USK Logo" 
+                className="w-full h-full object-contain" 
+              />
+            </div>
+            <div>
+              <h1 className="text-base md:text-xl font-black text-slate-900 tracking-tighter leading-none mb-1">Pusat Kendali Admin</h1>
+              <p className="text-[0.65rem] md:text-[0.75rem] uppercase font-black text-primary tracking-[0.3em] opacity-70">Sistem Manajemen Praktikum Virtual</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4 md:gap-8">
+            <button 
+              onClick={resetState}
+              className="w-14 h-14 md:w-16 md:h-16 bg-red-50 text-red-600 rounded-2xl md:rounded-3xl hover:bg-red-600 hover:text-white transition-all flex items-center justify-center shadow-sm hover:shadow-xl group"
+            >
+              <LogOut size={24} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </header>
 
-    <main className="max-w-7xl mx-auto p-4 md:p-8 w-full">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-        <div className="bento-card border-slate-200 p-5 sm:p-6 md:p-8">
-           <p className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Kelompok</p>
-           <div className="text-2xl md:text-4xl font-black text-slate-800">{stats.totalGroups}</div>
-        </div>
-        <div className="bento-card border-slate-200 p-5 sm:p-6 md:p-8">
-           <p className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Siswa</p>
-           <div className="text-2xl md:text-4xl font-black text-primary">{stats.totalStudents}</div>
-        </div>
-        <div className="bento-card border-slate-200 p-5 sm:p-6 md:p-8">
-           <p className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Selesai Semua</p>
-           <div className="text-2xl md:text-4xl font-black text-success">{stats.completedAll}</div>
-        </div>
-        <div className="bento-card border-slate-200 p-5 sm:p-6 md:p-8">
-           <p className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Rata-rata Quiz</p>
-           <div className="text-2xl md:text-4xl font-black text-orange-500">{stats.avgScore} <span className="text-sm md:text-lg text-slate-300 font-bold">/ 100</span></div>
-        </div>
-      </div>
+        <main className="max-w-[100rem] mx-auto p-8 md:p-12 w-full">
+          {/* Stats Grid - Upscaled */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mb-12">
+            <div className="bento-card border-white/50 p-10 md:p-12 bg-white/80 backdrop-blur-xl shadow-2xl relative group overflow-hidden">
+               <div className="absolute top-0 right-0 p-8 text-slate-100 group-hover:text-primary/10 transition-colors">
+                  <Users size={64} />
+               </div>
+               <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-4 relative z-10">Total Kelompok</p>
+               <div className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter relative z-10">{stats.totalGroups}</div>
+               <div className="mt-6 flex items-center gap-2 text-success relative z-10">
+                  <Activity size={16} />
+                  <span className="text-[0.7rem] font-black uppercase">Data Terkini</span>
+               </div>
+            </div>
+            
+            <div className="bento-card border-white/50 p-10 md:p-12 bg-white/80 backdrop-blur-xl shadow-2xl relative group overflow-hidden">
+               <div className="absolute top-0 right-0 p-8 text-slate-100 group-hover:text-blue-500/10 transition-colors">
+                  <User size={64} />
+               </div>
+               <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-4 relative z-10">Total Peserta</p>
+               <div className="text-2xl md:text-3xl font-black text-primary tracking-tighter relative z-10">{stats.totalStudents}</div>
+               <div className="mt-6 flex items-center gap-2 text-primary relative z-10">
+                  <CheckCircle2 size={16} />
+                  <span className="text-[0.7rem] font-black uppercase">Siswa Terverifikasi</span>
+               </div>
+            </div>
 
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-2 mb-8 bg-white/50 p-1.5 rounded-2xl w-fit border border-slate-200">
+            <div className="bento-card border-white/50 p-10 md:p-12 bg-white/80 backdrop-blur-xl shadow-2xl relative group overflow-hidden">
+               <div className="absolute top-0 right-0 p-8 text-slate-100 group-hover:text-green-500/10 transition-colors">
+                  <Trophy size={64} />
+               </div>
+               <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-4 relative z-10">Tuntas Praktikum</p>
+               <div className="text-2xl md:text-3xl font-black text-success tracking-tighter relative z-10">{stats.completedAll}</div>
+               <div className="mt-6 flex items-center gap-2 text-success relative z-10">
+                  <Award size={16} />
+                  <span className="text-[0.7rem] font-black uppercase">Reward Tersedia</span>
+               </div>
+            </div>
+
+            <div className="bento-card border-white/50 p-10 md:p-12 bg-white/80 backdrop-blur-xl shadow-2xl relative group overflow-hidden">
+               <div className="absolute top-0 right-0 p-8 text-slate-100 group-hover:text-orange-500/10 transition-colors">
+                  <BookOpen size={64} />
+               </div>
+               <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-4 relative z-10">Skor Rata-rata</p>
+               <div className="text-2xl md:text-3xl font-black text-orange-500 tracking-tighter relative z-10">
+                 {stats.avgScore} <span className="text-2xl text-slate-300">/ 100</span>
+               </div>
+               <div className="mt-6 flex items-center gap-2 text-orange-400 relative z-10">
+                  <TrendingUp size={16} />
+                  <span className="text-[0.7rem] font-black uppercase">Stabilitas Performa</span>
+               </div>
+            </div>
+          </div>
+
+      {/* Tabs - Upscaled */}
+      <div className="flex flex-wrap gap-4 mb-12 bg-white/50 backdrop-blur-3xl p-3 rounded-[2.5rem] w-fit border border-white shadow-xl">
         <button 
           onClick={() => setActiveTab('ANALYTICS')}
           className={cn(
-            "px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-[0.65rem] md:text-xs font-black uppercase tracking-widest transition-all",
-            activeTab === 'ANALYTICS' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-400 hover:text-slate-600"
+            "px-8 md:px-10 py-4 md:py-5 rounded-[2rem] text-[0.8rem] md:text-sm font-black uppercase tracking-[0.3em] transition-all flex items-center gap-4",
+            activeTab === 'ANALYTICS' ? "bg-primary text-white shadow-2xl shadow-primary/30" : "text-slate-400 hover:text-slate-600 hover:bg-white"
           )}
         >
-          Analitik
+          <Activity size={20} /> Analitik Strategis
         </button>
         <button 
           onClick={() => setActiveTab('GROUPS')}
           className={cn(
-            "px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-[0.65rem] md:text-xs font-black uppercase tracking-widest transition-all",
-            activeTab === 'GROUPS' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-400 hover:text-slate-600"
+            "px-8 md:px-10 py-4 md:py-5 rounded-[2rem] text-[0.8rem] md:text-sm font-black uppercase tracking-[0.3em] transition-all flex items-center gap-4",
+            activeTab === 'GROUPS' ? "bg-primary text-white shadow-2xl shadow-primary/30" : "text-slate-400 hover:text-slate-600 hover:bg-white"
           )}
         >
-          Kelompok
+          <Users size={20} /> Manajemen Kelompok
         </button>
         <button 
           onClick={() => setActiveTab('STUDENTS')}
           className={cn(
-            "px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-[0.65rem] md:text-xs font-black uppercase tracking-widest transition-all",
-            activeTab === 'STUDENTS' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-400 hover:text-slate-600"
+            "px-8 md:px-10 py-4 md:py-5 rounded-[2rem] text-[0.8rem] md:text-sm font-black uppercase tracking-[0.3em] transition-all flex items-center gap-4",
+            activeTab === 'STUDENTS' ? "bg-primary text-white shadow-2xl shadow-primary/30" : "text-slate-400 hover:text-slate-600 hover:bg-white"
           )}
         >
-          Siswa
+          <User size={20} /> Data Siswa Individu
         </button>
       </div>
 
       {activeTab === 'ANALYTICS' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-           <div className="bento-card border-slate-200 p-8">
-              <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                <PieChart size={16} className="text-success" /> Proporsi Penyelesaian
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 md:gap-12 mb-12">
+           <div className="bento-card border-white/50 p-12 bg-white/90 backdrop-blur-3xl shadow-2xl">
+              <h3 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-10 flex items-center gap-4">
+                <PieChart size={24} className="text-success" /> Proporsi Penyelesaian
               </h3>
-              <div className="h-[250px]">
+              <div className="h-[350px]">
                 <AdminStatusPieChart stats={stats} />
               </div>
            </div>
-           <div className="bento-card border-slate-200 p-8">
-              <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                <Target size={16} className="text-primary" /> Kelompok Selesai per Modul
+           <div className="bento-card border-white/50 p-12 bg-white/90 backdrop-blur-3xl shadow-2xl">
+              <h3 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-10 flex items-center gap-4">
+                <Target size={24} className="text-primary" /> Kelompok Selesai per Modul
               </h3>
-              <div className="h-[250px]">
+              <div className="h-[350px]">
                 <AdminCompletionChart data={getAnalyticsData()} />
               </div>
            </div>
-           <div className="bento-card border-slate-200 p-8">
-              <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                <Trophy size={16} className="text-orange-500" /> Rata-rata Skor per Modul
+           <div className="bento-card border-white/50 p-12 bg-white/90 backdrop-blur-3xl shadow-2xl">
+              <h3 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-10 flex items-center gap-4">
+                <Trophy size={24} className="text-orange-500" /> Rata-rata Skor per Modul
               </h3>
-              <div className="h-[250px]">
+              <div className="h-[350px]">
                 <AdminScoreChart data={getAnalyticsData()} />
               </div>
            </div>
-           <div className="lg:col-span-3 bento-card border-slate-200 p-8">
-              <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                <Activity size={16} className="text-primary" /> Grafik Aktivitas Real-time
+           <div className="lg:col-span-3 bento-card border-white/50 p-12 bg-white/90 backdrop-blur-3xl shadow-2xl overflow-hidden">
+              <h3 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-10 flex items-center gap-4">
+                <Activity size={24} className="text-primary" /> Grafik Aktivitas Real-time & Interaksi Sistem
               </h3>
-              <div className="h-[350px]">
+              <div className="h-[450px]">
                 <AdminActivityChart data={studentsProgress} />
               </div>
            </div>
@@ -1183,35 +1301,38 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
       )}
 
       {activeTab === 'GROUPS' && (
-        <div className="bento-card border-slate-200 overflow-hidden p-0">
-           <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <h3 className="font-extrabold text-slate-800 flex items-center gap-2">
-                <Anchor size={18} className="text-primary" /> Daftar Kelompok Praktikum
-              </h3>
+        <div className="bento-card border-white shadow-2xl overflow-hidden p-0 rounded-[4rem] bg-white/80 backdrop-blur-3xl">
+           <div className="p-10 md:p-14 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter flex items-center gap-6">
+                  <Anchor size={32} className="text-primary" /> Inventori Kelompok Aktif
+                </h3>
+                <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-[0.3em] mt-2">Daftar Pengamatan Laboratorium Terintegrasi</p>
+              </div>
               <button 
                 onClick={fetchProgress}
-                className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-500 hover:bg-slate-50 flex items-center gap-2"
+                className="px-8 py-4 bg-white border-2 border-slate-100 rounded-[1.5rem] text-sm font-black text-slate-600 hover:border-primary/30 transition-all flex items-center gap-4 shadow-sm"
               >
-                <RefreshCw size={12} className={loading ? "animate-spin" : ""} /> Refresh Data
+                <RefreshCw size={18} className={loading ? "animate-spin" : "text-primary"} /> Segarkan Data
               </button>
            </div>
            <div className="overflow-x-auto">
-              <table className="w-full text-left min-w-[800px]">
+              <table className="w-full text-left min-w-[1000px]">
                  <thead>
-                    <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.6rem] sm:text-[0.65rem] uppercase tracking-wider">
-                      <th className="p-4 sm:p-6">Identitas Kelompok</th>
-                      <th className="p-4 sm:p-6">Ketua</th>
-                      <th className="p-4 sm:p-6 hidden md:table-cell">Progress Modul</th>
-                      <th className="p-4 sm:p-6">Avg Score</th>
-                      <th className="p-4 sm:p-6 hidden lg:table-cell">Terakhir Aktif</th>
-                      <th className="p-4 sm:p-6 text-right">Aksi</th>
+                    <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.85rem] uppercase tracking-[0.2em] bg-slate-50/10">
+                      <th className="p-8 md:p-10">Label Kelompok</th>
+                      <th className="p-8 md:p-10">Penanggung Jawab</th>
+                      <th className="p-8 md:p-10 hidden md:table-cell">Integrasi Modul</th>
+                      <th className="p-8 md:p-10">Metrik Skor</th>
+                      <th className="p-8 md:p-10 hidden lg:table-cell">Timestamp Data</th>
+                      <th className="p-8 md:p-10 text-right">Navigasi</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
                     {loading ? (
-                      <tr><td colSpan={6} className="p-20 text-center font-bold text-slate-400">Memuat data...</td></tr>
+                      <tr><td colSpan={6} className="p-32 text-center font-black text-slate-300 text-2xl animate-pulse">Sinkronisasi Database...</td></tr>
                     ) : studentsProgress.length === 0 ? (
-                      <tr><td colSpan={6} className="p-20 text-center font-bold text-slate-400 italic">Belum ada kelompok terdaftar.</td></tr>
+                      <tr><td colSpan={6} className="p-32 text-center font-black text-slate-400 italic text-xl">Belum ada kelompok yang terverifikasi di sistem.</td></tr>
                     ) : [...studentsProgress].sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime()).map((p) => {
                       const completedCount = Object.keys(p.moduleProgress || {}).length;
                       const mods = Object.values(p.moduleProgress || {}) as any[];
@@ -1221,37 +1342,39 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                         : 0;
 
                       return (
-                        <tr key={p.id} className="border-b border-slate-50 hover:bg-slate-50/30 transition-colors">
-                          <td className="p-4 sm:p-6">
-                            <div className="font-black text-slate-800 text-xs sm:text-sm">{p.groupName}</div>
-                            <div className="text-[0.65rem] text-slate-400 font-medium">ID: {p.id.slice(0, 8)}</div>
+                        <tr key={p.id} className="border-b border-slate-50 hover:bg-primary/5 transition-all group">
+                          <td className="p-8 md:p-10">
+                            <div className="font-black text-slate-900 text-base md:text-lg tracking-tighter leading-none mb-2">{p.groupName}</div>
+                            <div className="text-[0.7rem] text-slate-400 font-black uppercase tracking-widest">ID: {p.id.slice(0, 12)}</div>
                           </td>
-                          <td className="p-4 sm:p-6 font-bold text-slate-600 text-xs sm:text-sm">{p.leaderName}</td>
-                          <td className="p-4 sm:p-6 hidden md:table-cell">
-                            <div className="flex items-center gap-3">
-                              <div className="w-16 sm:w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                 <div className="h-full bg-primary" style={{ width: `${(completedCount / APP_CONFIG.modules.length) * 100}%` }} />
+                          <td className="p-8 md:p-10 font-black text-slate-700 text-md md:text-lg">{p.leaderName}</td>
+                          <td className="p-8 md:p-10 hidden md:table-cell">
+                            <div className="flex items-center gap-6">
+                              <div className="w-32 md:w-48 h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner p-0.5">
+                                 <div className="h-full bg-primary rounded-full shadow-lg" style={{ width: `${(completedCount / APP_CONFIG.modules.length) * 100}%` }} />
                               </div>
-                              <span className="font-black text-slate-600 text-[0.65rem]">{completedCount}/{APP_CONFIG.modules.length}</span>
+                              <span className="font-black text-slate-900 text-[0.8rem]">{completedCount}/{APP_CONFIG.modules.length}</span>
                             </div>
                           </td>
-                          <td className="p-4 sm:p-6">
+                          <td className="p-8 md:p-10">
                              <span className={cn(
-                               "px-2 sm:px-3 py-1 rounded-full font-black text-[0.65rem] sm:text-xs",
-                               avgScore >= 80 ? "bg-success/10 text-success" : "bg-orange-50 text-orange-600"
+                               "px-4 py-2 rounded-2xl font-black text-[0.8rem] shadow-sm flex items-center gap-2 w-fit",
+                               avgScore >= 80 ? "bg-success/10 text-success border border-success/20" : 
+                               avgScore > 0 ? "bg-orange-50 text-orange-600 border border-orange-100" :
+                               "bg-slate-50 text-slate-300"
                              )}>
-                                {avgScore > 0 ? avgScore : '-'}
+                                {avgScore > 0 ? <><Trophy size={14} /> {avgScore}</> : 'N/A'}
                              </span>
                           </td>
-                          <td className="p-4 sm:p-6 hidden lg:table-cell text-slate-500 font-medium text-[0.65rem] sm:text-xs">
-                            {p.updatedAt ? formatDate(p.updatedAt) : '-'}
+                          <td className="p-8 md:p-10 hidden lg:table-cell text-slate-500 font-bold text-[0.8rem]">
+                            {p.updatedAt ? formatDate(p.updatedAt) : 'Tanpa Data'}
                           </td>
-                          <td className="p-4 sm:p-6 text-right">
+                          <td className="p-8 md:p-10 text-right">
                              <button 
                               onClick={() => { setSelectedGroup(p); setViewingModuleIdx(null); }}
-                              className="p-2 bg-slate-100 hover:bg-primary hover:text-white rounded-lg transition-all text-slate-600 shadow-sm"
+                              className="w-14 h-14 bg-white border border-slate-100 hover:bg-primary hover:text-white rounded-2xl transition-all text-slate-400 hover:shadow-xl shadow-sm flex items-center justify-center mx-auto md:mr-0 group-hover:scale-110 active:scale-95"
                              >
-                                <Eye size={16} />
+                                <Eye size={24} />
                              </button>
                           </td>
                         </tr>
@@ -1264,170 +1387,318 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
       )}
 
       {activeTab === 'STUDENTS' && (
-        <div className="bento-card border-slate-200 overflow-hidden p-0">
-           <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <h3 className="font-extrabold text-slate-800 flex items-center gap-2">
-                <User size={18} className="text-primary" /> Daftar Siswa Individu
-              </h3>
-              <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest">
-                Total {getAllIndividualStudents().length} Siswa
+        <div className="bento-card border-white shadow-2xl overflow-hidden p-0 rounded-[4rem] bg-white/80 backdrop-blur-3xl">
+           <div className="p-10 md:p-14 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter flex items-center gap-6">
+                  <User size={32} className="text-primary" /> Direktori Laboran Individu
+                </h3>
+                <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-[0.3em] mt-2">Sinkronisasi {getAllIndividualStudents().length} Entitas Terdaftar</p>
               </div>
            </div>
            <div className="overflow-x-auto">
-              <table className="w-full text-left">
+              <table className="w-full text-left min-w-[1000px]">
                 <thead>
-                  <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.65rem] uppercase tracking-wider">
-                    <th className="p-6">Nama Siswa</th>
-                    <th className="p-6">Peran di Tim</th>
-                    <th className="p-6">Nama Tim</th>
-                    <th className="p-6">Progres Tim</th>
-                    <th className="p-6">Aktif Terakhir</th>
-                    <th className="p-6">Aksi</th>
+                  <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.85rem] uppercase tracking-[0.2em] bg-slate-50/10">
+                    <th className="p-8 md:p-10">Nama Lengkap</th>
+                    <th className="p-8 md:p-10">Peran Operasional</th>
+                    <th className="p-8 md:p-10">Afiliasi Kelompok</th>
+                    <th className="p-8 md:p-10">Metrik Progres</th>
+                    <th className="p-8 md:p-10">Waktu Aktif</th>
+                    <th className="p-8 md:p-10 text-right">Analisis</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm">
                   {getAllIndividualStudents().length === 0 ? (
-                    <tr><td colSpan={6} className="p-20 text-center font-bold text-slate-400 italic">Belum ada data siswa.</td></tr>
+                    <tr><td colSpan={6} className="p-32 text-center font-black text-slate-400 italic text-xl">Database siswa masih dalam keadaan kosong.</td></tr>
                   ) : getAllIndividualStudents().map((s, idx) => (
-                    <tr key={idx} className="border-b border-slate-50 hover:bg-slate-50/30 transition-colors">
-                      <td className="p-6 font-black text-slate-800">{s.name}</td>
-                      <td className="p-6">
+                    <tr key={idx} className="border-b border-slate-50 hover:bg-primary/5 transition-all group">
+                      <td className="p-8 md:p-10 font-black text-slate-900 text-lg md:text-xl tracking-tighter leading-none">{s.name}</td>
+                      <td className="p-8 md:p-10">
                         <span className={cn(
-                          "px-2 py-0.5 rounded text-[0.65rem] font-bold uppercase tracking-wider",
-                          s.role === 'Ketua' ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-600"
+                          "px-4 py-2 rounded-xl text-[0.75rem] font-black uppercase tracking-widest border shadow-sm",
+                          s.role === 'Ketua' ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-slate-50 text-slate-500 border-slate-100"
                         )}>
                           {s.role}
                         </span>
                       </td>
-                      <td className="p-6 font-bold text-slate-500">{s.groupName}</td>
-                      <td className="p-6">
-                        <div className="flex items-center gap-3">
-                           <div className="w-20 h-1 bg-slate-100 rounded-full overflow-hidden">
-                              <div className="h-full bg-primary" style={{ width: `${(s.progress / APP_CONFIG.modules.length) * 100}%` }} />
+                      <td className="p-8 md:p-10 font-black text-slate-600 text-md">{s.groupName}</td>
+                      <td className="p-8 md:p-10">
+                        <div className="flex items-center gap-6">
+                           <div className="w-24 md:w-32 h-2.5 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                              <div className="h-full bg-primary rounded-full shadow-lg" style={{ width: `${(s.progress / APP_CONFIG.modules.length) * 100}%` }} />
                            </div>
-                           <span className="font-black text-slate-400 text-[0.6rem]">{s.progress}/{APP_CONFIG.modules.length}</span>
+                           <span className="font-black text-slate-900 text-[0.8rem]">{s.progress}/{APP_CONFIG.modules.length}</span>
                         </div>
                       </td>
-                      <td className="p-6 text-slate-400 text-xs font-medium">
-                        {s.lastActive ? new Date(s.lastActive).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-'}
+                      <td className="p-8 md:p-10 text-slate-500 text-[0.8rem] font-bold">
+                        {s.lastActive ? new Date(s.lastActive).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'N/A'}
                       </td>
-                      <td className="p-6">
+                      <td className="p-8 md:p-10 text-right">
                         <button 
                           onClick={() => setSelectedStudent(s)}
-                          className="p-2 bg-slate-100 hover:bg-primary hover:text-white rounded-lg transition-all text-slate-600 shadow-sm"
+                          className="w-14 h-14 bg-white border border-slate-100 hover:bg-primary hover:text-white rounded-2xl transition-all text-slate-400 hover:shadow-xl shadow-sm flex items-center justify-center mx-auto md:mr-0 group-hover:scale-110 active:scale-95"
                         >
-                          <BarChart2 size={16} />
+                          <BarChart2 size={24} />
                         </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-           </div>
+            </div>
+         </div>
+       )}
+     </main>
+
+      {/* Student Progress Visualization Modal - Upscaled Profile View */}
+      {selectedStudent && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 md:p-12 bg-slate-900/80 backdrop-blur-md">
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0, y: 40 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            className="bg-white rounded-[4rem] w-full max-w-6xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden border-4 border-white flex flex-col p-12 md:p-16 max-h-[90vh] relative"
+          >
+            <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 blur-[120px] pointer-events-none" />
+            
+            <div className="flex justify-between items-start mb-8 relative z-10">
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center shadow-inner">
+                  <User size={32} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 leading-none tracking-tighter mb-2">{selectedStudent.name}</h2>
+                  <div className="flex items-center gap-4">
+                    <span className="px-4 py-1.5 bg-slate-100 text-slate-500 rounded-full text-[0.7rem] font-black uppercase tracking-widest">{selectedStudent.role}</span>
+                    <span className="w-1.5 h-1.5 bg-slate-200 rounded-full" />
+                    <span className="text-base font-bold text-primary tracking-tight">{selectedStudent.groupName}</span>
+                  </div>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedStudent(null)}
+                className="w-12 h-12 bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all flex items-center justify-center shadow-sm"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 flex-1 overflow-hidden">
+               <div className="flex flex-col gap-12 overflow-y-auto pr-6 custom-scrollbar">
+                  <div className="bento-card bg-slate-50 border-none p-8 rounded-3xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-8 text-primary/5"><BarChart2 size={80} /></div>
+                    <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-8 flex items-center gap-4 relative z-10">
+                      <TrendingUp size={20} className="text-primary" /> Visualisasi Kompetensi Praktikum
+                    </h3>
+                    <div className="h-[300px] relative z-10">
+                      <AdminStudentScoreChart moduleProgress={selectedStudent.moduleProgress} />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                     <div className="p-8 bg-slate-900 text-white rounded-3xl shadow-xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl group-hover:bg-white/10 transition-colors" />
+                        <p className="text-[0.7rem] font-black text-slate-400 uppercase mb-4 tracking-[0.2em] relative z-10">Total Capaian</p>
+                        <div className="flex items-end gap-3 relative z-10">
+                           <p className="text-xl font-black text-white leading-none tracking-tighter">{selectedStudent.progress}</p>
+                           <p className="text-sm font-black text-slate-500 mb-1">/ {APP_CONFIG.modules.length}</p>
+                        </div>
+                     </div>
+                     <div className="p-8 bg-primary text-white rounded-3xl shadow-xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl group-hover:bg-white/10 transition-colors" />
+                        <p className="text-[0.7rem] font-black text-white/50 uppercase mb-4 tracking-[0.2em] relative z-10">Status</p>
+                        <div className="flex items-center gap-4 relative z-10">
+                           <p className="text-lg font-black text-white leading-none tracking-tighter">
+                             {selectedStudent.progress === APP_CONFIG.modules.length ? 'COMPLETE' : 'ACTIVE'}
+                           </p>
+                           <Activity size={24} className="opacity-40 animate-pulse text-white" />
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               <div className="flex flex-col overflow-hidden">
+                  <h3 className="text-[0.9rem] font-black text-slate-400 uppercase tracking-[0.5em] mb-10 px-4 flex items-center justify-between">
+                     <span>Log Progres Komprehensif</span>
+                     <span className="text-[0.7rem] lowercase font-bold opacity-40">educational engine v4.0.1</span>
+                  </h3>
+                  <div className="space-y-6 overflow-y-auto pr-6 custom-scrollbar flex-1">
+                    {APP_CONFIG.modules.map((m, idx) => {
+                      const prog = selectedStudent.moduleProgress[m.id] as any;
+                      const score = prog?.answers?.evaluationScore;
+                      let status = "Belum Mulai";
+                      let statusColor = "bg-slate-50 text-slate-300";
+                      
+                      if (prog) {
+                        if (score !== undefined) {
+                          status = "Terverifikasi";
+                          statusColor = "bg-success text-white shadow-lg shadow-success/20";
+                        } else {
+                          status = "Tahap Pengerjaan";
+                          statusColor = "bg-orange-500 text-white shadow-lg shadow-orange-500/20";
+                        }
+                      }
+
+                      return (
+                        <div key={m.id} className="group flex items-center justify-between p-6 bg-white border-2 border-slate-50 rounded-3xl transition-all hover:border-primary/20 hover:shadow-xl relative overflow-hidden">
+                          {status === 'Terverifikasi' && <div className="absolute left-0 top-0 bottom-0 w-2 bg-success" />}
+                          <div className="flex items-center gap-6 relative z-10">
+                            <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-xl font-black text-slate-400 group-hover:bg-primary/5 group-hover:text-primary group-hover:border-primary/10 transition-all">
+                              0{idx + 1}
+                            </div>
+                            <div>
+                              <p className="text-base font-black text-slate-900 leading-none mb-2 tracking-tighter">{m.title}</p>
+                              {score !== undefined ? (
+                                <div className="flex items-center gap-3">
+                                   <div className="flex items-center gap-1.5 px-2 py-0.5 bg-orange-50 rounded-md">
+                                      <Trophy size={14} className="text-orange-500" />
+                                      <p className="text-[0.75rem] font-black text-orange-600 uppercase tracking-widest">Skor: {score}</p>
+                                   </div>
+                                </div>
+                              ) : (
+                                <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-[0.2em]">{status}</p>
+                              )}
+                            </div>
+                          </div>
+                          <div className={cn(
+                            "px-5 py-2 rounded-xl text-[0.7rem] font-black uppercase tracking-widest shadow-sm relative z-10",
+                            statusColor
+                          )}>
+                            {status}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+               </div>
+            </div>
+
+            <div className="mt-16 flex justify-end relative z-20">
+              <button 
+                onClick={() => setSelectedStudent(null)}
+                className="px-12 py-5 bg-slate-900 text-white font-black text-lg rounded-[2.5rem] hover:bg-slate-800 transition-all shadow-2xl shadow-slate-900/30 active:scale-95"
+              >
+                Tutup Dashboard Profil
+              </button>
+            </div>
+          </motion.div>
         </div>
       )}
-    </main>
 
-      {/* Detail Modal */}
+      {/* Detail Modal - Group Observation Center - Upscaled */}
       {selectedGroup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 md:p-12 bg-slate-900/80 backdrop-blur-md">
           <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-[2rem] w-full max-w-4xl shadow-2xl overflow-hidden border-2 border-slate-100 flex flex-col max-h-[90vh]"
+            initial={{ scale: 0.95, opacity: 0, y: 40 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            className="bg-white rounded-[4rem] w-full max-w-6xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden border-4 border-white flex flex-col max-h-[90vh] relative"
           >
-            <div className="p-4 sm:p-6 md:p-8 border-b border-slate-100 flex justify-between items-start shrink-0 bg-white z-10">
-              <div className="flex items-center gap-3 md:gap-4">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 blur-[120px] pointer-events-none" />
+
+            <div className="p-10 md:p-14 border-b border-slate-100 flex justify-between items-start shrink-0 bg-white/80 backdrop-blur-xl z-20">
+              <div className="flex items-center gap-6 md:gap-10">
                 {viewingModuleIdx !== null && (
                   <button 
                     onClick={() => setViewingModuleIdx(null)}
-                    className="p-2 bg-slate-100 hover:bg-primary hover:text-white rounded-xl transition-all"
+                    className="w-16 h-16 bg-slate-100 hover:bg-primary hover:text-white rounded-[2rem] transition-all flex items-center justify-center shadow-sm"
                   >
-                    <ChevronLeft size={18} />
+                    <ChevronLeft size={32} />
                   </button>
                 )}
                 <div>
-                  <h2 className="text-lg md:text-2xl font-black text-slate-900 leading-tight">
-                    Laporan {selectedGroup.groupName}
+                  <h2 className="text-lg md:text-xl font-black text-slate-900 leading-none tracking-tighter mb-4">
+                    Pusat Data: {selectedGroup.groupName}
                   </h2>
-                  <p className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                    {viewingModuleIdx !== null ? `Detail Modul 0${viewingModuleIdx + 1}: ${APP_CONFIG.modules[viewingModuleIdx].title}` : 'Ringkasan Seluruh Modul Praktikum'}
-                  </p>
+                  <div className="flex items-center gap-4">
+                    <span className="px-4 py-1.5 bg-primary/10 text-primary rounded-full text-[0.75rem] font-black uppercase tracking-widest">Observasi Real-time</span>
+                    <span className="w-2 h-2 bg-slate-200 rounded-full" />
+                    <p className="text-lg font-black text-slate-400 tracking-tight">
+                      {viewingModuleIdx !== null ? `Modul 0${viewingModuleIdx + 1}: ${APP_CONFIG.modules[viewingModuleIdx].title}` : 'Agregasi Seluruh Laporan Praktikum'}
+                    </p>
+                  </div>
                 </div>
               </div>
               <button 
                 onClick={() => setSelectedGroup(null)}
-                className="p-2 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all text-slate-400"
+                className="w-16 h-16 bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 rounded-[2rem] transition-all flex items-center justify-center shadow-sm"
               >
-                <X size={20} />
+                <X size={32} />
               </button>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-10 md:p-14 custom-scrollbar relative z-10">
               {viewingModuleIdx !== null ? (
-                <div className="space-y-8 pb-8">
+                <div className="space-y-12 pb-12">
                   {(() => {
                     const module = APP_CONFIG.modules[viewingModuleIdx];
                     const answers = selectedGroup.moduleProgress && selectedGroup.moduleProgress[viewingModuleIdx];
                     
                     if (!answers) {
                       return (
-                        <div className="flex flex-col items-center justify-center p-20 text-center bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200">
-                          <div className="w-16 h-16 bg-slate-200 text-slate-400 rounded-full flex items-center justify-center mb-4">
-                            <Trash2 size={32} />
+                        <div className="flex flex-col items-center justify-center p-16 text-center bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100">
+                          <div className="w-16 h-16 bg-slate-100 text-slate-300 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+                            <Database size={32} />
                           </div>
-                          <h3 className="font-black text-slate-400">Belum Ada Data</h3>
-                          <p className="text-xs text-slate-400 font-medium mt-1">Kelompok ini belum menyelesaikan atau menyimpan progress untuk modul ini.</p>
+                          <h3 className="text-lg font-black text-slate-300 tracking-tight">Menunggu Sinkronisasi Data</h3>
+                          <p className="text-base text-slate-400 font-bold mt-2 max-w-sm mx-auto">Kelompok ini belum melakukan pengamatan atau menyimpan log progress untuk sesi modul ini.</p>
                         </div>
                       );
                     }
 
                     return (
-                      <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        {/* Summary Metrics */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                          <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                             <label className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-widest block mb-3">Rumusan Masalah</label>
-                             <p className="text-sm font-bold text-slate-700 leading-relaxed italic">"{answers.problemFormulation || '-'}"</p>
+                      <div className="space-y-14 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                        {/* Summary Metrics - Upscaled */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                          <div className="p-8 bg-slate-50 rounded-3xl border-2 border-white shadow-lg relative overflow-hidden group">
+                             <div className="absolute top-0 right-0 p-4 text-primary/5 group-hover:scale-110 transition-transform"><MessageSquare size={60} /></div>
+                             <label className="text-[0.7rem] font-black text-slate-400 uppercase tracking-[0.3em] block mb-4 relative z-10">Rumusan Masalah</label>
+                             <p className="text-base font-black text-slate-800 leading-tight italic relative z-10">"{answers.problemFormulation || '-'}"</p>
                           </div>
-                          <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10">
-                             <label className="text-[0.6rem] font-bold text-primary/60 uppercase tracking-widest block mb-3">Hipotesis</label>
-                             <p className="text-sm font-bold text-slate-800 leading-relaxed italic">"{answers.hypothesis || '-'}"</p>
+                          <div className="p-8 bg-primary/5 rounded-3xl border-2 border-white shadow-lg relative overflow-hidden group">
+                             <div className="absolute top-0 right-0 p-4 text-primary/5 group-hover:scale-110 transition-transform"><Lightbulb size={60} /></div>
+                             <label className="text-[0.7rem] font-black text-primary/60 uppercase tracking-[0.3em] block mb-4 relative z-10">Hipotesis Kerja</label>
+                             <p className="text-base font-black text-slate-900 leading-tight italic relative z-10">"{answers.hypothesis || '-'}"</p>
                           </div>
-                          <div className="p-6 bg-orange-50 rounded-3xl border border-orange-100 flex flex-col items-center justify-center">
-                             <label className="text-[0.6rem] font-bold text-orange-400 uppercase tracking-widest block mb-1">Skor Evaluasi</label>
-                             <div className="text-3xl font-black text-orange-500">{answers.evaluationScore || 0}</div>
+                          <div className="p-8 bg-orange-500 text-white rounded-3xl shadow-xl relative overflow-hidden group">
+                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-2xl rounded-full translate-x-16 -translate-y-16" />
+                             <label className="text-[0.7rem] font-black text-white/50 uppercase tracking-[0.3em] block mb-3 relative z-10">Akumulasi Skor</label>
+                             <div className="flex items-end gap-2 relative z-10">
+                                <span className="text-xl font-black tracking-tighter">{answers.evaluationScore || 0}</span>
+                                <span className="text-sm font-black text-white/40 mb-1">pts</span>
+                             </div>
                           </div>
                         </div>
 
-                        {/* Data Tables */}
+                        {/* Data Tables - Upscaled */}
                         <div>
-                          <label className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest block mb-4 flex items-center gap-2">
-                             <Droplets size={14} /> Data Hasil Pengamatan
-                          </label>
-                          <div className="space-y-8">
+                          <h4 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.5em] mb-10 flex items-center gap-6">
+                             <Droplets size={24} className="text-primary" /> Logaritma Pengamatan Fisika
+                          </h4>
+                          <div className="space-y-12">
                              {module.subExperiments ? module.subExperiments.map((sub: any) => {
                                const subData = answers.subTableData?.[sub.id] || [];
                                return (
-                                 <div key={sub.id} className="overflow-hidden rounded-2xl border border-slate-200">
-                                   <div className="bg-slate-50 px-6 py-3 border-b border-slate-200 flex justify-between items-center">
-                                      <span className="text-xs font-black text-slate-600 uppercase tracking-wider">{sub.title}</span>
-                                      <span className="text-[0.65rem] font-bold text-slate-400">{subData.length} baris data</span>
+                                 <div key={sub.id} className="overflow-hidden rounded-[3rem] border-4 border-slate-50 shadow-2xl bg-white">
+                                   <div className="bg-slate-50/50 px-10 py-6 border-b border-slate-100 flex justify-between items-center">
+                                      <span className="text-lg font-black text-slate-900 tracking-tight">{sub.title}</span>
+                                      <div className="px-6 py-2 bg-white rounded-full text-[0.7rem] font-black text-slate-400 uppercase tracking-widest shadow-sm border border-slate-100">
+                                         {subData.length} Data Entries
+                                      </div>
                                    </div>
                                    <div className="overflow-x-auto">
-                                      <table className="w-full text-xs">
+                                      <table className="w-full">
                                         <thead>
-                                          <tr className="bg-white border-b border-slate-100">
-                                            {sub.headers.map((h: string) => <th key={h} className="p-4 font-black text-slate-400 uppercase tracking-widest text-[0.6rem]">{h}</th>)}
+                                          <tr className="bg-slate-50/20 border-b border-slate-50">
+                                            {sub.headers.map((h: string) => <th key={h} className="p-8 font-black text-slate-400 uppercase tracking-[0.2em] text-[0.75rem] text-center">{h}</th>)}
                                           </tr>
                                         </thead>
                                         <tbody>
                                           {subData.length > 0 ? subData.map((row: any, i: number) => (
-                                            <tr key={i} className="border-b border-slate-50 last:border-0">
-                                              {sub.headers.map((h: string) => <td key={h} className="p-4 font-bold text-slate-700 text-center">{row[h] || '-'}</td>)}
+                                            <tr key={i} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/30 transition-colors">
+                                              {sub.headers.map((h: string) => <td key={h} className="p-8 font-black text-slate-800 text-base text-center">{row[h] || '-'}</td>)}
                                             </tr>
                                           )) : (
-                                            <tr><td colSpan={sub.headers.length} className="p-8 text-center text-slate-400 italic">Data kosong</td></tr>
+                                            <tr><td colSpan={sub.headers.length} className="p-20 text-center text-slate-300 font-bold italic text-xl uppercase tracking-widest">Entry Data Kosong</td></tr>
                                           )}
                                         </tbody>
                                       </table>
@@ -1435,23 +1706,23 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                                  </div>
                                );
                              }) : (
-                               <div className="overflow-hidden rounded-2xl border border-slate-200">
+                               <div className="overflow-hidden rounded-[3rem] border-4 border-slate-50 shadow-2xl bg-white">
                                  <div className="overflow-x-auto">
-                                   <table className="w-full text-xs">
+                                   <table className="w-full">
                                      <thead>
-                                       <tr className="bg-slate-50 border-b border-slate-100">
-                                          {['Benda', 'W di udara (N)', 'W di air (N)', 'Gaya Apung (N)'].map(h => <th key={h} className="p-4 font-black text-slate-400 uppercase tracking-widest text-[0.6rem]">{h}</th>)}
+                                       <tr className="bg-slate-50/50 border-b border-slate-100">
+                                          {['Benda Percobaan', 'W Berat di Udara (N)', 'W Berat di Air (N)', 'Fa Gaya Apung (N)'].map(h => <th key={h} className="p-8 font-black text-slate-400 uppercase tracking-[0.2em] text-[0.75rem] text-center">{h}</th>)}
                                        </tr>
                                      </thead>
                                      <tbody>
-                                       {answers.tableData && answers.tableData.length > 0 ? answers.tableData.map((row: any, i: number) => (
-                                         <tr key={i} className="border-b border-slate-50 last:border-0 font-bold text-slate-700">
-                                           <td className="p-4 text-center">{row['Benda']}</td>
-                                           <td className="p-4 text-center">{row['W di udara (N)']}</td>
-                                           <td className="p-4 text-center">{row['W di air (N)']}</td>
-                                           <td className="p-4 text-center">{row['Gaya Apung (N)']}</td>
-                                         </tr>
-                                       )) : <tr><td colSpan={4} className="p-8 text-center text-slate-400 italic">Data kosong</td></tr>}
+                                         {answers.tableData && answers.tableData.length > 0 ? answers.tableData.map((row: any, i: number) => (
+                                          <tr key={i} className="border-b border-slate-50 last:border-0 hover:bg-primary/5 transition-all">
+                                            <td className="p-8 text-center font-black text-slate-900 text-base">{row['Benda']}</td>
+                                            <td className="p-8 text-center font-black text-slate-700 text-base">{row['W di udara (N)']}</td>
+                                            <td className="p-8 text-center font-black text-slate-700 text-base">{row['W di air (N)']}</td>
+                                            <td className="p-8 text-center font-black text-primary text-lg">{row['Gaya Apung (N)']}</td>
+                                          </tr>
+                                        )) : <tr><td colSpan={4} className="p-24 text-center text-slate-300 font-bold italic text-xl uppercase tracking-widest">Menunggu Input Data Praktikum</td></tr>}
                                      </tbody>
                                    </table>
                                  </div>
@@ -1460,29 +1731,34 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                           </div>
                         </div>
 
-                        {/* Analysis & Conclusion */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                           <div className="p-8 bg-slate-50 rounded-[2rem] border-2 border-slate-100">
-                              <label className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest block mb-4 flex items-center gap-2">
-                                <CheckCircle2 size={14} className={answers.hypothesisTesting?.isCorrect ? 'text-success' : 'text-red-400'} /> Uji Hipotesis
+                        {/* Analysis & Conclusion - Upscaled */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                           <div className="p-12 bg-white rounded-[4rem] border-4 border-slate-50 shadow-2xl relative overflow-hidden group">
+                              <div className="absolute top-0 right-0 p-10 text-success/5 group-hover:scale-110 transition-transform"><Activity size={100} /></div>
+                              <label className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] block mb-8 flex items-center gap-4 relative z-10">
+                                <div className={cn("w-4 h-4 rounded-full", answers.hypothesisTesting?.isCorrect ? 'bg-success shadow-[0_0_15px_rgba(34,197,94,0.6)]' : 'bg-red-400 shadow-[0_0_15px_rgba(248,113,113,0.6)]')} />
+                                Uji Validitas Hipotesis
                               </label>
-                              <div className="space-y-4">
-                                <div className="flex items-center gap-2">
+                              <div className="space-y-8 relative z-10">
+                                <div className="flex items-center gap-6">
                                    <span className={cn(
-                                     "px-3 py-1 rounded-full text-[0.65rem] font-black uppercase tracking-widest",
-                                     answers.hypothesisTesting?.isCorrect ? "bg-success/10 text-success" : "bg-red-50 text-red-600"
+                                     "px-8 py-3 rounded-2xl text-lg font-black uppercase tracking-tighter border-2 shadow-sm",
+                                     answers.hypothesisTesting?.isCorrect ? "bg-success/10 text-success border-success/20" : "bg-red-50 text-red-600"
                                    )}>
-                                     {answers.hypothesisTesting?.isCorrect ? 'SESUAI' : 'TIDAK SESUAI'}
+                                     {answers.hypothesisTesting?.isCorrect ? 'VALIDASI SESUAI' : 'VALIDASI GAGAL'}
                                    </span>
+                                   <div className="h-[2px] flex-grow bg-slate-50" />
                                 </div>
-                                <p className="text-sm font-bold text-slate-600 leading-relaxed italic">"{answers.hypothesisTesting?.reason || '-'}"</p>
+                                <p className="text-xl font-black text-slate-900 leading-tight italic opacity-80">"{answers.hypothesisTesting?.reason || '-'}"</p>
                               </div>
                            </div>
-                           <div className="p-8 bg-slate-900 rounded-[2rem] text-white shadow-xl shadow-slate-900/10">
-                              <label className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest block mb-4 flex items-center gap-2">
-                                <Lightbulb size={14} className="text-yellow-400" /> Kesimpulan
+                           <div className="p-12 bg-slate-900 rounded-[4rem] text-white shadow-[0_40px_80px_-15px_rgba(15,23,42,0.4)] relative overflow-hidden group">
+                              <div className="absolute top-0 right-0 p-10 text-white/5 opacity-40 group-hover:scale-110 transition-transform"><Lightbulb size={120} /></div>
+                              <label className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] block mb-8 flex items-center gap-4 relative z-10">
+                                <div className="w-4 h-4 rounded-full bg-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.6)]" />
+                                Finalisasi Kesimpulan
                               </label>
-                              <p className="text-sm font-medium leading-relaxed italic text-slate-300">"{answers.conclusion || '-'}"</p>
+                              <p className="text-xl font-black leading-tight italic text-slate-200 relative z-10">"{answers.conclusion || '-'}"</p>
                            </div>
                         </div>
                       </div>
@@ -1490,43 +1766,45 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                   })()}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
-                  <div className="lg:col-span-2 space-y-8">
-                    {/* Identity Card */}
-                    <div className="p-8 bg-slate-50 rounded-[2rem] border-2 border-slate-100">
-                       <div className="flex items-center gap-4 mb-6">
-                          <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm border border-slate-100">
-                             <Users size={24} />
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 h-full">
+                  <div className="lg:col-span-8 space-y-12 pb-12">
+                    {/* Identity Card - Upscaled */}
+                    <div className="p-12 bg-slate-50 rounded-[4rem] border-4 border-white shadow-xl relative group">
+                       <div className="flex items-center gap-8 mb-10">
+                          <div className="w-20 h-20 bg-white rounded-[2rem] flex items-center justify-center text-primary shadow-2xl border border-slate-100 group-hover:rotate-6 transition-transform">
+                             <Users size={40} />
                           </div>
                           <div>
-                             <h3 className="text-xl font-black text-slate-800">{selectedGroup.groupName}</h3>
-                             <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest">Identitas Kelompok</p>
+                             <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tighter leading-none mb-2">{selectedGroup.groupName}</h3>
+                             <p className="text-[0.8rem] font-black text-slate-400 uppercase tracking-[0.4em]">Struktur Delegasi Kelompok</p>
                           </div>
                        </div>
                        
-                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                           <div>
-                             <label className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-widest block mb-1">Ketua Kelompok</label>
-                             <div className="p-4 bg-white rounded-xl border border-slate-100 font-bold text-slate-700">
-                                {selectedGroup.leaderName || '-'}
+                             <label className="text-[0.7rem] font-black text-slate-400 uppercase tracking-[0.3em] block mb-4">Ketua Eksekutif</label>
+                             <div className="p-8 bg-white rounded-[2rem] border-2 border-slate-100 font-black text-slate-900 text-2xl tracking-tight shadow-sm group-hover:border-primary/20 transition-all">
+                                {selectedGroup.leaderName || 'N/A'}
                              </div>
                           </div>
                           <div>
-                             <label className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-widest block mb-1">Anggota Tim</label>
-                             <div className="flex flex-wrap gap-2">
+                             <label className="text-[0.7rem] font-black text-slate-400 uppercase tracking-[0.3em] block mb-4">Unit Operasional ({selectedGroup.members?.length || 0})</label>
+                             <div className="flex flex-wrap gap-4">
                                 {selectedGroup.members && selectedGroup.members.length > 0 ? selectedGroup.members.map((m: string, i: number) => (
-                                  <span key={i} className="px-3 py-2 bg-white border border-slate-100 rounded-lg text-xs font-bold text-slate-600">
+                                  <span key={i} className="px-6 py-4 bg-white border-2 border-slate-100 rounded-2xl text-md font-black text-slate-700 shadow-sm hover:border-primary/30 transition-all">
                                      {m}
                                   </span>
-                                )) : <span className="text-xs text-slate-400 italic">Tidak ada anggota tambahan</span>}
+                                )) : <span className="text-lg text-slate-400 italic font-bold">Kelompok tunggal terdeteksi</span>}
                              </div>
                           </div>
                        </div>
                     </div>
 
                     <div>
-                       <label className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest block mb-4">Progress Modul Praktikum</label>
-                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                       <h4 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.5em] mb-10 flex items-center gap-6">
+                          <Activity size={24} className="text-primary" /> Matriks Pencapaian Kurikulum
+                       </h4>
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {APP_CONFIG.modules.map((m, idx) => {
                             const isDone = selectedGroup.moduleProgress && selectedGroup.moduleProgress[idx];
                             return (
@@ -1535,55 +1813,67 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                                 onClick={() => isDone && setViewingModuleIdx(idx)}
                                 disabled={!isDone}
                                 className={cn(
-                                  "w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all group",
+                                  "w-full flex items-center justify-between p-8 rounded-[3rem] border-4 transition-all group/card",
                                   isDone 
-                                    ? "border-success bg-success/5 text-success hover:bg-success/10 cursor-pointer" 
-                                    : "border-slate-100 text-slate-400 grayscale cursor-not-allowed opacity-60"
+                                    ? "border-success bg-white text-success hover:bg-success/5 cursor-pointer shadow-xl hover:shadow-2xl translate-z-0" 
+                                    : "border-slate-50 bg-slate-50 text-slate-300 grayscale cursor-not-allowed opacity-40"
                                 )}
                               >
-                                 <div className="flex items-center gap-3">
-                                   {isDone ? <CheckCircle2 size={18} /> : <div className="w-5 h-5 rounded-full border-2 border-current" />}
+                                 <div className="flex items-center gap-6">
+                                   {isDone ? (
+                                     <div className="w-14 h-14 bg-success/10 rounded-2xl flex items-center justify-center shadow-inner">
+                                       <CheckCircle2 size={28} />
+                                     </div>
+                                   ) : (
+                                     <div className="w-14 h-14 rounded-2xl border-4 border-slate-100 flex items-center justify-center" />
+                                   )}
                                    <div className="text-left">
-                                      <p className="text-[0.6rem] font-black uppercase tracking-widest opacity-60">Modul {idx + 1}</p>
-                                      <span className="text-xs font-black">{m.title}</span>
+                                      <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] opacity-60 mb-1">Fase 0{idx + 1}</p>
+                                      <span className="text-xl font-black tracking-tight leading-none line-clamp-1">{m.title}</span>
                                    </div>
                                  </div>
-                                 {isDone && <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />}
+                                 {isDone && <ArrowRight size={24} className="opacity-0 group-hover/card:opacity-100 transition-all -translate-x-4 group-hover/card:translate-x-0 group-hover/card:text-success" />}
                               </button>
                             );
                           })}
                        </div>
-                       <p className="text-[0.65rem] text-slate-400 font-medium italic mt-4">* Klik modul yang sudah selesai untuk melihat rincian laporan.</p>
+                       <p className="text-[0.85rem] text-slate-400 font-bold italic mt-8 text-center flex items-center justify-center gap-3">
+                         <div className="w-8 h-[2px] bg-slate-200" />
+                         Klik pada modul bertanda hijau untuk dekonstruksi laporan lengkap
+                         <div className="w-8 h-[2px] bg-slate-200" />
+                       </p>
                     </div>
                   </div>
                   
-                  <div className="space-y-8 flex flex-col">
-                     <div className="bento-card border-none bg-slate-50 p-8 rounded-[2rem]">
-                        <label className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest block mb-4">Hasil Evaluasi Terakhir</label>
+                  <div className="lg:col-span-4 space-y-10 flex flex-col pb-12">
+                     <div className="bento-card border-none bg-slate-900 text-white p-12 rounded-[4rem] shadow-[0_30px_60px_-10px_rgba(15,23,42,0.3)] relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 blur-3xl group-hover:bg-white/10 transition-colors" />
+                        <label className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.4em] block mb-8 relative z-10">Evaluasi Pamungkas</label>
                         {(() => {
                           const mods = Object.values(selectedGroup.moduleProgress || {}) as any[];
                           const latestScored = [...mods].reverse().find((m: any) => m.answers?.evaluationScore !== undefined);
                           if (latestScored) {
                             return (
-                              <div className="flex items-center gap-4">
-                                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl font-black text-orange-500 shadow-sm border border-slate-100">
+                              <div className="flex items-center gap-8 relative z-10">
+                                 <div className="w-24 h-24 bg-white/10 backdrop-blur-xl rounded-[2rem] flex items-center justify-center text-xl font-black text-amber-500 shadow-2xl border border-white/5">
                                     {latestScored.answers.evaluationScore}
                                  </div>
-                                 <div className="leading-tight">
-                                    <div className="text-sm font-black text-slate-800">Skor: {latestScored.answers.evaluationScore} / 100</div>
-                                    <p className="text-[0.6rem] font-bold text-slate-400 mt-1 uppercase tracking-wider">
-                                       Lulus Evaluasi Modul
+                                 <div className="shrink-0">
+                                    <div className="text-lg font-black text-white tracking-tight uppercase leading-none mb-2">Akumulasi Skor</div>
+                                    <p className="text-[0.75rem] font-black text-success mt-1 uppercase tracking-widest flex items-center gap-2">
+                                       <Award size={16} /> Sertifikasi Lulus
                                     </p>
                                  </div>
                               </div>
                             );
                           }
                           return (
-                            <div className="flex flex-col items-center justify-center p-6 text-center border-2 border-dashed border-slate-200 rounded-2xl">
-                               <div className="w-10 h-10 bg-slate-100 text-slate-300 rounded-full flex items-center justify-center mb-2">
-                                  <FileText size={20} />
-                               </div>
-                               <div className="text-slate-400 font-bold italic text-xs uppercase tracking-widest leading-tight">Belum Ada Skor<br/>Evaluasi Modul</div>
+                            <div className="flex flex-col items-center justify-center p-10 text-center border-4 border-dashed border-white/10 rounded-[3rem] relative z-10">
+                               <div className="w-16 h-16 bg-white/5 text-white/20 rounded-[2rem] flex items-center justify-center mb-6">
+                                  <FileText size={32} />
+                                </div>
+                               <div className="text-white/30 font-black italic text-md uppercase tracking-[0.2em] leading-tight mb-2">Belum Terdeteksi<br/>Skor Evaluasi</div>
+                               <p className="text-[0.65rem] text-white/20 font-bold uppercase tracking-widest">Sistem Menunggu Input Guru</p>
                             </div>
                           );
                         })()}
@@ -1591,136 +1881,39 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
 
                      <div className="flex-1" />
 
-                     <div className="space-y-4 pt-8 border-t border-slate-100">
-                        <h4 className="text-[0.65rem] font-bold text-red-400 uppercase tracking-widest mb-2">Danger Zone</h4>
-                        <div className="grid grid-cols-1 gap-3">
+                     <div className="space-y-6 pt-10 border-t-4 border-slate-50 relative z-10">
+                        <h4 className="text-[0.85rem] font-black text-red-400 uppercase tracking-[0.5em] mb-4 text-center">Protokol Pembersihan</h4>
+                        <div className="grid grid-cols-1 gap-4">
                            <button 
                              disabled={isResetting || isDeleting}
                              onClick={() => setResetTarget(selectedGroup)}
-                             className="w-full py-4 bg-red-50 text-red-600 rounded-2xl text-[0.65rem] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2 border-2 border-red-100"
+                             className="w-full py-6 bg-red-50 text-red-600 rounded-[2.5rem] text-[0.85rem] font-black uppercase tracking-[0.3em] hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-4 border-2 border-red-100 shadow-xl shadow-red-500/5 active:scale-95"
                            >
-                             <RefreshCw size={14} className={isResetting ? 'animate-spin' : ''} /> {isResetting ? 'Mereset...' : 'Reset Progress'}
+                             <RefreshCw size={20} className={isResetting ? 'animate-spin' : ''} /> {isResetting ? 'Mereset Data...' : 'Reset Progres Kelompok'}
                            </button>
                            <button 
                              disabled={isResetting || isDeleting}
                              onClick={() => setDeleteTarget(selectedGroup)}
-                             className="w-full py-4 bg-white text-red-600 rounded-2xl text-[0.65rem] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2 border-2 border-red-100"
+                             className="w-full py-6 bg-white text-red-600 rounded-[2.5rem] text-[0.85rem] font-black uppercase tracking-[0.3em] hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-4 border-2 border-red-100 shadow-xl shadow-red-500/5 active:scale-95"
                            >
-                             <Trash2 size={14} /> {isDeleting ? 'Menghapus...' : 'Hapus Seluruh Akun'}
+                             <Trash2 size={20} /> {isDeleting ? 'Menghapus Akun...' : 'Eliminasi Akun Total'}
                            </button>
                         </div>
-                        <p className="text-[0.6rem] text-slate-400 text-center font-medium italic">Menghapus akun akan menghilangkan data pendaftaran dan progres selamanya.</p>
+                        <p className="text-[0.75rem] text-slate-400 text-center font-bold italic leading-relaxed px-4">Tindakan ini bersifat dekstruktif. Menghapus akun akan melenyapkan seluruh arsip pendaftaran dan progres kelompok dari server pangkalan data secara permanen.</p>
                      </div>
                   </div>
                 </div>
               )}
             </div>
-          </motion.div>
-        </div>
-      )}
 
-      {/* Student Progress Visualization Modal */}
-      {selectedStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-[2rem] w-full max-w-2xl shadow-2xl overflow-hidden border-2 border-slate-100 flex flex-col p-8 md:p-10"
-          >
-            <div className="flex justify-between items-start mb-8">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
-                    <User size={24} />
-                  </div>
-                  <div>
-                    <h2 className="text-xl md:text-2xl font-black text-slate-900 leading-tight">{selectedStudent.name}</h2>
-                    <p className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-widest">{selectedStudent.role} • {selectedStudent.groupName}</p>
-                  </div>
-                </div>
-              </div>
-              <button 
-                onClick={() => setSelectedStudent(null)}
-                className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+            <div className="p-10 bg-slate-50/50 border-t border-slate-100 flex justify-end relative z-20">
+               <button 
+                onClick={() => setSelectedGroup(null)}
+                className="px-16 py-6 bg-slate-900 text-white font-black text-xl rounded-[2.5rem] hover:bg-slate-800 transition-all shadow-2xl shadow-slate-900/20 active:scale-95"
               >
-                <X size={24} className="text-slate-400" />
+                Kembali ke Dashboard
               </button>
             </div>
-
-            <div className="mb-10 bento-card bg-slate-50 border-none p-8 rounded-[2rem]">
-              <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
-                <BarChart2 size={16} className="text-primary" /> Visualisasi Skor per Modul
-              </h3>
-              <div className="h-[300px]">
-                <AdminStudentScoreChart moduleProgress={selectedStudent.moduleProgress} />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-               <div className="p-6 bg-slate-100/50 rounded-2xl">
-                  <p className="text-[0.6rem] font-bold text-slate-400 uppercase mb-1">Total Modul</p>
-                  <p className="text-xl font-black text-slate-800">{selectedStudent.progress} / {APP_CONFIG.modules.length}</p>
-               </div>
-               <div className="p-6 bg-slate-100/50 rounded-2xl">
-                  <p className="text-[0.6rem] font-bold text-slate-400 uppercase mb-1">Status Tim</p>
-                  <p className="text-xl font-black text-primary">{selectedStudent.progress === APP_CONFIG.modules.length ? 'SELESAI' : 'BERPROSES'}</p>
-               </div>
-            </div>
-
-            <div className="mt-8 flex-grow overflow-hidden flex flex-col">
-              <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-4">Ringkasan Progres Modul</h3>
-              <div className="space-y-3 overflow-y-auto pr-2 custom-scrollbar max-h-[300px]">
-                {APP_CONFIG.modules.map((m, idx) => {
-                  const prog = selectedStudent.moduleProgress[m.id] as any;
-                  const score = prog?.answers?.evaluationScore;
-                  let status = "Belum Mulai";
-                  let statusColor = "text-slate-400 bg-slate-50";
-                  
-                  if (prog) {
-                    if (score !== undefined) {
-                      status = "Selesai";
-                      statusColor = "text-success bg-success/10";
-                    } else {
-                      status = "Progres";
-                      statusColor = "text-orange-600 bg-orange-50";
-                    }
-                  }
-
-                  return (
-                    <div key={m.id} className="flex items-center justify-between p-4 bg-slate-50/50 border border-slate-100 rounded-2xl transition-all hover:bg-white hover:shadow-sm">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-[0.7rem] font-black text-slate-400 shadow-sm">
-                          0{idx + 1}
-                        </div>
-                        <div>
-                          <p className="text-sm font-black text-slate-800 leading-tight mb-1">{m.title}</p>
-                          {score !== undefined ? (
-                            <p className="text-[0.65rem] font-bold text-success capitalize">Evaluasi: <span className="font-black">{score} / 100</span></p>
-                          ) : (
-                            <p className="text-[0.65rem] font-bold text-slate-400 capitalize">{status}</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className={cn(
-                        "px-3 py-1 rounded-full text-[0.6rem] font-black uppercase tracking-widest border border-transparent",
-                        status === 'Selesai' ? "bg-success/20 text-success border-success/10" : 
-                        status === 'Progres' ? "bg-orange-100 text-orange-600 border-orange-200" : 
-                        "bg-slate-100 text-slate-400 border-slate-200"
-                      )}>
-                        {status}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <button 
-              onClick={() => setSelectedStudent(null)}
-              className="mt-8 w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-slate-900/20 hover:bg-primary transition-all active:scale-[0.98]"
-            >
-              Tutup Visualisasi
-            </button>
           </motion.div>
         </div>
       )}
@@ -1799,7 +1992,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
         </div>
       )}
     </div>
-      </div>
+  </div>
   );
 };
 
@@ -1813,14 +2006,14 @@ const MainMenu = ({
   getModuleAnswers,
   onSaveRoleAssignments
 }: { 
-  appState: AppState, 
-  setActiveModuleIndex: (i: number) => void, 
-  setView: (v: View) => void, 
-  resetState: () => void,
-  generateCompletePDF: () => void,
-  profile: UserProfile | null,
-  getModuleAnswers: (moduleId: string) => StudentAnswers,
-  onSaveRoleAssignments: (moduleId: string, assignments: { name: string; role: string }[]) => void
+  appState: AppState;
+  setActiveModuleIndex: (i: number) => void;
+  setView: (v: View) => void;
+  resetState: () => void;
+  generateCompletePDF: () => void;
+  profile: UserProfile | null;
+  getModuleAnswers: (moduleId: string) => StudentAnswers;
+  onSaveRoleAssignments: (moduleId: string, assignments: { name: string; role: string }[]) => void;
 }) => {
   const [selectedModuleForRoles, setSelectedModuleForRoles] = useState<number | null>(null);
 
@@ -1832,10 +2025,10 @@ const MainMenu = ({
   return (
     <div className="min-h-screen bg-bg flex flex-col relative overflow-hidden">
       <LabBackground variant="light" />
-      {/* Header Strip */}
-      <header className="bg-white/80 backdrop-blur-md px-4 md:px-8 py-3 md:py-4 border-b border-slate-200 flex justify-between items-center sticky top-0 z-20">
-        <div className="flex items-center gap-3 md:gap-4">
-          <div className="w-8 h-8 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center p-1 shadow-sm border border-slate-100 overflow-hidden">
+      {/* Header Strip - Upscaled */}
+      <header className="bg-white/80 backdrop-blur-3xl px-8 md:px-12 py-6 md:py-8 border-b border-slate-200/50 flex justify-between items-center sticky top-0 z-20 transition-all">
+        <div className="flex items-center gap-6">
+          <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-3xl flex items-center justify-center p-2 shadow-xl border border-slate-100 overflow-hidden rotate-[-5deg] hover:rotate-0 transition-transform">
             <img 
               src={APP_CONFIG.university.logo} 
               alt="USK Logo" 
@@ -1843,127 +2036,136 @@ const MainMenu = ({
             />
           </div>
           <div className="leading-tight">
-            <p className="text-[0.55rem] md:text-[0.65rem] uppercase font-bold text-slate-400 tracking-wider">
+            <p className="text-[0.65rem] md:text-[0.75rem] uppercase font-black text-slate-400 tracking-[0.3em] mb-1">
               {APP_CONFIG.university.name}
             </p>
-            <p className="font-extrabold text-slate-800 text-xs md:text-sm">LMS Gaya Archimedes</p>
+            <p className="font-black text-slate-800 text-base md:text-xl tracking-tighter">Virtual Laboratory System</p>
           </div>
         </div>
         
-        <div className="flex items-center gap-2 md:gap-8">
+        <div className="flex items-center gap-4 md:gap-10">
           {profile?.role === 'admin' && (
-            <Button onClick={() => setView('ADMIN')} variant="primary" className="bg-slate-900 border-none px-3 md:px-4 py-1.5 md:py-2 text-[0.65rem] md:text-sm">
-              <Shield size={16} /> <span className="hidden md:inline">Admin Panel</span>
+            <Button onClick={() => setView('ADMIN')} variant="primary" className="bg-slate-900 border-none px-6 py-3 text-sm font-black shadow-slate-900/20">
+              <Shield size={18} /> <span className="hidden md:inline">Admin Panel</span>
             </Button>
           )}
-          <div className="text-right hidden lg:block">
-            <p className="text-[0.65rem] uppercase font-bold text-slate-400 tracking-wider">
-              {profile?.role === 'admin' ? 'Administrator' : 'Kelompok:'}
+          <div className="text-right hidden lg:block border-l border-slate-200 pl-10">
+            <p className="text-[0.65rem] uppercase font-black text-slate-400 tracking-[0.2em] mb-1">
+              {profile?.role === 'admin' ? 'Administrator' : 'Akses Terbatas untuk:'}
             </p>
-            <p className="font-bold text-slate-800 text-xs">{appState.groupInfo?.groupName || profile?.email}</p>
+            <p className="font-black text-primary text-sm md:text-base">{appState.groupInfo?.groupName || profile?.email}</p>
           </div>
           <button 
             onClick={resetState}
-            className="px-3 md:px-4 py-2 bg-red-50 text-red-600 rounded-[0.5rem] text-[0.65rem] md:text-sm font-semibold hover:bg-red-100 transition-colors flex items-center gap-2"
+            className="w-14 h-14 md:w-16 md:h-16 bg-red-50 text-red-600 rounded-2xl md:rounded-3xl hover:bg-red-100 transition-all flex items-center justify-center shadow-sm hover:shadow-xl group"
           >
-            <LogOut size={16} /> <span className="hidden md:inline">Keluar</span>
+            <LogOut size={24} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </header>
 
-      {/* Bento Grid */}
-      <main className="flex-grow p-4 md:p-6 lg:p-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto w-full">
+      {/* Bento Grid - Upscaled & Spacing */}
+      <main className="flex-grow p-8 md:p-12 lg:p-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 max-w-[95rem] mx-auto w-full relative z-10">
         
-        {/* Welcome & Overview Card */}
-        <div className="sm:col-span-2 lg:col-span-2 bento-card bg-gradient-to-br from-primary to-blue-700 text-white border-transparent p-8 md:p-10 flex flex-col justify-center">
-          <div className="w-fit bg-white/20 text-white px-3 py-1 rounded-full text-[0.65rem] md:text-[0.7rem] font-bold uppercase tracking-widest backdrop-blur-md mb-6">
-            Dashboard Praktikum
+        {/* Welcome & Overview Card - Large Display */}
+        <div className="sm:col-span-2 lg:col-span-2 bento-card bg-gradient-to-br from-primary via-blue-600 to-blue-800 text-white border-transparent p-10 md:p-12 flex flex-col justify-center shadow-[0_30px_60px_-15px_rgba(59,130,246,0.4)] relative overflow-hidden group">
+          <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[120%] bg-white/10 blur-3xl rounded-full rotate-45 group-hover:bg-white/20 transition-all duration-700" />
+          
+          <div className="w-fit bg-white/20 text-white px-5 py-2 rounded-full text-[0.7rem] font-black uppercase tracking-widest backdrop-blur-xl mb-8 border border-white/20 relative z-10">
+            Pusat Kendali Pengamatan
           </div>
-          <h2 className="text-3xl md:text-4xl font-black mb-4 leading-tight">
-            Halo, Tim {appState.groupInfo?.groupName || 'Pencarian'}!
+          <h2 className="text-xl md:text-2xl font-black mb-6 leading-tight tracking-tighter relative z-10">
+            Halo, Kelompok <br/>
+            <span className="opacity-80 italic">{appState.groupInfo?.groupName || 'Pencarian'}!</span>
           </h2>
-          <p className="text-blue-100 text-sm md:text-base font-medium leading-relaxed max-w-md">
-            Silakan pilih salah satu modul praktikum di bawah ini untuk memulai pengamatan PhET kalian.
+          <p className="text-blue-100 text-base md:text-lg font-medium leading-relaxed max-w-xl opacity-90 mb-8 relative z-10">
+            Selamat datang di laboratorium virtual. Silakan pilih modul di bawah untuk memulai analisis Gaya Archimedes kalian.
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <div className="bg-white/10 p-4 md:p-5 rounded-2xl backdrop-blur-sm border border-white/10 min-w-[120px]">
-              <p className="text-[0.6rem] uppercase font-black opacity-60 tracking-wider mb-1">Status Progres</p>
-              <div className="flex items-end gap-2">
-                <span className="text-2xl md:text-3xl font-black leading-none">{progressPercent}%</span>
-                <span className="text-[0.7rem] font-bold opacity-60 mb-0.5">Selesai</span>
+          <div className="mt-2 flex flex-wrap gap-6 relative z-10">
+            <div className="bg-white/10 p-6 md:p-8 rounded-[2rem] backdrop-blur-xl border border-white/20 min-w-[180px] shadow-xl">
+              <p className="text-[0.65rem] uppercase font-black opacity-60 tracking-widest mb-2">Total Progres</p>
+              <div className="flex items-end gap-3">
+                <span className="text-xl md:text-2xl font-black leading-none">{progressPercent}%</span>
+                <span className="text-xs font-black opacity-60 mb-1 uppercase tracking-widest text-white/60">Tuntas</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Status Counter Card */}
-        <div className="bento-card border-slate-200 p-6 md:p-8 flex flex-col">
-          <h3 className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mb-auto">Ringkasan Modul</h3>
-          <div className="flex justify-between items-end mt-8">
+        {/* Status Counter Card - Upscaled */}
+        <div className="bento-card border-white/50 p-10 flex flex-col bg-white/80 backdrop-blur-2xl shadow-xl relative group min-h-[350px]">
+          <div className="absolute top-8 right-8 w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 group-hover:text-primary transition-all group-hover:rotate-12">
+            <Target size={28} />
+          </div>
+          <h3 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-auto">Metrik Capaian</h3>
+          <div className="flex justify-between items-end mt-20 mb-8 px-4">
              <div>
-               <div className="text-4xl md:text-5xl font-black text-slate-800">{completedModules}</div>
-               <div className="text-[0.65rem] md:text-[0.7rem] text-slate-400 font-bold uppercase tracking-widest">Selesai</div>
+               <div className="text-3xl md:text-4xl font-black text-slate-900 leading-none tracking-tighter">{completedModules}</div>
+               <div className="text-[0.8rem] text-slate-400 font-black uppercase tracking-[0.3em] mt-4">Module Selesai</div>
              </div>
              <div className="text-right">
-               <div className="text-4xl md:text-5xl font-black text-slate-100">{totalModules}</div>
-               <div className="text-[0.65rem] md:text-[0.7rem] text-slate-400 font-bold uppercase tracking-widest">Total</div>
+               <div className="text-2xl md:text-3xl font-black text-slate-100 leading-none tracking-tighter">{totalModules}</div>
+               <div className="text-[0.8rem] text-slate-400 font-black uppercase tracking-[0.3em] mt-4">Total Target</div>
              </div>
           </div>
-          <div className="h-2.5 bg-slate-100 rounded-full mt-6 overflow-hidden">
+          <div className="h-6 bg-slate-100 rounded-full mt-8 overflow-hidden shadow-inner p-1.5 border border-slate-200/50">
              <motion.div 
                initial={{ width: 0 }}
                animate={{ width: `${progressPercent}%` }}
-               className="h-full bg-primary" 
+               className="h-full bg-primary rounded-full shadow-[0_0_25px_rgba(59,130,246,0.5)]" 
              />
           </div>
+          <p className="text-center text-[0.85rem] font-black text-slate-400 mt-10 uppercase tracking-[0.2em] opacity-60">
+            Terget Tersisa: <span className="text-primary">{totalModules - completedModules} Modul</span>
+          </p>
         </div>
 
-        {/* Team Information Card */}
-        <div className="bento-card border-slate-200 flex flex-col p-6 md:p-8">
-          <h3 className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mb-6">Anggota Tim</h3>
-          <div className="space-y-6">
+        {/* Team Information Card - Upscaled */}
+        <div className="bento-card border-white/50 flex flex-col p-12 md:p-14 bg-white/80 backdrop-blur-2xl shadow-2xl min-h-[400px]">
+          <h3 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-12">Detail Laboran</h3>
+          <div className="space-y-12 flex-grow">
             <div>
-              <p className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest mb-2">Identitas Kelompok</p>
-              <p className="text-xl font-black text-primary uppercase tracking-tight leading-tight">{appState.groupInfo?.groupName}</p>
+              <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Identitas Kelompok</p>
+              <p className="text-xl md:text-2xl font-black text-primary uppercase tracking-tighter leading-none mb-2 drop-shadow-sm">{appState.groupInfo?.groupName}</p>
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-8">
               <div>
-                <p className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest mb-2">Ketua Kelompok</p>
-                <div className="flex items-center gap-3">
-                   <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-black text-sm">K</div>
-                   <p className="font-bold text-slate-800 text-sm md:text-base">{appState.groupInfo?.leaderName}</p>
+                <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Ketua Kelompok Pengamat</p>
+                <div className="flex items-center gap-6 p-6 bg-primary/5 rounded-[2.5rem] border border-primary/10 group hover:bg-primary/10 transition-colors">
+                   <div className="w-20 h-20 rounded-3xl bg-primary text-white flex items-center justify-center font-black text-3xl shadow-xl group-hover:scale-110 transition-transform">K</div>
+                   <div>
+                     <p className="font-black text-slate-900 text-xl md:text-2xl leading-none mb-1">{appState.groupInfo?.leaderName}</p>
+                     <p className="text-[0.7rem] font-black text-primary uppercase tracking-[0.2em]">Koordinator Utama</p>
+                   </div>
                 </div>
               </div>
 
               <div>
-                <p className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest mb-2">Daftar Anggota</p>
-                <div className="grid grid-cols-1 gap-2 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar">
+                <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Daftar Anggota Aktif ({appState.groupInfo?.members.filter(m => m).length})</p>
+                <div className="grid grid-cols-1 gap-4 max-h-[250px] overflow-y-auto pr-4 custom-scrollbar">
                    {appState.groupInfo?.members.filter(m => m).map((m, i) => (
-                     <div key={i} className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                        <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-black text-[0.7rem] text-slate-400">{i+1}</div>
-                        <p className="font-bold text-slate-700 text-xs md:text-sm">{m}</p>
+                     <div key={i} className="flex items-center gap-6 p-5 bg-slate-50/50 rounded-[2rem] border border-slate-100 hover:border-primary/20 transition-all hover:bg-white hover:shadow-lg group">
+                        <div className="w-10 h-10 rounded-2xl bg-white border border-slate-100 flex items-center justify-center font-black text-sm text-slate-400 group-hover:text-primary transition-colors">{i+1}</div>
+                        <p className="font-black text-slate-700 text-lg">{m}</p>
                      </div>
                    ))}
-                   {(!appState.groupInfo?.members || appState.groupInfo.members.filter(m => m).length === 0) && (
-                     <p className="text-[0.7rem] text-slate-400 italic font-medium px-1">Hanya ketua kelompok aktif</p>
-                   )}
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Module Selection Section */}
-        <div className="sm:col-span-2 lg:col-span-4 mt-12 md:mt-16 mb-2">
-          <h3 className="text-[0.7rem] md:text-sm font-black text-slate-400 uppercase tracking-[0.3em] mb-8 flex items-center gap-4">
-            <div className="w-12 h-[2px] bg-primary/20" />
-            Daftar Modul Praktikum
-            <div className="flex-grow h-[2px] bg-slate-100" />
+        {/* Module Selection Section - Upscaled Heading */}
+        <div className="sm:col-span-2 lg:col-span-4 mt-20 md:mt-24 mb-6">
+          <h3 className="text-[0.8rem] md:text-xl font-black text-slate-400 uppercase tracking-[0.5em] mb-12 flex items-center gap-10">
+            <div className="w-20 h-[3px] bg-primary/30 rounded-full" />
+            Kurikulum Praktikum Ke-Archimedesan
+            <div className="flex-grow h-[1px] bg-slate-200/50" />
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
             {APP_CONFIG.modules.map((m, idx) => {
-              const Icon = icons[m.icon as keyof typeof icons] || BookOpen;
+              const Icon = icons[m.icon as keyof typeof icons] || Droplets;
               const answers = getModuleAnswers(m.id);
               const calculateModuleProgress = () => {
                 let filled = 0;
@@ -1983,77 +2185,78 @@ const MainMenu = ({
               return (
                 <motion.div
                   key={m.id}
-                  whileHover={{ y: -12, shadow: '0 25px 50px -12px rgba(0,0,0,0.1)' }}
+                  whileHover={{ y: -24, scale: 1.02, shadow: '0 60px 120px -30px rgba(0,0,0,0.15)' }}
                   onClick={() => {
                     setActiveModuleIndex(idx);
                     setView('MODULE');
                   }}
-                  className="bento-card cursor-pointer group relative overflow-hidden bg-white border-2 border-slate-50 hover:border-primary/40 transition-all p-8 md:p-10 flex flex-col h-full"
+                  className="bento-card cursor-pointer group relative overflow-hidden bg-white/90 backdrop-blur-3xl border-4 border-white hover:border-primary/20 transition-all p-12 md:p-16 flex flex-col h-full rounded-[4rem] shadow-2xl"
                 >
-                  <div className="absolute top-0 right-0 p-6">
+                  <div className="absolute top-0 right-0 p-10">
                     {isCompleted ? (
-                      <div className="px-4 py-1.5 bg-success text-white rounded-full flex items-center gap-2 text-[0.65rem] font-bold uppercase tracking-widest shadow-lg shadow-success/20">
-                         <CheckCircle2 size={14} /> Selesai
+                      <div className="px-8 py-3 bg-success text-white rounded-full flex items-center gap-4 text-[0.85rem] font-black uppercase tracking-[0.2em] shadow-2xl shadow-success/30">
+                         <CheckCircle2 size={24} /> Lulus Praktikum
                       </div>
                     ) : (
-                      <div className="px-4 py-1.5 bg-slate-100 text-slate-500 rounded-full flex items-center gap-2 text-[0.65rem] font-black uppercase tracking-widest border border-slate-200">
-                         <PlayCircle size={14} /> {moduleProgressPercent}%
+                      <div className="px-8 py-3 bg-slate-50 text-slate-500 rounded-full flex items-center gap-4 text-[0.85rem] font-black uppercase tracking-[0.2em] border-2 border-slate-100">
+                         <PlayCircle size={24} className="group-hover:text-primary transition-colors" /> {moduleProgressPercent}% Selesai
                       </div>
                     )}
                   </div>
                   
-                  <div className="mb-0 flex-grow">
-                    <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-2">Modul 0{idx + 1}</p>
-                    <h4 className="text-2xl font-black text-slate-800 leading-tight mb-4 group-hover:text-primary transition-colors text-balance">
+                  <div className="mb-0 flex-grow pt-10">
+                    <p className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-6">Paket Percobaan 0{idx + 1}</p>
+                    <h4 className="text-lg md:text-xl font-black text-slate-900 leading-[0.9] mb-12 tracking-tighter group-hover:text-primary transition-colors text-balance">
                       {m.title}
                     </h4>
-                    <div className="flex items-center gap-2 text-slate-500 mb-6">
-                       <RefreshCw size={14} className="opacity-40" />
-                       <span className="text-[0.65rem] font-bold">Terupdate: {(answers as any).updatedAt ? formatDate((answers as any).updatedAt) : 'Belum Mulai'}</span>
+                    <div className="flex items-center gap-4 text-slate-500 mb-12 p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100">
+                       <RefreshCw size={24} className="opacity-40 animate-spin-slow text-primary" />
+                       <div>
+                         <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Status Sinkronisasi</p>
+                         <p className="font-black text-slate-700 text-sm">{(answers as any).updatedAt ? formatDate((answers as any).updatedAt) : 'Menunggu Akses'}</p>
+                       </div>
                     </div>
 
-                    <div className="space-y-4">
-                       <div className="flex justify-between items-center text-[0.65rem] font-black uppercase tracking-widest">
-                          <span className="text-slate-400">Progres Langkah</span>
+                    <div className="space-y-8">
+                       <div className="flex justify-between items-center text-[0.85rem] font-black uppercase tracking-[0.3em]">
+                          <span className="text-slate-400">Pencapaian Langkah</span>
                           <span className="text-primary">{moduleProgressPercent}%</span>
                        </div>
-                       <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                       <div className="w-full h-5 bg-slate-100 rounded-full overflow-hidden shadow-inner p-1">
                           <motion.div 
                             initial={{ width: 0 }}
                             animate={{ width: `${moduleProgressPercent}%` }}
-                            className="h-full bg-primary" 
+                            className="h-full bg-primary rounded-full shadow-lg" 
                           />
                        </div>
                     </div>
                   </div>
 
-                  <div className="mt-8 pt-8 border-t border-slate-50">
-                    <p className="text-[0.6rem] font-black text-slate-300 uppercase tracking-widest mb-4">Detail Tahapan Praktikum</p>
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                  <div className="mt-16 pt-16 border-t-2 border-slate-50">
+                    <p className="text-[0.75rem] font-black text-slate-300 uppercase tracking-[0.4em] mb-8">Struktur Inkuiri Terbimbing</p>
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                        {[
-                         { label: 'Pembagian Tugas', done: answers.roleAssignments && answers.roleAssignments.some(r => r.role) },
-                         { label: 'Rumusan Masalah', done: !!answers.problemFormulation },
+                         { label: 'Kelompok Lab', done: answers.roleAssignments && answers.roleAssignments.some(r => r.role) },
+                         { label: 'Masalah', done: !!answers.problemFormulation },
                          { label: 'Hipotesis', done: !!answers.hypothesis },
-                         { label: 'Pengamatan Data', done: answers.tableData.length > 0 || (answers.subTableData && Object.values(answers.subTableData).some(d => d.length > 0)) },
-                         { label: 'Uji Hipotesis', done: answers.hypothesisTesting.isCorrect !== null },
-                         { label: 'Kesimpulan', done: !!answers.conclusion },
-                         { label: 'Evaluasi', done: answers.evaluationScore !== undefined },
-                         { label: 'Refleksi', done: answers.reflection && answers.reflection.whatLearned }
+                         { label: 'Oberservasi', done: answers.tableData.length > 0 || (answers.subTableData && Object.values(answers.subTableData).some(d => d.length > 0)) },
+                         { label: 'Analisis', done: answers.hypothesisTesting.isCorrect !== null },
+                         { label: 'Kesimpulan', done: !!answers.conclusion }
                        ].map((step, i) => (
-                         <div key={i} className="flex items-center gap-2">
-                            <div className={cn("w-1.5 h-1.5 rounded-full", step.done ? "bg-success" : "bg-slate-200")} />
-                            <span className={cn("text-[0.65rem] font-bold truncate", step.done ? "text-slate-700" : "text-slate-400")}>{step.label}</span>
+                         <div key={i} className="flex items-center gap-4">
+                            <div className={cn("w-4 h-4 rounded-full border-2", step.done ? "bg-success border-success shadow-[0_0_15px_rgba(34,197,94,0.4)]" : "bg-white border-slate-200")} />
+                            <span className={cn("text-[0.85rem] font-black truncate", step.done ? "text-slate-800" : "text-slate-400")}>{step.label}</span>
                          </div>
                        ))}
                     </div>
                   </div>
 
-                  <div className="mt-8 flex justify-between items-center">
-                     <span className="text-[0.65rem] font-black text-primary uppercase tracking-widest group-hover:translate-x-2 transition-transform flex items-center gap-2">
-                        Buka Laporan <ArrowRight size={14} />
+                  <div className="mt-16 flex justify-between items-center bg-slate-50/50 p-8 rounded-[3rem] hover:bg-primary/5 transition-all group/btn border border-transparent hover:border-primary/10">
+                     <span className="text-xl font-black text-primary uppercase tracking-[0.2em] group-hover/btn:translate-x-6 transition-transform flex items-center gap-5">
+                        Buka Lab <ArrowRight size={32} />
                      </span>
-                     <div className="w-10 h-10 bg-slate-50 text-slate-400 group-hover:bg-primary group-hover:text-white rounded-full flex items-center justify-center transition-all">
-                        <ChevronRight size={20} />
+                     <div className="w-20 h-20 bg-white text-slate-300 group-hover/btn:bg-primary group-hover/btn:text-white rounded-[2rem] flex items-center justify-center transition-all shadow-xl group-hover/btn:rotate-12">
+                        <ChevronRight size={48} />
                      </div>
                   </div>
                 </motion.div>
@@ -2062,42 +2265,67 @@ const MainMenu = ({
           </div>
         </div>
 
-        {/* Bottom Features */}
-        <div className="sm:col-span-2 lg:col-span-3 bento-card bg-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-6 border-transparent p-8 md:p-12">
-           <div className="flex flex-wrap justify-center md:justify-start gap-8 md:gap-12">
-             <div>
-                <p className="text-[0.5rem] opacity-50 uppercase font-black mb-1 tracking-widest">Total Data</p>
-                <p className="text-2xl font-black text-amber-500">
-                  {Object.values(appState.moduleProgress).reduce((acc: number, m: any) => acc + (m.answers?.tableData?.length || 0), 0).toString().padStart(2, '0')}
-                </p>
+        {/* Bottom Features - Upscaled */}
+        <div className="sm:col-span-2 lg:col-span-4 bento-card bg-slate-900 text-white flex flex-col xl:flex-row items-center justify-between gap-12 border-transparent p-12 md:p-16 shadow-[0_50px_100px_-20px_rgba(15,23,42,0.4)] mt-12 mb-12 rounded-[5rem] overflow-hidden relative">
+           <div className="absolute top-0 right-0 w-80 h-80 bg-white opacity-[0.03] blur-[100px] pointer-events-none" />
+           <div className="flex flex-wrap justify-center md:justify-start gap-12 md:gap-20 relative z-10">
+             <div className="text-center md:text-left">
+                <p className="text-[0.65rem] opacity-50 uppercase font-black mb-3 tracking-[0.5em]">Total Titik Data</p>
+                <div className="flex items-center gap-4">
+                   <p className="text-2xl md:text-3xl font-black text-amber-500 tracking-tighter">
+                    {Object.values(appState.moduleProgress).reduce((acc: number, m: any) => acc + (m.answers?.tableData?.length || 0), 0).toString().padStart(2, '0')}
+                   </p>
+                   <div className="w-10 h-10 bg-amber-500/20 rounded-2xl flex items-center justify-center text-amber-500 shadow-xl"><Database size={24} /></div>
+                </div>
              </div>
-             <div className="h-10 w-[1px] bg-white/10 hidden md:block" />
-             <div>
-                <p className="text-[0.5rem] opacity-50 uppercase font-black mb-1 tracking-widest">Modul Selesai</p>
-                <p className="text-2xl font-black text-green-500">
-                  {completedModules.toString().padStart(2, '0')}
-                </p>
+             <div className="h-20 w-[2px] bg-white/10 hidden xl:block" />
+             <div className="text-center md:text-left">
+                <p className="text-[0.65rem] opacity-50 uppercase font-black mb-3 tracking-[0.5em]">Modul Tuntas</p>
+                <div className="flex items-center gap-4">
+                   <p className="text-2xl md:text-3xl font-black text-green-500 tracking-tighter">
+                    {completedModules.toString().padStart(2, '0')}
+                   </p>
+                   <div className="w-10 h-10 bg-green-500/20 rounded-2xl flex items-center justify-center text-green-500 shadow-xl"><CheckCircle2 size={24} /></div>
+                </div>
              </div>
-             <div className="h-10 w-[1px] bg-white/10 hidden md:block" />
-             <div>
-                <p className="text-[0.5rem] opacity-50 uppercase font-black mb-1 tracking-widest">Skor Rata-rata</p>
-                <p className="text-2xl font-black text-blue-400">
-                  {Math.round(Object.values(appState.moduleProgress).reduce((acc: number, m: any) => acc + (m.answers?.evaluationScore || 0), 0) / (completedModules || 1))}
-                </p>
+             <div className="h-20 w-[2px] bg-white/10 hidden xl:block" />
+             <div className="text-center md:text-left">
+                <p className="text-[0.65rem] opacity-50 uppercase font-black mb-3 tracking-[0.5em]">Skor Capaian</p>
+                <div className="flex items-center gap-4">
+                   <p className="text-2xl md:text-3xl font-black text-blue-400 tracking-tighter">
+                    {Math.round(Object.values(appState.moduleProgress).reduce((acc: number, m: any) => acc + (m.answers?.evaluationScore || 0), 0) / (completedModules || 1))}
+                   </p>
+                   <div className="w-10 h-10 bg-blue-400/20 rounded-2xl flex items-center justify-center text-blue-400 shadow-xl"><Award size={24} /></div>
+                </div>
              </div>
            </div>
-           <Button variant="success" onClick={generateCompletePDF} className="w-full md:w-auto px-8 py-5 rounded-2xl shadow-xl shadow-green-500/20">
-             <Download /> Laporan Akhir (PDF)
-           </Button>
+           
+           <div className="relative z-10 w-full xl:w-auto">
+             <Button 
+                variant="success" 
+                onClick={generateCompletePDF} 
+                className="w-full xl:w-auto px-16 py-8 text-2xl font-black rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(34,197,94,0.4)] group overflow-hidden"
+              >
+               <span className="relative z-10 flex items-center gap-6">Unduh Laporan Akhir (PDF) <Download size={32} className="group-hover:translate-y-2 transition-transform" /></span>
+               <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+             </Button>
+           </div>
         </div>
 
       </main>
 
-      <footer className="px-8 py-3 bg-white border-t border-slate-200 flex justify-between items-center text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest">
-        <span>Model: Guided Inquiry LKPD v2.1</span>
-        <span className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" /> Auto-save: Aktif
-        </span>
+      <footer className="px-12 py-10 bg-white/50 backdrop-blur-3xl border-t border-slate-200/50 flex flex-col md:flex-row justify-between items-center gap-8 text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.5em] relative z-10 mt-auto">
+        <span>© 2026 Guided Inquiry Integrated LMS • Archimedes Science Prototype v2.5.4</span>
+        <div className="flex flex-wrap items-center justify-center gap-10">
+           <span className="flex items-center gap-3">
+             <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.6)]" /> 
+             Cloud Synchronization Active
+           </span>
+           <span className="flex items-center gap-3">
+             <div className="w-3 h-3 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)]" /> 
+             Secure Lab Protocol
+           </span>
+        </div>
       </footer>
     </div>
   );
@@ -2233,14 +2461,14 @@ const EvaluationSection = ({ module, evaluationScore, onComplete }: any) => {
         </div>
         
         <div>
-          <h2 className={cn("text-4xl font-black mb-2", isWin ? "text-green-600" : "text-red-600")}>
+          <h2 className={cn("text-2xl font-black mb-2", isWin ? "text-green-600" : "text-red-600")}>
             {isWin ? "Misi Berhasil!" : "Misi Gagal"}
           </h2>
           <p className="text-xl text-slate-500 font-bold">Skor Akhir Evaluasi:</p>
         </div>
 
         <div className="flex flex-col items-center">
-           <div className={cn("text-8xl font-black tracking-tighter", isWin ? "text-green-500" : "text-red-500")}>
+           <div className={cn("text-4xl font-black tracking-tighter", isWin ? "text-green-500" : "text-red-500")}>
              {Math.round(displayScore)}
            </div>
            <div className="text-sm font-bold text-slate-400 mt-2">MINIMAL 80 UNTUK LULUS</div>
@@ -2299,7 +2527,7 @@ const EvaluationSection = ({ module, evaluationScore, onComplete }: any) => {
               </div>
               
               <h2 className={cn(
-                "text-3xl font-black mb-3",
+                "text-xl font-black mb-3",
                 modalData.type === 'RIGHT' ? "text-green-600" : "text-red-600"
               )}>
                 {modalData.type === 'RIGHT' ? "Menakjubkan!" : "Belum Tepat"}
@@ -2433,7 +2661,7 @@ const EvaluationSection = ({ module, evaluationScore, onComplete }: any) => {
 const ObjectivesSection = ({ module }: any) => (
   <div className="space-y-12">
     <div className="text-center">
-      <h2 className="text-5xl font-black text-slate-900 mb-4">Tujuan Pembelajaran</h2>
+      <h2 className="text-3xl font-black text-slate-900 mb-4">Tujuan Pembelajaran</h2>
       <p className="text-xl text-slate-500 font-medium">Melalui praktikum ini, Anda diharapkan mampu mencapai poin-poin berikut:</p>
     </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -2456,7 +2684,7 @@ const ObjectivesSection = ({ module }: any) => (
 const OrientationSection = ({ module }: any) => (
   <div className="space-y-6 md:space-y-12">
     <div className="text-center max-w-2xl mx-auto px-4">
-      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-3 md:mb-4">Orientasi Masalah</h2>
+      <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-3 md:mb-4">Orientasi Masalah</h2>
       <p className="text-base md:text-xl text-slate-500 font-medium leading-relaxed">
         {module.orientationText || "Perhatikan video berikut untuk memahami konteks masalah yang akan kita teliti."}
       </p>
@@ -2490,7 +2718,7 @@ const TextSection = ({ title, description, value, onChange, icon, isLast, onFini
       <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-100 rounded-2xl md:rounded-[2rem] flex items-center justify-center mx-auto mb-6 md:mb-8 shadow-inner text-primary">
         {React.cloneElement(icon as React.ReactElement, { size: 32 })}
       </div>
-      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4">{title}</h2>
+      <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4">{title}</h2>
       <p className="text-base md:text-xl text-slate-500 font-medium px-4">{description}</p>
     </div>
     <textarea 
@@ -2636,7 +2864,7 @@ const DataSection = ({ module, data, subTableData, onDataChange, onSubDataChange
   return (
     <div className="space-y-8 md:space-y-12">
       <div className="text-center">
-        <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 px-4">Mengumpulkan Data</h2>
+        <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4 px-4">Mengumpulkan Data</h2>
         <p className="text-lg md:text-xl text-slate-500 font-medium px-6">Lakukan pengamatan menggunakan simulasi PhET untuk memperoleh data praktikum.</p>
       </div>
 
@@ -2778,7 +3006,7 @@ const DataSection = ({ module, data, subTableData, onDataChange, onSubDataChange
 const UjiSection = ({ hypothesis, value, onChange }: any) => (
   <div className="space-y-12 max-w-4xl mx-auto">
     <div className="text-center">
-      <h2 className="text-5xl font-black text-slate-900 mb-4">Menguji Hipotesis</h2>
+      <h2 className="text-3xl font-black text-slate-900 mb-4">Menguji Hipotesis</h2>
       <p className="text-xl text-slate-500 font-medium">Apakah hasil pengamatan Anda sesuai dengan hipotesis awal?</p>
     </div>
     
@@ -2869,8 +3097,8 @@ const RoleAssignmentSection = ({
     <div className="space-y-12 max-w-4xl mx-auto pb-20">
       <div className="text-center">
         <p className="text-[0.6rem] font-black text-primary uppercase tracking-[0.2em] mb-4">Langkah 01</p>
-        <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4">Pembagian Tugas Tim</h2>
-        <p className="text-lg md:text-xl text-slate-500 font-medium">Tentukan peran setiap anggota tim untuk modul <span className="text-slate-900 font-bold">"{moduleTitle}"</span></p>
+        <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4">Pembagian Tugas Kelompok</h2>
+        <p className="text-lg md:text-xl text-slate-500 font-medium">Tentukan peran setiap anggota kelompok untuk modul <span className="text-slate-900 font-bold">"{moduleTitle}"</span></p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -2931,7 +3159,7 @@ const RoleAssignmentSection = ({
          <div className="text-center md:text-left">
             <h4 className="text-xl font-bold text-primary">Mengapa Ini Penting?</h4>
             <p className="text-slate-600 text-sm md:text-base opacity-90 italic leading-relaxed">
-              Memilih peran membantu tim fokus pada tanggung jawab masing-masing. Namun, pastikan <span className="font-bold text-primary">seluruh anggota tetap berdiskusi bersama</span> di setiap langkah penemuan!
+              Memilih peran membantu kelompok fokus pada tanggung jawab masing-masing. Namun, pastikan <span className="font-bold text-primary">seluruh anggota tetap berdiskusi bersama</span> di setiap langkah penemuan!
             </p>
          </div>
       </div>
@@ -2953,7 +3181,7 @@ const RoleAssignmentSection = ({
 const ReflectionSection = ({ value, onChange, onFinish }: any) => {
   const fields = [
     { key: 'whatLearned', label: 'Apa yang paling penting kami pelajari hari ini?', icon: <BookOpen className="text-pink-500" /> },
-    { key: 'feelings', label: 'Bagaimana perasaan tim saat melakukan praktikum?', icon: <Heart className="text-green-500" /> },
+    { key: 'feelings', label: 'Bagaimana perasaan kelompok saat melakukan praktikum?', icon: <Heart className="text-green-500" /> },
     { key: 'difficulties', label: 'Kesulitan apa yang kami hadapi dan bagaimana kami mengatasinya?', icon: <AlertCircle className="text-amber-500" /> },
     { key: 'nextSteps', label: 'Apa yang ingin kami pelajari lebih lanjut?', icon: <ArrowRightCircle className="text-blue-500" /> },
   ];
@@ -2963,8 +3191,8 @@ const ReflectionSection = ({ value, onChange, onFinish }: any) => {
   return (
     <div className="space-y-12 max-w-4xl mx-auto pb-20">
       <div className="text-center">
-        <h2 className="text-5xl font-black text-slate-900 mb-4">Refleksi Belajar</h2>
-        <p className="text-xl text-slate-500 font-medium">Lengkapi refleksi tim Anda untuk mengakhiri praktikum ini.</p>
+        <h2 className="text-3xl font-black text-slate-900 mb-4">Refleksi Belajar</h2>
+        <p className="text-xl text-slate-500 font-medium">Lengkapi refleksi kelompok Anda untuk mengakhiri praktikum ini.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -3075,7 +3303,7 @@ const ModuleView = ({
            {answers.roleAssignments && (
              <div className="hidden lg:flex items-center gap-4 mr-6">
                 <div className="text-right">
-                  <p className="text-[0.45rem] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Status Tim</p>
+                  <p className="text-[0.45rem] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Status Kelompok</p>
                   <p className="text-[0.6rem] font-black text-primary uppercase tracking-tighter">Kolaborasi Aktif</p>
                 </div>
                 <div className="flex -space-x-2">
@@ -3086,7 +3314,7 @@ const ModuleView = ({
                       </div>
                       <div className="absolute top-10 right-0 w-40 bg-slate-900/90 backdrop-blur-md text-white p-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-[0.6rem] shadow-xl z-[100] border border-white/10">
                         <p className="font-extrabold text-blue-400 mb-1">{ra.name}</p>
-                        <p className="opacity-80 italic leading-tight">{ra.role || 'Anggota Tim'}</p>
+                        <p className="opacity-80 italic leading-tight">{ra.role || 'Anggota Kelompok'}</p>
                       </div>
                     </div>
                   ))}
