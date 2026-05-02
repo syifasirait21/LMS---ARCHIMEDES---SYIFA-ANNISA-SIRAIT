@@ -43,7 +43,10 @@ import {
   ClipboardCheck,
   User,
   Target,
-  Search
+  Search,
+  BarChart2,
+  PieChart,
+  Activity
 } from 'lucide-react';
 import {
   DndContext,
@@ -845,7 +848,7 @@ const RegisterPage = ({ setView }: { setView: (v: View) => void }) => {
           
           <div className="col-span-2">
             <label className="block text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Nama Anggota (Maks. 4)</label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {formData.members.map((member, i) => (
                 <input 
                   key={i}
@@ -891,10 +894,13 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
   const [viewingModuleIdx, setViewingModuleIdx] = useState<number | null>(null);
   const [resetTarget, setResetTarget] = useState<any | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<any | null>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [activeTab, setActiveTab] = useState<'GROUPS' | 'STUDENTS' | 'ANALYTICS'>('ANALYTICS');
   const [stats, setStats] = useState({
     totalGroups: 0,
+    totalStudents: 0,
     completedAll: 0,
     avgScore: 0
   });
@@ -926,7 +932,13 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
       setStudentsProgress(mergedData);
       
       // Calculate stats
-      const total = mergedData.length;
+      const totalGroups = mergedData.length;
+      let totalStudents = 0;
+      mergedData.forEach((p: any) => {
+        const membersCount = (p.members?.filter((m: string) => m.trim() !== '').length || 0) + 1; // +1 for leader
+        totalStudents += membersCount;
+      });
+
       const completed = mergedData.filter((p: any) => Object.keys(p.moduleProgress || {}).length === APP_CONFIG.modules.length).length;
       
       let totalScores = 0;
@@ -942,7 +954,8 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
       const avg = countScores > 0 ? (totalScores / countScores).toFixed(1) : 0;
       
       setStats({
-        totalGroups: total,
+        totalGroups,
+        totalStudents,
         completedAll: completed,
         avgScore: Number(avg)
       });
@@ -995,11 +1008,67 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
     }
   };
 
+  const getAnalyticsData = () => {
+    const moduleStats = APP_CONFIG.modules.map((m, idx) => {
+      let completedCount = 0;
+      let totalScoreForMod = 0;
+      let scoreCountForMod = 0;
+
+      studentsProgress.forEach(p => {
+        const modProgress = p.moduleProgress?.[idx];
+        if (modProgress) {
+          completedCount++;
+          if (modProgress.answers?.evaluationScore !== undefined) {
+             totalScoreForMod += modProgress.answers.evaluationScore;
+             scoreCountForMod++;
+          }
+        }
+      });
+
+      return {
+        name: m.title,
+        completed: completedCount,
+        avgScore: scoreCountForMod > 0 ? Math.round(totalScoreForMod / scoreCountForMod) : 0
+      };
+    });
+
+    return moduleStats;
+  };
+
+  const getAllIndividualStudents = () => {
+    const students: any[] = [];
+    studentsProgress.forEach(group => {
+      // Add leader
+      students.push({
+        name: group.leaderName,
+        role: 'Ketua',
+        groupName: group.groupName,
+        groupId: group.id,
+        progress: Object.keys(group.moduleProgress || {}).length,
+        lastActive: group.updatedAt,
+        moduleProgress: group.moduleProgress || {}
+      });
+      // Add members
+      (group.members || []).filter((m: string) => m.trim() !== '').forEach((m: string) => {
+        students.push({
+          name: m,
+          role: 'Anggota',
+          groupName: group.groupName,
+          groupId: group.id,
+          progress: Object.keys(group.moduleProgress || {}).length,
+          lastActive: group.updatedAt,
+          moduleProgress: group.moduleProgress || {}
+        });
+      });
+    });
+    return students;
+  };
+
   return (
     <div className="min-h-screen bg-bg relative overflow-hidden">
       <LabBackground variant="light" />
       <div className="relative z-10">
-        <header className="bg-white/80 backdrop-blur-md px-4 md:px-8 py-3 md:py-4 border-b border-slate-200 flex justify-between items-center sticky top-0 z-20">
+        <header className="bg-white/80 backdrop-blur-md px-4 md:px-8 py-3 md:py-4 border-b border-slate-200 flex justify-between items-center sticky top-0 z-50">
       <div className="flex items-center gap-3 md:gap-4">
         <div className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-xl flex items-center justify-center p-1 shadow-sm border border-slate-100">
           <img 
@@ -1026,96 +1095,161 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
 
     <main className="max-w-7xl mx-auto p-4 md:p-8">
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
         <div className="bento-card border-slate-200 p-6 md:p-8">
            <p className="text-[0.6rem] md:text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Kelompok</p>
            <div className="text-2xl md:text-4xl font-black text-slate-800">{stats.totalGroups}</div>
         </div>
         <div className="bento-card border-slate-200 p-6 md:p-8">
+           <p className="text-[0.6rem] md:text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Siswa</p>
+           <div className="text-2xl md:text-4xl font-black text-primary">{stats.totalStudents}</div>
+        </div>
+        <div className="bento-card border-slate-200 p-6 md:p-8">
            <p className="text-[0.6rem] md:text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Selesai Semua</p>
            <div className="text-2xl md:text-4xl font-black text-success">{stats.completedAll}</div>
         </div>
-        <div className="bento-card border-slate-200 p-6 md:p-8 sm:col-span-2 md:col-span-1">
+        <div className="bento-card border-slate-200 p-6 md:p-8">
            <p className="text-[0.6rem] md:text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Rata-rata Quiz</p>
            <div className="text-2xl md:text-4xl font-black text-orange-500">{stats.avgScore} <span className="text-sm md:text-lg text-slate-300 font-bold">/ 100</span></div>
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-2 mb-8 bg-white/50 p-1.5 rounded-2xl w-fit border border-slate-200">
+        <button 
+          onClick={() => setActiveTab('ANALYTICS')}
+          className={cn(
+            "px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+            activeTab === 'ANALYTICS' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-400 hover:text-slate-600"
+          )}
+        >
+          Analitik & Grafik
+        </button>
+        <button 
+          onClick={() => setActiveTab('GROUPS')}
+          className={cn(
+            "px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+            activeTab === 'GROUPS' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-400 hover:text-slate-600"
+          )}
+        >
+          Daftar Kelompok
+        </button>
+        <button 
+          onClick={() => setActiveTab('STUDENTS')}
+          className={cn(
+            "px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+            activeTab === 'STUDENTS' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-400 hover:text-slate-600"
+          )}
+        >
+          Data Siswa Individu
+        </button>
+      </div>
+
+      {activeTab === 'ANALYTICS' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+           <div className="bento-card border-slate-200 p-8">
+              <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                <PieChart size={16} className="text-success" /> Proporsi Penyelesaian
+              </h3>
+              <div className="h-[250px]">
+                <AdminStatusPieChart stats={stats} />
+              </div>
+           </div>
+           <div className="bento-card border-slate-200 p-8">
+              <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                <Target size={16} className="text-primary" /> Kelompok Selesai per Modul
+              </h3>
+              <div className="h-[250px]">
+                <AdminCompletionChart data={getAnalyticsData()} />
+              </div>
+           </div>
+           <div className="bento-card border-slate-200 p-8">
+              <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                <Trophy size={16} className="text-orange-500" /> Rata-rata Skor per Modul
+              </h3>
+              <div className="h-[250px]">
+                <AdminScoreChart data={getAnalyticsData()} />
+              </div>
+           </div>
+           <div className="lg:col-span-3 bento-card border-slate-200 p-8">
+              <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                <Activity size={16} className="text-primary" /> Grafik Aktivitas Real-time
+              </h3>
+              <div className="h-[350px]">
+                <AdminActivityChart data={studentsProgress} />
+              </div>
+           </div>
+        </div>
+      )}
+
+      {activeTab === 'GROUPS' && (
         <div className="bento-card border-slate-200 overflow-hidden p-0">
            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <h3 className="font-extrabold text-slate-800 flex items-center gap-2">
-                <Users size={18} className="text-primary" /> Daftar Aktivitas Siswa
+                <Anchor size={18} className="text-primary" /> Daftar Kelompok Praktikum
               </h3>
-              <div className="flex gap-2">
-                 <button 
-                  onClick={fetchProgress}
-                  className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-500 hover:bg-slate-50 flex items-center gap-2"
-                 >
-                    <RefreshCw size={12} className={loading ? "animate-spin" : ""} /> Refresh Data
-                 </button>
-              </div>
+              <button 
+                onClick={fetchProgress}
+                className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-500 hover:bg-slate-50 flex items-center gap-2"
+              >
+                <RefreshCw size={12} className={loading ? "animate-spin" : ""} /> Refresh Data
+              </button>
            </div>
            <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.65rem] uppercase tracking-wider">
                     <th className="p-6">Identitas Kelompok</th>
+                    <th className="p-6">Ketua</th>
                     <th className="p-6">Progress Modul</th>
-                    <th className="p-6">Skor Quiz</th>
-                    <th className="p-6">Aktivitas Terakhir</th>
+                    <th className="p-6">Avg Score</th>
+                    <th className="p-6">Terakhir Aktif</th>
                     <th className="p-6">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm">
                   {loading ? (
-                    <tr><td colSpan={5} className="p-20 text-center font-bold text-slate-400">Memuat data secara realtime...</td></tr>
+                    <tr><td colSpan={6} className="p-20 text-center font-bold text-slate-400">Memuat data...</td></tr>
                   ) : studentsProgress.length === 0 ? (
-                    <tr><td colSpan={5} className="p-20 text-center font-bold text-slate-400 italic">Belum ada aktivitas praktikum yang tersimpan.</td></tr>
+                    <tr><td colSpan={6} className="p-20 text-center font-bold text-slate-400 italic">Belum ada kelompok terdaftar.</td></tr>
                   ) : [...studentsProgress].sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime()).map((p) => {
                     const completedCount = Object.keys(p.moduleProgress || {}).length;
+                    const mods = Object.values(p.moduleProgress || {}) as any[];
+                    const scoredMods = mods.filter((m: any) => m.answers?.evaluationScore !== undefined);
+                    const avgScore = scoredMods.length > 0 
+                      ? Math.round(scoredMods.reduce((acc: number, m: any) => acc + (Number(m.answers.evaluationScore) || 0), 0) / scoredMods.length)
+                      : 0;
+
                     return (
                       <tr key={p.id} className="border-b border-slate-50 hover:bg-slate-50/30 transition-colors">
                         <td className="p-6">
-                          <div className="font-black text-slate-800">{p.groupName || 'Tanpa Nama'}</div>
-                          <div className="text-[0.7rem] text-slate-400 font-medium">ID: {p.id.slice(0, 8)}...</div>
+                          <div className="font-black text-slate-800">{p.groupName}</div>
+                          <div className="text-[0.7rem] text-slate-400 font-medium">ID: {p.id.slice(0, 8)}</div>
                         </td>
+                        <td className="p-6 font-bold text-slate-600">{p.leaderName}</td>
                         <td className="p-6">
                           <div className="flex items-center gap-3">
                             <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                                <div className="h-full bg-primary" style={{ width: `${(completedCount / APP_CONFIG.modules.length) * 100}%` }} />
                             </div>
-                            <span className="font-black text-slate-600 text-xs">
-                              {completedCount} / {APP_CONFIG.modules.length}
-                            </span>
+                            <span className="font-black text-slate-600 text-xs">{completedCount}/{APP_CONFIG.modules.length}</span>
                           </div>
                         </td>
                         <td className="p-6">
-                           {(() => {
-                             const mods = Object.values(p.moduleProgress || {}) as any[];
-                             const scoredMods = mods.filter((m: any) => m.answers?.evaluationScore !== undefined);
-                             if (scoredMods.length > 0) {
-                               const avgScore = Math.round(scoredMods.reduce((acc: number, m: any) => acc + (Number(m.answers.evaluationScore) || 0), 0) / scoredMods.length);
-                               return (
-                                 <span className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full font-black text-xs">
-                                    {avgScore} (Avg)
-                                 </span>
-                               );
-                             }
-                             return <span className="text-slate-300 font-bold italic text-xs">Belum Ada Skor</span>;
-                           })()}
+                           <span className={cn(
+                             "px-3 py-1 rounded-full font-black text-xs",
+                             avgScore >= 80 ? "bg-success/10 text-success" : "bg-orange-50 text-orange-600"
+                           )}>
+                              {avgScore > 0 ? avgScore : '-'}
+                           </span>
                         </td>
                         <td className="p-6 text-slate-500 font-medium text-xs">
-                          {p.updatedAt ? new Date(p.updatedAt).toLocaleString('id-ID', {
-                            day: 'numeric',
-                            month: 'short',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          }) : '-'}
+                          {p.updatedAt ? formatDate(p.updatedAt) : '-'}
                         </td>
                         <td className="p-6">
                            <button 
                             onClick={() => { setSelectedGroup(p); setViewingModuleIdx(null); }}
-                            className="p-2 bg-slate-100 hover:bg-primary hover:text-white rounded-lg transition-all text-slate-600"
+                            className="p-2 bg-slate-100 hover:bg-primary hover:text-white rounded-lg transition-all text-slate-600 shadow-sm"
                            >
                               <Eye size={16} />
                            </button>
@@ -1127,7 +1261,72 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
               </table>
            </div>
         </div>
-      </main>
+      )}
+
+      {activeTab === 'STUDENTS' && (
+        <div className="bento-card border-slate-200 overflow-hidden p-0">
+           <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <h3 className="font-extrabold text-slate-800 flex items-center gap-2">
+                <User size={18} className="text-primary" /> Daftar Siswa Individu
+              </h3>
+              <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest">
+                Total {getAllIndividualStudents().length} Siswa
+              </div>
+           </div>
+           <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.65rem] uppercase tracking-wider">
+                    <th className="p-6">Nama Siswa</th>
+                    <th className="p-6">Peran di Tim</th>
+                    <th className="p-6">Nama Tim</th>
+                    <th className="p-6">Progres Tim</th>
+                    <th className="p-6">Aktif Terakhir</th>
+                    <th className="p-6">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm">
+                  {getAllIndividualStudents().length === 0 ? (
+                    <tr><td colSpan={6} className="p-20 text-center font-bold text-slate-400 italic">Belum ada data siswa.</td></tr>
+                  ) : getAllIndividualStudents().map((s, idx) => (
+                    <tr key={idx} className="border-b border-slate-50 hover:bg-slate-50/30 transition-colors">
+                      <td className="p-6 font-black text-slate-800">{s.name}</td>
+                      <td className="p-6">
+                        <span className={cn(
+                          "px-2 py-0.5 rounded text-[0.65rem] font-bold uppercase tracking-wider",
+                          s.role === 'Ketua' ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-600"
+                        )}>
+                          {s.role}
+                        </span>
+                      </td>
+                      <td className="p-6 font-bold text-slate-500">{s.groupName}</td>
+                      <td className="p-6">
+                        <div className="flex items-center gap-3">
+                           <div className="w-20 h-1 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-primary" style={{ width: `${(s.progress / APP_CONFIG.modules.length) * 100}%` }} />
+                           </div>
+                           <span className="font-black text-slate-400 text-[0.6rem]">{s.progress}/{APP_CONFIG.modules.length}</span>
+                        </div>
+                      </td>
+                      <td className="p-6 text-slate-400 text-xs font-medium">
+                        {s.lastActive ? new Date(s.lastActive).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-'}
+                      </td>
+                      <td className="p-6">
+                        <button 
+                          onClick={() => setSelectedStudent(s)}
+                          className="p-2 bg-slate-100 hover:bg-primary hover:text-white rounded-lg transition-all text-slate-600 shadow-sm"
+                        >
+                          <BarChart2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+           </div>
+        </div>
+      )}
+    </main>
 
       {/* Detail Modal */}
       {selectedGroup && (
@@ -1417,6 +1616,64 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
         </div>
       )}
 
+      {/* Student Progress Visualization Modal */}
+      {selectedStudent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-[2rem] w-full max-w-2xl shadow-2xl overflow-hidden border-2 border-slate-100 flex flex-col p-8 md:p-10"
+          >
+            <div className="flex justify-between items-start mb-8">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
+                    <User size={24} />
+                  </div>
+                  <div>
+                    <h2 className="text-xl md:text-2xl font-black text-slate-900 leading-tight">{selectedStudent.name}</h2>
+                    <p className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-widest">{selectedStudent.role} • {selectedStudent.groupName}</p>
+                  </div>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedStudent(null)}
+                className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                <X size={24} className="text-slate-400" />
+              </button>
+            </div>
+
+            <div className="mb-10 bento-card bg-slate-50 border-none p-8 rounded-[2rem]">
+              <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
+                <BarChart2 size={16} className="text-primary" /> Visualisasi Skor per Modul
+              </h3>
+              <div className="h-[300px]">
+                <AdminStudentScoreChart moduleProgress={selectedStudent.moduleProgress} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+               <div className="p-6 bg-slate-100/50 rounded-2xl">
+                  <p className="text-[0.6rem] font-bold text-slate-400 uppercase mb-1">Total Modul</p>
+                  <p className="text-xl font-black text-slate-800">{selectedStudent.progress} / {APP_CONFIG.modules.length}</p>
+               </div>
+               <div className="p-6 bg-slate-100/50 rounded-2xl">
+                  <p className="text-[0.6rem] font-bold text-slate-400 uppercase mb-1">Status Tim</p>
+                  <p className="text-xl font-black text-primary">{selectedStudent.progress === APP_CONFIG.modules.length ? 'SELESAI' : 'BERPROSES'}</p>
+               </div>
+            </div>
+
+            <button 
+              onClick={() => setSelectedStudent(null)}
+              className="mt-8 w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-slate-900/20 hover:bg-primary transition-all active:scale-[0.98]"
+            >
+              Tutup Visualisasi
+            </button>
+          </motion.div>
+        </div>
+      )}
+
       {/* Reset Confirmation Modal */}
       {resetTarget && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
@@ -1564,10 +1821,10 @@ const MainMenu = ({
       </header>
 
       {/* Bento Grid */}
-      <main className="flex-grow p-4 md:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-5 max-w-7xl mx-auto w-full">
+      <main className="flex-grow p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 max-w-7xl mx-auto w-full">
         
         {/* Welcome & Overview Card */}
-        <div className="md:col-span-2 bento-card bg-gradient-to-br from-primary to-blue-700 text-white border-transparent p-8 md:p-10">
+        <div className="sm:col-span-2 lg:col-span-2 bento-card bg-gradient-to-br from-primary to-blue-700 text-white border-transparent p-8 md:p-10">
           <span className="bg-white/20 text-white px-3 py-1 rounded-full text-[0.6rem] font-bold uppercase tracking-widest backdrop-blur-md">
             Dashboard Praktikum
           </span>
@@ -1640,7 +1897,7 @@ const MainMenu = ({
         </div>
 
         {/* Module Selection Section */}
-        <div className="md:col-span-4 mt-8 md:mt-4 mb-2">
+        <div className="sm:col-span-2 lg:col-span-4 mt-8 md:mt-4 mb-2">
           <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
             <div className="w-8 h-[2px] bg-slate-100" />
             Daftar Modul Praktikum Virtual
@@ -1782,7 +2039,7 @@ const MainMenu = ({
         </div>
 
         {/* Bottom Features */}
-        <div className="md:col-span-3 bento-card bg-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-6 border-transparent p-8 md:p-12">
+        <div className="sm:col-span-2 lg:col-span-3 bento-card bg-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-6 border-transparent p-8 md:p-12">
            <div className="flex flex-wrap justify-center md:justify-start gap-8 md:gap-12">
              <div>
                 <p className="text-[0.5rem] opacity-50 uppercase font-black mb-1 tracking-widest">Total Data</p>
@@ -2765,8 +3022,9 @@ const ModuleView = ({
             <ChevronLeft size={20} />
           </motion.button>
           <div className="leading-tight">
-            <p className="text-[0.55rem] md:text-[0.65rem] uppercase font-bold text-slate-400 tracking-wider">
+            <p className="text-[0.55rem] md:text-[0.65rem] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-2">
               Modul {activeModuleIndex + 1}
+              <span className="md:hidden px-1.5 py-0.5 bg-slate-100 rounded text-[0.5rem] text-slate-500">{step + 1}/{steps.length}</span>
             </p>
             <p className="font-extrabold text-slate-800 text-xs md:text-sm truncate max-w-[120px] md:max-w-none">{module.title}</p>
           </div>
@@ -3194,23 +3452,128 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
   Filler
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar, Pie } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
   Filler
 );
+
+function AdminCompletionChart({ data }: any) {
+  const chartData = {
+    labels: data.map((mod: any) => mod.name),
+    datasets: [
+      {
+        label: 'Kelompok Selesai',
+        data: data.map((mod: any) => mod.completed),
+        backgroundColor: 'rgba(59, 130, 246, 0.6)',
+        borderRadius: 8,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+    },
+    scales: {
+      y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+      x: { grid: { display: false } }
+    }
+  };
+
+  return <Bar data={chartData} options={options} />;
+}
+
+function AdminScoreChart({ data }: any) {
+  const chartData = {
+    labels: data.map((mod: any) => mod.name),
+    datasets: [
+      {
+        label: 'Rata-rata Skor',
+        data: data.map((mod: any) => mod.avgScore),
+        backgroundColor: 'rgba(249, 115, 22, 0.6)',
+        borderRadius: 8,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+    },
+    scales: {
+      y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' } },
+      x: { grid: { display: false } }
+    }
+  };
+
+  return <Bar data={chartData} options={options} />;
+}
+
+function AdminActivityChart({ data }: any) {
+  // Simple time-based activity (grouping by date)
+  const last7Days = [...Array(7)].map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    return d.toISOString().split('T')[0];
+  }).reverse();
+
+  const activityCounts = last7Days.map(day => {
+    return data.filter((p: any) => p.updatedAt?.startsWith(day)).length;
+  });
+
+  const chartData = {
+    labels: last7Days.map(day => {
+      const d = new Date(day);
+      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    }),
+    datasets: [
+      {
+        label: 'Aktivitas Kelompok',
+        data: activityCounts,
+        borderColor: 'rgb(59, 130, 246)',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 6,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+    },
+    scales: {
+      y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+      x: { grid: { display: false } }
+    }
+  };
+
+  return <Line data={chartData} options={options} />;
+}
 
 function ArchimedesChart({ data }: any) {
   const chartData = {
@@ -3257,4 +3620,97 @@ function ArchimedesChart({ data }: any) {
   };
 
   return <Line data={chartData} options={options} />;
+}
+
+function AdminStatusPieChart({ stats }: { stats: any }) {
+  const chartData = {
+    labels: ['Selesai Semua', 'Belum Selesai'],
+    datasets: [
+      {
+        data: [stats.completedAll, stats.totalGroups - stats.completedAll],
+        backgroundColor: [
+          'rgba(34, 197, 94, 0.6)', // Green
+          'rgba(203, 213, 225, 0.6)', // Slate
+        ],
+        borderColor: [
+          'rgb(34, 197, 94)',
+          'rgb(203, 213, 225)',
+        ],
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+        labels: {
+          padding: 20,
+          font: { weight: 'bold' as const, size: 10 }
+        }
+      },
+    },
+  };
+
+  return <Pie data={chartData} options={options} />;
+}
+
+function AdminStudentScoreChart({ moduleProgress }: { moduleProgress: any }) {
+  const chartData = {
+    labels: APP_CONFIG.modules.map(m => m.title),
+    datasets: [
+      {
+        label: 'Skor Evaluasi',
+        data: APP_CONFIG.modules.map((_, idx) => {
+          const mod = moduleProgress[idx];
+          return mod?.answers?.evaluationScore || 0;
+        }),
+        backgroundColor: APP_CONFIG.modules.map((_, idx) => {
+          const mod = moduleProgress[idx];
+          if (!mod) return 'rgba(203, 213, 225, 0.4)'; // Slate 300
+          const score = mod?.answers?.evaluationScore || 0;
+          if (score >= 80) return 'rgba(34, 197, 94, 0.6)'; // Green 500
+          if (score >= 60) return 'rgba(234, 179, 8, 0.6)'; // Yellow 500
+          return 'rgba(239, 68, 68, 0.6)'; // Red 500
+        }),
+        borderRadius: 12,
+        borderWidth: 0,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (context: any) => `Skor: ${context.raw} / 100`
+        }
+      }
+    },
+    scales: {
+      y: { 
+        beginAtZero: true, 
+        max: 100, 
+        grid: { color: '#f1f5f9' },
+        ticks: { font: { weight: 'bold' as const } }
+      },
+      x: { 
+        grid: { display: false },
+        ticks: { 
+          font: { weight: 'bold' as const, size: 10 },
+          callback: function(value: any, index: number) {
+            return `Modul ${index + 1}`;
+          }
+        }
+      }
+    }
+  };
+
+  return <Bar data={chartData} options={options} />;
 }
