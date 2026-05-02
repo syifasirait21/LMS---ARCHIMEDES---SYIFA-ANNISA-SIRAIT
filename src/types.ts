@@ -78,6 +78,7 @@ export interface AppState {
     [moduleId: string]: {
       answers: StudentAnswers;
       currentStep: number;
+      updatedAt?: string;
     };
   };
   quizResult: QuizResult | null;

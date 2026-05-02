@@ -63,7 +63,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { APP_CONFIG } from './constants';
 import { AppState, View, GroupInfo, StudentAnswers, UserProfile, EvaluationQuestion } from './types';
-import { cn } from './lib/utils';
+import { cn, formatDate } from './lib/utils';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import confetti from 'canvas-confetti';
@@ -1694,6 +1694,13 @@ const MainMenu = ({
                       {m.title}
                     </h4>
                     
+                    {appState.moduleProgress[m.id]?.updatedAt && (
+                      <p className="text-[0.65rem] font-medium text-slate-500 mt-1 flex items-center gap-1.5">
+                        <RefreshCw size={10} className="text-slate-400" />
+                        {isCompleted ? 'Selesai' : 'Disimpan'} pada {formatDate(appState.moduleProgress[m.id].updatedAt)}
+                      </p>
+                    )}
+                    
                     {/* Progress Bar */}
                     <div className="mt-4">
                       <div className="flex justify-between items-center mb-1.5">
@@ -2166,21 +2173,32 @@ const ObjectivesSection = ({ module }: any) => (
 );
 
 const OrientationSection = ({ module }: any) => (
-  <div className="space-y-12">
-    <div className="text-center max-w-2xl mx-auto">
-      <h2 className="text-5xl font-black text-slate-900 mb-4">Orientasi Masalah</h2>
-      <p className="text-xl text-slate-500 font-medium">
+  <div className="space-y-6 md:space-y-12">
+    <div className="text-center max-w-2xl mx-auto px-4">
+      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-3 md:mb-4">Orientasi Masalah</h2>
+      <p className="text-base md:text-xl text-slate-500 font-medium leading-relaxed">
         {module.orientationText || "Perhatikan video berikut untuk memahami konteks masalah yang akan kita teliti."}
       </p>
     </div>
-    <div className="aspect-video w-full rounded-[2.5rem] overflow-hidden shadow-2xl bg-black border-8 border-white">
+    <div className="aspect-video w-full rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-2xl bg-black border-4 md:border-8 border-white relative z-10 touch-auto">
       <iframe 
-        className="w-full h-full"
-        src={module.videoUrl}
+        className="w-full h-full relative z-10 pointer-events-auto"
+        src={`${module.videoUrl}${module.videoUrl.includes('?') ? '&' : '?'}playsinline=1&modestbranding=1&rel=0`}
         title="Orientation Video"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
+        loading="lazy"
       ></iframe>
+    </div>
+    <div className="flex justify-center mt-4">
+      <a 
+        href={module.videoUrl.replace('embed/', 'watch?v=')} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="text-[0.65rem] md:text-xs font-bold text-slate-400 hover:text-primary flex items-center gap-2 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-slate-200 transition-all"
+      >
+        <PlayCircle size={14} /> Video tidak muncul? Buka di Tab Baru
+      </a>
     </div>
   </div>
 );
@@ -2213,6 +2231,17 @@ const TextSection = ({ title, description, value, onChange, icon, isLast, onFini
 
 const DataSection = ({ module, data, subTableData, onDataChange, onSubDataChange }: any) => {
   const [activeSubId, setActiveSubId] = useState(module.subExperiments?.[0]?.id || null);
+
+  // Sync activeSubId when module changes
+  useEffect(() => {
+    if (module.subExperiments && module.subExperiments.length > 0) {
+      const firstId = module.subExperiments[0].id;
+      if (!activeSubId || !module.subExperiments.some((s: any) => s.id === activeSubId)) {
+        setActiveSubId(firstId);
+      }
+    }
+  }, [module.id, module.subExperiments]);
+
   const defaultHeaders = ['Benda', 'W di udara (N)', 'W di air (N)', 'Gaya Apung (N)'];
   
   useEffect(() => {
@@ -2331,16 +2360,21 @@ const DataSection = ({ module, data, subTableData, onDataChange, onSubDataChange
       </div>
 
       {module.subExperiments && (
-        <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-2">
+        <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-6 relative z-[60]">
           {module.subExperiments.map((sub: any) => (
             <button
               key={sub.id}
-              onClick={() => setActiveSubId(sub.id)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setActiveSubId(sub.id);
+              }}
+              type="button"
               className={cn(
-                "px-6 py-3 rounded-2xl font-black text-xs md:text-sm uppercase tracking-widest transition-all border-2",
+                "px-6 py-3 rounded-2xl font-black text-xs md:text-sm uppercase tracking-widest transition-all border-2 cursor-pointer active:scale-95 touch-manipulation",
                 activeSubId === sub.id 
                   ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" 
-                  : "bg-white border-slate-100 text-slate-400 hover:border-primary/30 hover:text-primary"
+                  : "bg-white border-slate-100 text-slate-400 hover:border-primary/30 hover:text-primary shadow-sm"
               )}
             >
               {sub.title}
@@ -2371,8 +2405,9 @@ const DataSection = ({ module, data, subTableData, onDataChange, onSubDataChange
         </div>
       </div>
 
-      <div className="aspect-video w-full rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 md:border-8 border-white bg-slate-100">
+      <div className="aspect-video w-full rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 md:border-8 border-white bg-slate-100 relative z-10 touch-auto">
         <iframe 
+          className="w-full h-full relative z-10 pointer-events-auto"
           src={module.phetUrl}
           width="100%" 
           height="100%" 
@@ -2541,68 +2576,85 @@ const RoleAssignmentSection = ({
     return allMembers.map(name => ({ name, role: '' }));
   });
 
+  const availableRoles = [
+    'Merumuskan Masalah',
+    'Menulis Hipotesis',
+    'Mengumpulkan Data',
+    'Menguji Hipotesis',
+    'Kesimpulan'
+  ];
+
   return (
     <div className="space-y-12 max-w-4xl mx-auto pb-20">
       <div className="text-center">
         <p className="text-[0.6rem] font-black text-primary uppercase tracking-[0.2em] mb-4">Langkah 01</p>
-        <h2 className="text-5xl font-black text-slate-900 mb-4">Pembagian Tugas Tim</h2>
-        <p className="text-xl text-slate-500 font-medium">Tentukan peran setiap anggota tim untuk modul <span className="text-slate-900 font-bold">"{moduleTitle}"</span></p>
+        <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4">Pembagian Tugas Tim</h2>
+        <p className="text-lg md:text-xl text-slate-500 font-medium">Tentukan peran setiap anggota tim untuk modul <span className="text-slate-900 font-bold">"{moduleTitle}"</span></p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
         {assignments.map((member, idx) => (
           <motion.div 
             key={idx}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col gap-6"
+            className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col gap-6"
           >
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-primary/5 text-primary flex items-center justify-center font-black text-xl">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-primary/5 text-primary flex items-center justify-center font-black text-lg md:text-xl">
                 {member.name.charAt(0)}
               </div>
-              <div>
+              <div className="flex-grow min-w-0">
                 <p className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest">Nama Anggota</p>
-                <h4 className="text-lg font-black text-slate-800">{member.name} {idx === 0 && <span className="ml-2 text-[0.6rem] bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-tighter">Ketua</span>}</h4>
+                <h4 className="text-lg font-black text-slate-800 truncate">{member.name} {idx === 0 && <span className="ml-2 text-[0.6rem] bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-tighter">Ketua</span>}</h4>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-widest ml-1">Peran / Tugas dalam Praktikum</label>
-              <div className="relative">
-                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-primary">
+            <div className="space-y-3">
+              <label className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary" /> Peran dalam Praktikum
+              </label>
+              <div className="relative group">
+                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-primary pointer-events-none group-focus-within:scale-110 transition-transform">
                   <User size={18} />
                 </div>
-                <input 
-                  type="text"
+                <select 
                   value={member.role}
                   onChange={(e) => {
                     const newAssignments = [...assignments];
-                    newAssignments[idx].role = e.target.value;
+                    newAssignments[idx] = { ...newAssignments[idx], role: e.target.value };
                     setAssignments(newAssignments);
                     onChange(newAssignments);
                   }}
-                  placeholder="Contoh: Pengamat PhET / Pencatat Data"
-                  className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl outline-none font-bold text-slate-800 transition-all text-sm shadow-inner"
-                />
+                  className="w-full pl-14 pr-10 py-4 md:py-5 bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl outline-none font-bold text-slate-800 transition-all text-sm appearance-none shadow-inner"
+                >
+                  <option value="" disabled>Pilih Fokus Tugas...</option>
+                  {availableRoles.map(role => (
+                    <option key={role} value={role}>{role}</option>
+                  ))}
+                </select>
+                <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                  <ArrowRight size={16} className="rotate-90" />
+                </div>
               </div>
             </div>
           </motion.div>
         ))}
       </div>
 
-      <div className="bg-amber-50 border-2 border-amber-100 p-8 rounded-[2.5rem] flex items-center gap-8">
-         <div className="w-16 h-16 bg-amber-500 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20">
+      <div className="bg-primary/5 border-2 border-primary/10 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] flex flex-col md:flex-row items-center gap-6 md:gap-8">
+         <div className="w-14 h-14 md:w-16 md:h-16 bg-primary text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
             <Info size={32} />
          </div>
-         <div>
-            <h4 className="text-xl font-bold text-amber-900">Mengapa Ini Penting?</h4>
-            <p className="text-amber-700 text-sm opacity-80 italic leading-relaxed">
-              Pembagian tugas ini memastikan setiap anggota tim aktif berkontribusi. Misalnya, ada yang fokus mengoperasikan Phet Simulation, ada yang bertugas mencatat hasil pengamatan ke tabel, dan ada yang bertugas merumuskan kesimpulan bersama.
+         <div className="text-center md:text-left">
+            <h4 className="text-xl font-bold text-primary">Mengapa Ini Penting?</h4>
+            <p className="text-slate-600 text-sm md:text-base opacity-90 italic leading-relaxed">
+              Memilih peran membantu tim fokus pada tanggung jawab masing-masing. Namun, pastikan <span className="font-bold text-primary">seluruh anggota tetap berdiskusi bersama</span> di setiap langkah penemuan!
             </p>
          </div>
       </div>
+
 
       <div className="flex justify-center pt-8">
         <Button 
@@ -2766,7 +2818,7 @@ const ModuleView = ({
       </header>
 
       {/* Content Area */}
-      <main className="flex-grow p-6 py-12 md:p-12 lg:p-20 overflow-y-auto">
+      <main className="flex-grow p-6 py-12 md:p-12 lg:p-20 overflow-y-auto relative z-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
@@ -2843,7 +2895,10 @@ const ModuleView = ({
               <ReflectionSection 
                 value={answers.reflection}
                 onChange={(v: any) => updateModuleAnswers(module.id, { reflection: v })}
-                onFinish={() => setView('MENU')}
+                onFinish={() => {
+                  updateModuleAnswers(module.id, {});
+                  setView('MENU');
+                }}
               />
             )}
           </motion.div>
@@ -2870,12 +2925,14 @@ const ModuleView = ({
             <p className="text-[0.65rem] font-bold text-slate-600 uppercase tracking-tight text-primary">{APP_CONFIG.university.name}</p>
           </div>
         </div>
-        <Button onClick={() => {
-          if (step < steps.length - 1) setStep(s => s + 1);
-          else setView('MENU');
-        }}>
-          {step === steps.length - 1 ? 'Selesai Modul' : 'Lanjut'} <ChevronRight />
-        </Button>
+        {step !== 0 && step !== steps.length - 1 && (
+          <Button onClick={() => {
+            if (step < steps.length - 1) setStep(s => s + 1);
+            else setView('MENU');
+          }}>
+            {step === steps.length - 1 ? 'Selesai Modul' : 'Lanjut'} <ChevronRight />
+          </Button>
+        )}
       </footer>
     </div>
   );
@@ -3087,7 +3144,8 @@ export default function App() {
           answers: {
             ...getModuleAnswers(moduleId),
             ...answers
-          }
+          },
+          updatedAt: new Date().toISOString()
         }
       }
     }));
