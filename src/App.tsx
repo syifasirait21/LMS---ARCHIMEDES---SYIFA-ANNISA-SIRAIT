@@ -463,30 +463,30 @@ const LandingPage = ({ setView }: { setView: (v: View) => void }) => (
     className="min-h-screen bg-bg flex flex-col items-center justify-center p-6 text-center relative overflow-hidden"
   >
     <LabBackground variant="light" />
-    <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative z-10">
+      <div className="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center relative z-10">
       <motion.div
         initial={{ x: -30, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        className="text-left"
+        className="text-center md:text-left"
       >
          <motion.img 
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 4, repeat: Infinity }}
           src={APP_CONFIG.university.logo} 
           alt="Logo" 
-          className="w-20 h-20 md:w-32 md:h-32 object-contain mb-8" 
+          className="w-24 h-24 md:w-32 md:h-32 object-contain mb-8 mx-auto md:mx-0" 
         />
-        <h2 className="text-primary font-black uppercase tracking-[0.3em] text-[0.6rem] md:text-sm mb-4">
+        <h2 className="text-primary font-black uppercase tracking-[0.3em] text-[0.7rem] md:text-sm mb-4">
           {APP_CONFIG.university.name}
         </h2>
         <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 leading-none tracking-tighter mb-6 text-balance">
           Praktikum<br/>
           <span className="text-primary">Gaya Archimedes.</span>
         </h1>
-        <p className="text-slate-500 text-base md:text-lg font-medium mb-10 max-w-md">
+        <p className="text-slate-500 text-base md:text-lg font-medium mb-10 max-w-md mx-auto md:mx-0">
           LMS Interaktif berbasis Guided Inquiry untuk mengeksplorasi hukum-hukum fisika dengan cara yang menyenangkan.
         </p>
-        <Button onClick={() => setView('LOGIN')} className="w-full md:w-auto px-10 py-5 text-xl shadow-2xl shadow-primary/30">
+        <Button onClick={() => setView('LOGIN')} className="w-full md:w-auto px-10 py-5 text-lg md:text-xl shadow-2xl shadow-primary/30">
           Mulai Belajar Sekarang <ChevronRight />
         </Button>
       </motion.div>
@@ -1093,55 +1093,55 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
       </div>
     </header>
 
-    <main className="max-w-7xl mx-auto p-4 md:p-8">
+    <main className="max-w-7xl mx-auto p-4 md:p-8 w-full">
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-        <div className="bento-card border-slate-200 p-6 md:p-8">
-           <p className="text-[0.6rem] md:text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Kelompok</p>
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+        <div className="bento-card border-slate-200 p-5 sm:p-6 md:p-8">
+           <p className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Kelompok</p>
            <div className="text-2xl md:text-4xl font-black text-slate-800">{stats.totalGroups}</div>
         </div>
-        <div className="bento-card border-slate-200 p-6 md:p-8">
-           <p className="text-[0.6rem] md:text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Siswa</p>
+        <div className="bento-card border-slate-200 p-5 sm:p-6 md:p-8">
+           <p className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Siswa</p>
            <div className="text-2xl md:text-4xl font-black text-primary">{stats.totalStudents}</div>
         </div>
-        <div className="bento-card border-slate-200 p-6 md:p-8">
-           <p className="text-[0.6rem] md:text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Selesai Semua</p>
+        <div className="bento-card border-slate-200 p-5 sm:p-6 md:p-8">
+           <p className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Selesai Semua</p>
            <div className="text-2xl md:text-4xl font-black text-success">{stats.completedAll}</div>
         </div>
-        <div className="bento-card border-slate-200 p-6 md:p-8">
-           <p className="text-[0.6rem] md:text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Rata-rata Quiz</p>
+        <div className="bento-card border-slate-200 p-5 sm:p-6 md:p-8">
+           <p className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mb-2">Rata-rata Quiz</p>
            <div className="text-2xl md:text-4xl font-black text-orange-500">{stats.avgScore} <span className="text-sm md:text-lg text-slate-300 font-bold">/ 100</span></div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-8 bg-white/50 p-1.5 rounded-2xl w-fit border border-slate-200">
+      <div className="flex flex-wrap gap-2 mb-8 bg-white/50 p-1.5 rounded-2xl w-fit border border-slate-200">
         <button 
           onClick={() => setActiveTab('ANALYTICS')}
           className={cn(
-            "px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+            "px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-[0.65rem] md:text-xs font-black uppercase tracking-widest transition-all",
             activeTab === 'ANALYTICS' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-400 hover:text-slate-600"
           )}
         >
-          Analitik & Grafik
+          Analitik
         </button>
         <button 
           onClick={() => setActiveTab('GROUPS')}
           className={cn(
-            "px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+            "px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-[0.65rem] md:text-xs font-black uppercase tracking-widest transition-all",
             activeTab === 'GROUPS' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-400 hover:text-slate-600"
           )}
         >
-          Daftar Kelompok
+          Kelompok
         </button>
         <button 
           onClick={() => setActiveTab('STUDENTS')}
           className={cn(
-            "px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+            "px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-[0.65rem] md:text-xs font-black uppercase tracking-widest transition-all",
             activeTab === 'STUDENTS' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-400 hover:text-slate-600"
           )}
         >
-          Data Siswa Individu
+          Siswa
         </button>
       </div>
 
@@ -1196,68 +1196,68 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
               </button>
            </div>
            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.65rem] uppercase tracking-wider">
-                    <th className="p-6">Identitas Kelompok</th>
-                    <th className="p-6">Ketua</th>
-                    <th className="p-6">Progress Modul</th>
-                    <th className="p-6">Avg Score</th>
-                    <th className="p-6">Terakhir Aktif</th>
-                    <th className="p-6">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  {loading ? (
-                    <tr><td colSpan={6} className="p-20 text-center font-bold text-slate-400">Memuat data...</td></tr>
-                  ) : studentsProgress.length === 0 ? (
-                    <tr><td colSpan={6} className="p-20 text-center font-bold text-slate-400 italic">Belum ada kelompok terdaftar.</td></tr>
-                  ) : [...studentsProgress].sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime()).map((p) => {
-                    const completedCount = Object.keys(p.moduleProgress || {}).length;
-                    const mods = Object.values(p.moduleProgress || {}) as any[];
-                    const scoredMods = mods.filter((m: any) => m.answers?.evaluationScore !== undefined);
-                    const avgScore = scoredMods.length > 0 
-                      ? Math.round(scoredMods.reduce((acc: number, m: any) => acc + (Number(m.answers.evaluationScore) || 0), 0) / scoredMods.length)
-                      : 0;
+              <table className="w-full text-left min-w-[800px]">
+                 <thead>
+                    <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.6rem] sm:text-[0.65rem] uppercase tracking-wider">
+                      <th className="p-4 sm:p-6">Identitas Kelompok</th>
+                      <th className="p-4 sm:p-6">Ketua</th>
+                      <th className="p-4 sm:p-6 hidden md:table-cell">Progress Modul</th>
+                      <th className="p-4 sm:p-6">Avg Score</th>
+                      <th className="p-4 sm:p-6 hidden lg:table-cell">Terakhir Aktif</th>
+                      <th className="p-4 sm:p-6 text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {loading ? (
+                      <tr><td colSpan={6} className="p-20 text-center font-bold text-slate-400">Memuat data...</td></tr>
+                    ) : studentsProgress.length === 0 ? (
+                      <tr><td colSpan={6} className="p-20 text-center font-bold text-slate-400 italic">Belum ada kelompok terdaftar.</td></tr>
+                    ) : [...studentsProgress].sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime()).map((p) => {
+                      const completedCount = Object.keys(p.moduleProgress || {}).length;
+                      const mods = Object.values(p.moduleProgress || {}) as any[];
+                      const scoredMods = mods.filter((m: any) => m.answers?.evaluationScore !== undefined);
+                      const avgScore = scoredMods.length > 0 
+                        ? Math.round(scoredMods.reduce((acc: number, m: any) => acc + (Number(m.answers.evaluationScore) || 0), 0) / scoredMods.length)
+                        : 0;
 
-                    return (
-                      <tr key={p.id} className="border-b border-slate-50 hover:bg-slate-50/30 transition-colors">
-                        <td className="p-6">
-                          <div className="font-black text-slate-800">{p.groupName}</div>
-                          <div className="text-[0.7rem] text-slate-400 font-medium">ID: {p.id.slice(0, 8)}</div>
-                        </td>
-                        <td className="p-6 font-bold text-slate-600">{p.leaderName}</td>
-                        <td className="p-6">
-                          <div className="flex items-center gap-3">
-                            <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                               <div className="h-full bg-primary" style={{ width: `${(completedCount / APP_CONFIG.modules.length) * 100}%` }} />
+                      return (
+                        <tr key={p.id} className="border-b border-slate-50 hover:bg-slate-50/30 transition-colors">
+                          <td className="p-4 sm:p-6">
+                            <div className="font-black text-slate-800 text-xs sm:text-sm">{p.groupName}</div>
+                            <div className="text-[0.65rem] text-slate-400 font-medium">ID: {p.id.slice(0, 8)}</div>
+                          </td>
+                          <td className="p-4 sm:p-6 font-bold text-slate-600 text-xs sm:text-sm">{p.leaderName}</td>
+                          <td className="p-4 sm:p-6 hidden md:table-cell">
+                            <div className="flex items-center gap-3">
+                              <div className="w-16 sm:w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                 <div className="h-full bg-primary" style={{ width: `${(completedCount / APP_CONFIG.modules.length) * 100}%` }} />
+                              </div>
+                              <span className="font-black text-slate-600 text-[0.65rem]">{completedCount}/{APP_CONFIG.modules.length}</span>
                             </div>
-                            <span className="font-black text-slate-600 text-xs">{completedCount}/{APP_CONFIG.modules.length}</span>
-                          </div>
-                        </td>
-                        <td className="p-6">
-                           <span className={cn(
-                             "px-3 py-1 rounded-full font-black text-xs",
-                             avgScore >= 80 ? "bg-success/10 text-success" : "bg-orange-50 text-orange-600"
-                           )}>
-                              {avgScore > 0 ? avgScore : '-'}
-                           </span>
-                        </td>
-                        <td className="p-6 text-slate-500 font-medium text-xs">
-                          {p.updatedAt ? formatDate(p.updatedAt) : '-'}
-                        </td>
-                        <td className="p-6">
-                           <button 
-                            onClick={() => { setSelectedGroup(p); setViewingModuleIdx(null); }}
-                            className="p-2 bg-slate-100 hover:bg-primary hover:text-white rounded-lg transition-all text-slate-600 shadow-sm"
-                           >
-                              <Eye size={16} />
-                           </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
+                          </td>
+                          <td className="p-4 sm:p-6">
+                             <span className={cn(
+                               "px-2 sm:px-3 py-1 rounded-full font-black text-[0.65rem] sm:text-xs",
+                               avgScore >= 80 ? "bg-success/10 text-success" : "bg-orange-50 text-orange-600"
+                             )}>
+                                {avgScore > 0 ? avgScore : '-'}
+                             </span>
+                          </td>
+                          <td className="p-4 sm:p-6 hidden lg:table-cell text-slate-500 font-medium text-[0.65rem] sm:text-xs">
+                            {p.updatedAt ? formatDate(p.updatedAt) : '-'}
+                          </td>
+                          <td className="p-4 sm:p-6 text-right">
+                             <button 
+                              onClick={() => { setSelectedGroup(p); setViewingModuleIdx(null); }}
+                              className="p-2 bg-slate-100 hover:bg-primary hover:text-white rounded-lg transition-all text-slate-600 shadow-sm"
+                             >
+                                <Eye size={16} />
+                             </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
               </table>
            </div>
         </div>
@@ -1336,31 +1336,34 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
             animate={{ scale: 1, opacity: 1 }}
             className="bg-white rounded-[2rem] w-full max-w-4xl shadow-2xl overflow-hidden border-2 border-slate-100 flex flex-col max-h-[90vh]"
           >
-            <div className="p-6 md:p-8 border-b border-slate-100 flex justify-between items-start shrink-0 bg-white z-10">
-              <div className="flex items-center gap-4">
+            <div className="p-4 sm:p-6 md:p-8 border-b border-slate-100 flex justify-between items-start shrink-0 bg-white z-10">
+              <div className="flex items-center gap-3 md:gap-4">
                 {viewingModuleIdx !== null && (
                   <button 
                     onClick={() => setViewingModuleIdx(null)}
                     className="p-2 bg-slate-100 hover:bg-primary hover:text-white rounded-xl transition-all"
                   >
-                    <ChevronLeft size={20} />
+                    <ChevronLeft size={18} />
                   </button>
                 )}
                 <div>
-                  <h2 className="text-xl md:text-2xl font-black text-slate-900 leading-tight">
-                    {viewingModuleIdx !== null ? `Modul ${viewingModuleIdx + 1}: ${APP_CONFIG.modules[viewingModuleIdx].title}` : selectedGroup.groupName}
+                  <h2 className="text-lg md:text-2xl font-black text-slate-900 leading-tight">
+                    Laporan {selectedGroup.groupName}
                   </h2>
-                  <p className="text-slate-400 font-bold text-[0.65rem] uppercase tracking-widest mt-1">
-                    {viewingModuleIdx !== null ? `Laporan Kerja ${selectedGroup.groupName}` : 'Detail Progress Kelompok'}
+                  <p className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                    {viewingModuleIdx !== null ? `Detail Modul 0${viewingModuleIdx + 1}: ${APP_CONFIG.modules[viewingModuleIdx].title}` : 'Ringkasan Seluruh Modul Praktikum'}
                   </p>
                 </div>
               </div>
-              <button onClick={() => setSelectedGroup(null)} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
-                 <X size={24} className="text-slate-400" />
+              <button 
+                onClick={() => setSelectedGroup(null)}
+                className="p-2 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all text-slate-400"
+              >
+                <X size={20} />
               </button>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-6 md:p-8">
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar">
               {viewingModuleIdx !== null ? (
                 <div className="space-y-8 pb-8">
                   {(() => {
@@ -1664,6 +1667,54 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                </div>
             </div>
 
+            <div className="mt-8 flex-grow overflow-hidden flex flex-col">
+              <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-4">Ringkasan Progres Modul</h3>
+              <div className="space-y-3 overflow-y-auto pr-2 custom-scrollbar max-h-[300px]">
+                {APP_CONFIG.modules.map((m, idx) => {
+                  const prog = selectedStudent.moduleProgress[m.id] as any;
+                  const score = prog?.answers?.evaluationScore;
+                  let status = "Belum Mulai";
+                  let statusColor = "text-slate-400 bg-slate-50";
+                  
+                  if (prog) {
+                    if (score !== undefined) {
+                      status = "Selesai";
+                      statusColor = "text-success bg-success/10";
+                    } else {
+                      status = "Progres";
+                      statusColor = "text-orange-600 bg-orange-50";
+                    }
+                  }
+
+                  return (
+                    <div key={m.id} className="flex items-center justify-between p-4 bg-slate-50/50 border border-slate-100 rounded-2xl transition-all hover:bg-white hover:shadow-sm">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-[0.7rem] font-black text-slate-400 shadow-sm">
+                          0{idx + 1}
+                        </div>
+                        <div>
+                          <p className="text-sm font-black text-slate-800 leading-tight mb-1">{m.title}</p>
+                          {score !== undefined ? (
+                            <p className="text-[0.65rem] font-bold text-success capitalize">Evaluasi: <span className="font-black">{score} / 100</span></p>
+                          ) : (
+                            <p className="text-[0.65rem] font-bold text-slate-400 capitalize">{status}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className={cn(
+                        "px-3 py-1 rounded-full text-[0.6rem] font-black uppercase tracking-widest border border-transparent",
+                        status === 'Selesai' ? "bg-success/20 text-success border-success/10" : 
+                        status === 'Progres' ? "bg-orange-100 text-orange-600 border-orange-200" : 
+                        "bg-slate-100 text-slate-400 border-slate-200"
+                      )}>
+                        {status}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             <button 
               onClick={() => setSelectedStudent(null)}
               className="mt-8 w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-slate-900/20 hover:bg-primary transition-all active:scale-[0.98]"
@@ -1821,74 +1872,81 @@ const MainMenu = ({
       </header>
 
       {/* Bento Grid */}
-      <main className="flex-grow p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 max-w-7xl mx-auto w-full">
+      <main className="flex-grow p-4 md:p-6 lg:p-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto w-full">
         
         {/* Welcome & Overview Card */}
-        <div className="sm:col-span-2 lg:col-span-2 bento-card bg-gradient-to-br from-primary to-blue-700 text-white border-transparent p-8 md:p-10">
-          <span className="bg-white/20 text-white px-3 py-1 rounded-full text-[0.6rem] font-bold uppercase tracking-widest backdrop-blur-md">
+        <div className="sm:col-span-2 lg:col-span-2 bento-card bg-gradient-to-br from-primary to-blue-700 text-white border-transparent p-8 md:p-10 flex flex-col justify-center">
+          <div className="w-fit bg-white/20 text-white px-3 py-1 rounded-full text-[0.65rem] md:text-[0.7rem] font-bold uppercase tracking-widest backdrop-blur-md mb-6">
             Dashboard Praktikum
-          </span>
-          <h2 className="text-2xl md:text-3xl font-extrabold mt-4 leading-tight text-balance">
-            Halo, Kelompok {appState.groupInfo?.groupName || 'Pencarian'}!<br/>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-black mb-4 leading-tight">
+            Halo, Tim {appState.groupInfo?.groupName || 'Pencarian'}!
           </h2>
-          <p className="text-blue-100 mt-2 text-sm font-medium leading-relaxed max-w-sm">
+          <p className="text-blue-100 text-sm md:text-base font-medium leading-relaxed max-w-md">
             Silakan pilih salah satu modul praktikum di bawah ini untuk memulai pengamatan PhET kalian.
           </p>
-          <div className="mt-8 flex gap-4">
-            <div className="bg-white/10 p-3 md:p-4 rounded-xl backdrop-blur-sm border border-white/10">
-              <p className="text-[0.5rem] uppercase font-black opacity-60">Status</p>
-              <p className="text-base md:text-lg font-black">{progressPercent}% Selesai</p>
+          <div className="mt-10 flex flex-wrap gap-4">
+            <div className="bg-white/10 p-4 md:p-5 rounded-2xl backdrop-blur-sm border border-white/10 min-w-[120px]">
+              <p className="text-[0.6rem] uppercase font-black opacity-60 tracking-wider mb-1">Status Progres</p>
+              <div className="flex items-end gap-2">
+                <span className="text-2xl md:text-3xl font-black leading-none">{progressPercent}%</span>
+                <span className="text-[0.7rem] font-bold opacity-60 mb-0.5">Selesai</span>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Status Counter Card */}
-        <div className="bento-card border-slate-200 p-8">
-          <h3 className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-4">Ringkasan Modul</h3>
-          <div className="flex justify-between items-end">
+        <div className="bento-card border-slate-200 p-6 md:p-8 flex flex-col">
+          <h3 className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mb-auto">Ringkasan Modul</h3>
+          <div className="flex justify-between items-end mt-8">
              <div>
-               <div className="text-3xl md:text-4xl font-black text-slate-800">{completedModules}</div>
-               <div className="text-[0.6rem] text-slate-400 font-bold uppercase tracking-widest">Selesai</div>
+               <div className="text-4xl md:text-5xl font-black text-slate-800">{completedModules}</div>
+               <div className="text-[0.65rem] md:text-[0.7rem] text-slate-400 font-bold uppercase tracking-widest">Selesai</div>
              </div>
              <div className="text-right">
-               <div className="text-3xl md:text-4xl font-black text-slate-200">{totalModules}</div>
-               <div className="text-[0.6rem] text-slate-400 font-bold uppercase tracking-widest">Total</div>
+               <div className="text-4xl md:text-5xl font-black text-slate-100">{totalModules}</div>
+               <div className="text-[0.65rem] md:text-[0.7rem] text-slate-400 font-bold uppercase tracking-widest">Total</div>
              </div>
           </div>
-          <div className="h-2 bg-slate-100 rounded-full mt-4 overflow-hidden">
-             <div className="h-full bg-primary" style={{ width: `${progressPercent}%` }} />
+          <div className="h-2.5 bg-slate-100 rounded-full mt-6 overflow-hidden">
+             <motion.div 
+               initial={{ width: 0 }}
+               animate={{ width: `${progressPercent}%` }}
+               className="h-full bg-primary" 
+             />
           </div>
         </div>
 
         {/* Team Information Card */}
-        <div className="bento-card border-slate-200 flex flex-col p-8">
-          <h3 className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-4">Anggota Tim</h3>
+        <div className="bento-card border-slate-200 flex flex-col p-6 md:p-8">
+          <h3 className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-widest mb-6">Anggota Tim</h3>
           <div className="space-y-6">
             <div>
-              <p className="text-[0.5rem] font-black text-slate-400 uppercase tracking-widest mb-2">Identitas Kelompok</p>
-              <p className="text-lg font-black text-primary uppercase tracking-tight leading-tight">{appState.groupInfo?.groupName}</p>
+              <p className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest mb-2">Identitas Kelompok</p>
+              <p className="text-xl font-black text-primary uppercase tracking-tight leading-tight">{appState.groupInfo?.groupName}</p>
             </div>
             
             <div className="space-y-4">
               <div>
-                <p className="text-[0.5rem] font-black text-slate-400 uppercase tracking-widest mb-2">Ketua Kelompok</p>
+                <p className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest mb-2">Ketua Kelompok</p>
                 <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-black text-xs">K</div>
-                   <p className="font-bold text-slate-800 text-sm">{appState.groupInfo?.leaderName}</p>
+                   <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-black text-sm">K</div>
+                   <p className="font-bold text-slate-800 text-sm md:text-base">{appState.groupInfo?.leaderName}</p>
                 </div>
               </div>
 
               <div>
-                <p className="text-[0.5rem] font-black text-slate-400 uppercase tracking-widest mb-2">Daftar Anggota</p>
-                <div className="grid grid-cols-1 gap-2">
+                <p className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest mb-2">Daftar Anggota</p>
+                <div className="grid grid-cols-1 gap-2 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar">
                    {appState.groupInfo?.members.filter(m => m).map((m, i) => (
-                     <div key={i} className="flex items-center gap-3 p-2 bg-slate-50 rounded-xl border border-slate-100">
-                        <div className="w-6 h-6 rounded-md bg-white border border-slate-200 flex items-center justify-center font-black text-[0.6rem] text-slate-400">{i+1}</div>
-                        <p className="font-bold text-slate-700 text-xs">{m}</p>
+                     <div key={i} className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                        <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-black text-[0.7rem] text-slate-400">{i+1}</div>
+                        <p className="font-bold text-slate-700 text-xs md:text-sm">{m}</p>
                      </div>
                    ))}
                    {(!appState.groupInfo?.members || appState.groupInfo.members.filter(m => m).length === 0) && (
-                     <p className="text-[0.65rem] text-slate-400 italic">Hanya ketua kelompok</p>
+                     <p className="text-[0.7rem] text-slate-400 italic font-medium px-1">Hanya ketua kelompok aktif</p>
                    )}
                 </div>
               </div>
@@ -1897,13 +1955,13 @@ const MainMenu = ({
         </div>
 
         {/* Module Selection Section */}
-        <div className="sm:col-span-2 lg:col-span-4 mt-8 md:mt-4 mb-2">
-          <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-            <div className="w-8 h-[2px] bg-slate-100" />
-            Daftar Modul Praktikum Virtual
+        <div className="sm:col-span-2 lg:col-span-4 mt-12 md:mt-16 mb-2">
+          <h3 className="text-[0.7rem] md:text-sm font-black text-slate-400 uppercase tracking-[0.3em] mb-8 flex items-center gap-4">
+            <div className="w-12 h-[2px] bg-primary/20" />
+            Daftar Modul Praktikum
             <div className="flex-grow h-[2px] bg-slate-100" />
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {APP_CONFIG.modules.map((m, idx) => {
               const Icon = icons[m.icon as keyof typeof icons] || BookOpen;
               const answers = getModuleAnswers(m.id);
@@ -1922,115 +1980,81 @@ const MainMenu = ({
               };
               const moduleProgressPercent = calculateModuleProgress();
               const isCompleted = moduleProgressPercent === 100;
-              const hasRoles = answers.roleAssignments && answers.roleAssignments.length > 0;
               return (
                 <motion.div
                   key={m.id}
-                  whileHover={{ y: -8 }}
+                  whileHover={{ y: -12, shadow: '0 25px 50px -12px rgba(0,0,0,0.1)' }}
                   onClick={() => {
                     setActiveModuleIndex(idx);
                     setView('MODULE');
                   }}
-                  className="bento-card cursor-pointer group relative overflow-hidden bg-white hover:border-primary/30 transition-all shadow-sm"
+                  className="bento-card cursor-pointer group relative overflow-hidden bg-white border-2 border-slate-50 hover:border-primary/40 transition-all p-8 md:p-10 flex flex-col h-full"
                 >
-                  <div className="absolute top-0 right-0 p-4">
+                  <div className="absolute top-0 right-0 p-6">
                     {isCompleted ? (
-                      <div className="p-1 px-2.5 bg-green-500 text-white rounded-full flex items-center gap-1.5 text-[0.6rem] font-black uppercase tracking-widest shadow-lg shadow-green-500/20">
-                         <CheckCircle2 size={12} /> Selesai
+                      <div className="px-4 py-1.5 bg-success text-white rounded-full flex items-center gap-2 text-[0.65rem] font-bold uppercase tracking-widest shadow-lg shadow-success/20">
+                         <CheckCircle2 size={14} /> Selesai
                       </div>
                     ) : (
-                      <div className="p-1 px-2.5 bg-slate-100 text-slate-400 rounded-full flex items-center gap-1.5 text-[0.6rem] font-black uppercase tracking-widest">
-                         <PlayCircle size={12} /> {moduleProgressPercent}%
+                      <div className="px-4 py-1.5 bg-slate-100 text-slate-500 rounded-full flex items-center gap-2 text-[0.65rem] font-black uppercase tracking-widest border border-slate-200">
+                         <PlayCircle size={14} /> {moduleProgressPercent}%
                       </div>
                     )}
                   </div>
                   
-                  <div className="mb-6">
-                    <p className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest mb-1">Modul 0{idx + 1}</p>
-                    <h4 className="text-xl font-extrabold text-slate-800 leading-tight group-hover:text-primary transition-colors">
+                  <div className="mb-0 flex-grow">
+                    <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-2">Modul 0{idx + 1}</p>
+                    <h4 className="text-2xl font-black text-slate-800 leading-tight mb-4 group-hover:text-primary transition-colors text-balance">
                       {m.title}
                     </h4>
-                    
-                    {appState.moduleProgress[m.id]?.updatedAt && (
-                      <p className="text-[0.65rem] font-medium text-slate-500 mt-1 flex items-center gap-1.5">
-                        <RefreshCw size={10} className="text-slate-400" />
-                        {isCompleted ? 'Selesai' : 'Disimpan'} pada {formatDate(appState.moduleProgress[m.id].updatedAt)}
-                      </p>
-                    )}
-                    
-                    {/* Progress Bar */}
-                    <div className="mt-4">
-                      <div className="flex justify-between items-center mb-1.5">
-                        <span className="text-[0.65rem] font-bold text-slate-500">Progres Langkah</span>
-                        <span className="text-[0.65rem] font-black text-primary">{moduleProgressPercent}%</span>
-                      </div>
-                      <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <motion.div 
-                          initial={{ width: 0 }}
-                          animate={{ width: `${moduleProgressPercent}%` }}
-                          className="h-full bg-primary"
-                        />
-                      </div>
+                    <div className="flex items-center gap-2 text-slate-500 mb-6">
+                       <RefreshCw size={14} className="opacity-40" />
+                       <span className="text-[0.65rem] font-bold">Terupdate: {(answers as any).updatedAt ? formatDate((answers as any).updatedAt) : 'Belum Mulai'}</span>
+                    </div>
+
+                    <div className="space-y-4">
+                       <div className="flex justify-between items-center text-[0.65rem] font-black uppercase tracking-widest">
+                          <span className="text-slate-400">Progres Langkah</span>
+                          <span className="text-primary">{moduleProgressPercent}%</span>
+                       </div>
+                       <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${moduleProgressPercent}%` }}
+                            className="h-full bg-primary" 
+                          />
+                       </div>
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-100 space-y-4">
-                    <p className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-widest">Detail Progres Praktikum</p>
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                      {[
-                        { name: 'Pembagian Tugas', key: 'roleAssignments' },
-                        { name: 'Rumusan Masalah', key: 'problemFormulation' },
-                        { name: 'Hipotesis', key: 'hypothesis' },
-                        { name: 'Pengamatan Data', key: 'data' },
-                        { name: 'Uji Hipotesis', key: 'hypothesisTesting' },
-                        { name: 'Kesimpulan', key: 'conclusion' },
-                        { name: 'Evaluasi', key: 'evaluationScore' },
-                        { name: 'Refleksi', key: 'reflection' }
-                      ].map((item) => {
-                        const answers = getModuleAnswers(m.id);
-                        let isDone = false;
-                        if (item.key === 'roleAssignments') isDone = !!(answers.roleAssignments && answers.roleAssignments.some(r => r.role));
-                        if (item.key === 'problemFormulation') isDone = !!answers.problemFormulation;
-                        if (item.key === 'hypothesis') isDone = !!answers.hypothesis;
-                        if (item.key === 'data') isDone = answers.tableData.length > 0 || (answers.subTableData && Object.keys(answers.subTableData).length > 0);
-                        if (item.key === 'hypothesisTesting') isDone = answers.hypothesisTesting.isCorrect !== null;
-                        if (item.key === 'conclusion') isDone = !!answers.conclusion;
-                        if (item.key === 'evaluationScore') isDone = answers.evaluationScore !== undefined;
-                        if (item.key === 'reflection') isDone = !!(answers.reflection && answers.reflection.whatLearned);
-
-                        return (
-                          <div key={item.name} className="flex items-center gap-2">
-                            <div className={cn(
-                              "w-1.5 h-1.5 rounded-full",
-                              isDone ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-slate-200"
-                            )} />
-                            <span className={cn(
-                              "text-[0.55rem] font-bold truncate",
-                              isDone ? "text-slate-700" : "text-slate-400"
-                            )}>
-                              {item.name}
-                            </span>
-                            {isDone && <CheckCircle2 size={10} className="text-green-500 shrink-0" />}
-                          </div>
-                        );
-                      })}
+                  <div className="mt-8 pt-8 border-t border-slate-50">
+                    <p className="text-[0.6rem] font-black text-slate-300 uppercase tracking-widest mb-4">Detail Tahapan Praktikum</p>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                       {[
+                         { label: 'Pembagian Tugas', done: answers.roleAssignments && answers.roleAssignments.some(r => r.role) },
+                         { label: 'Rumusan Masalah', done: !!answers.problemFormulation },
+                         { label: 'Hipotesis', done: !!answers.hypothesis },
+                         { label: 'Pengamatan Data', done: answers.tableData.length > 0 || (answers.subTableData && Object.values(answers.subTableData).some(d => d.length > 0)) },
+                         { label: 'Uji Hipotesis', done: answers.hypothesisTesting.isCorrect !== null },
+                         { label: 'Kesimpulan', done: !!answers.conclusion },
+                         { label: 'Evaluasi', done: answers.evaluationScore !== undefined },
+                         { label: 'Refleksi', done: answers.reflection && answers.reflection.whatLearned }
+                       ].map((step, i) => (
+                         <div key={i} className="flex items-center gap-2">
+                            <div className={cn("w-1.5 h-1.5 rounded-full", step.done ? "bg-success" : "bg-slate-200")} />
+                            <span className={cn("text-[0.65rem] font-bold truncate", step.done ? "text-slate-700" : "text-slate-400")}>{step.label}</span>
+                         </div>
+                       ))}
                     </div>
                   </div>
 
-                  <div className="mt-8 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                       <HelpCircle size={16} className="text-slate-300" />
-                       <span className="text-[0.65rem] font-black text-slate-500 uppercase tracking-tight">Evaluasi Archimedes</span>
-                    </div>
-                    <motion.div 
-                      whileHover={{ x: 5 }}
-                      className={cn(
-                        "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
-                        isCompleted ? "bg-green-100 text-green-600" : "bg-primary text-white shadow-lg shadow-primary/30"
-                      )}
-                    >
-                      <ChevronRight size={24} />
-                    </motion.div>
+                  <div className="mt-8 flex justify-between items-center">
+                     <span className="text-[0.65rem] font-black text-primary uppercase tracking-widest group-hover:translate-x-2 transition-transform flex items-center gap-2">
+                        Buka Laporan <ArrowRight size={14} />
+                     </span>
+                     <div className="w-10 h-10 bg-slate-50 text-slate-400 group-hover:bg-primary group-hover:text-white rounded-full flex items-center justify-center transition-all">
+                        <ChevronRight size={20} />
+                     </div>
                   </div>
                 </motion.div>
               );
@@ -3664,12 +3688,12 @@ function AdminStudentScoreChart({ moduleProgress }: { moduleProgress: any }) {
     datasets: [
       {
         label: 'Skor Evaluasi',
-        data: APP_CONFIG.modules.map((_, idx) => {
-          const mod = moduleProgress[idx];
+        data: APP_CONFIG.modules.map((m) => {
+          const mod = moduleProgress[m.id];
           return mod?.answers?.evaluationScore || 0;
         }),
-        backgroundColor: APP_CONFIG.modules.map((_, idx) => {
-          const mod = moduleProgress[idx];
+        backgroundColor: APP_CONFIG.modules.map((m) => {
+          const mod = moduleProgress[m.id];
           if (!mod) return 'rgba(203, 213, 225, 0.4)'; // Slate 300
           const score = mod?.answers?.evaluationScore || 0;
           if (score >= 80) return 'rgba(34, 197, 94, 0.6)'; // Green 500
