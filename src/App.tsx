@@ -37,6 +37,7 @@ import {
   Home,
   GripVertical,
   ArrowRight,
+  ArrowLeft,
   X,
   XCircle,
   Heart,
@@ -505,42 +506,42 @@ const LandingPage = ({ setView }: { setView: (v: View) => void }) => (
     className="min-h-screen flex flex-col items-center justify-center p-6 text-center relative overflow-hidden"
   >
     <LabBackground variant="light" />
-    <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center relative z-10">
+    <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
       <motion.div
-        initial={{ x: -60, opacity: 0 }}
+        initial={{ x: -40, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.8 }}
         className="text-center lg:text-left"
       >
          <motion.div
-           animate={{ y: [0, -20, 0] }}
+           animate={{ y: [0, -15, 0] }}
            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-           className="relative inline-block mb-10"
+           className="relative inline-block mb-8"
          >
-           <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
+           <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full" />
            <img 
             src={APP_CONFIG.university.logo} 
             alt="Logo" 
-            className="w-36 h-36 md:w-52 md:h-52 object-contain relative z-10 drop-shadow-[0_20px_50px_rgba(59,130,246,0.3)]" 
+            className="w-28 h-28 md:w-40 md:h-40 object-contain relative z-10 drop-shadow-[0_15px_40px_rgba(59,130,246,0.3)]" 
            />
          </motion.div>
         
-        <h2 className="text-primary font-black uppercase tracking-[0.5em] text-[0.8rem] md:text-lg mb-6 flex items-center justify-center lg:justify-start gap-3">
-          <span className="w-8 h-[2px] bg-primary/30 hidden md:block" />
+        <h2 className="text-primary font-black uppercase tracking-[0.4em] text-[0.75rem] md:text-sm mb-4 flex items-center justify-center lg:justify-start gap-3">
+          <span className="w-6 h-[2px] bg-primary/30 hidden md:block" />
           {APP_CONFIG.university.name}
         </h2>
         
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[0.9] tracking-tighter mb-10 text-balance drop-shadow-sm">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tighter mb-8 text-balance drop-shadow-sm">
           Praktikum<br/>
           <span className="bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">Gaya Archimedes.</span>
         </h1>
         
-        <p className="text-slate-500 text-base md:text-lg font-medium mb-14 max-w-2xl mx-auto lg:mx-0 leading-relaxed opacity-90">
-          LMS Interaktif berbasis <span className="text-primary font-black border-b-4 border-primary/20">Guided Inquiry</span> untuk eksplorasi hukum fisika secara mendalam.
+        <p className="text-slate-500 text-sm md:text-base font-medium mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed opacity-90">
+          LMS Interaktif berbasis <span className="text-primary font-black border-b-2 border-primary/20">Guided Inquiry</span> untuk eksplorasi hukum fisika secara mendalam.
         </p>
         
-        <Button onClick={() => setView('LOGIN')} className="w-full md:w-auto px-16 py-8 text-xl md:text-2xl shadow-[0_30px_60px_-15px_rgba(59,130,246,0.5)] rounded-[2.5rem] group bg-primary hover:bg-blue-700 transition-all">
-          Mulai Belajar Sekarang <ChevronRight className="group-hover:translate-x-3 transition-transform duration-300" size={32} />
+        <Button onClick={() => setView('LOGIN')} className="w-full md:w-auto px-10 py-5 text-lg md:text-xl shadow-[0_20px_40px_-10px_rgba(59,130,246,0.5)] rounded-2xl group bg-primary hover:bg-blue-700 transition-all">
+          Mulai Belajar Sekarang <ChevronRight className="group-hover:translate-x-2 transition-transform duration-300" size={24} />
         </Button>
       </motion.div>
 
@@ -550,36 +551,36 @@ const LandingPage = ({ setView }: { setView: (v: View) => void }) => (
         transition={{ duration: 0.8, delay: 0.2 }}
         className="grid grid-cols-2 gap-4 md:gap-6"
       >
-        <div className="bento-card p-6 md:p-10 flex flex-col items-center justify-center bg-white/80 backdrop-blur-md shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] rounded-[2.5rem] border border-white group hover:translate-y-[-8px] transition-all duration-500">
-          <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/5 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
-            <Anchor size={32} className="md:size-10" />
+        <div className="bento-card p-5 md:p-8 flex flex-col items-center justify-center bg-white/80 backdrop-blur-md shadow-sm rounded-3xl border border-white group hover:translate-y-[-4px] transition-all duration-500">
+          <div className="w-12 h-12 md:w-16 md:h-16 bg-primary/5 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
+            <Anchor size={28} className="md:size-8" />
           </div>
-          <p className="font-bold text-slate-400 text-[0.6rem] md:text-xs uppercase tracking-[0.3em] mb-2">Praktikum</p>
-          <p className="font-black text-slate-800 text-base md:text-lg tracking-tight">Virtual</p>
+          <p className="font-bold text-slate-400 text-[0.6rem] md:text-[0.65rem] uppercase tracking-[0.2em] mb-1">Praktikum</p>
+          <p className="font-black text-slate-800 text-sm md:text-base tracking-tight">Virtual</p>
         </div>
         
-        <div className="bento-card p-6 md:p-10 flex flex-col items-center justify-center bg-primary text-white border-transparent shadow-[0_30px_60px_-15px_rgba(59,130,246,0.3)] rounded-[2.5rem] group hover:translate-y-[-8px] transition-all duration-500">
-          <div className="w-16 h-16 md:w-20 md:h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-primary transition-all duration-500 shadow-lg">
-            <Trophy size={32} className="md:size-10" />
+        <div className="bento-card p-5 md:p-8 flex flex-col items-center justify-center bg-primary text-white border-transparent shadow-lg rounded-3xl group hover:translate-y-[-4px] transition-all duration-500">
+          <div className="w-12 h-12 md:w-16 md:h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white group-hover:text-primary transition-all duration-500 shadow-lg">
+            <Trophy size={28} className="md:size-8" />
           </div>
-          <p className="font-bold opacity-60 text-[0.6rem] md:text-xs uppercase tracking-[0.3em] mb-2">LKPD</p>
-          <p className="font-black text-base md:text-lg tracking-tight">Interaktif</p>
+          <p className="font-bold opacity-60 text-[0.6rem] md:text-[0.65rem] uppercase tracking-[0.2em] mb-1">LKPD</p>
+          <p className="font-black text-sm md:text-base tracking-tight">Interaktif</p>
         </div>
         
-        <div className="bento-card p-6 md:p-10 flex flex-col items-center justify-center bg-slate-50/50 backdrop-blur-sm border-2 border-dashed border-slate-200 rounded-[2.5rem] group hover:translate-y-[-8px] transition-all duration-500">
-          <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-200/50 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-slate-800 group-hover:text-white transition-all duration-500">
-            <Users size={32} className="text-slate-400 md:size-10 transition-colors" />
+        <div className="bento-card p-5 md:p-8 flex flex-col items-center justify-center bg-slate-50/50 backdrop-blur-sm border border-dashed border-slate-200 rounded-3xl group hover:translate-y-[-4px] transition-all duration-500">
+          <div className="w-12 h-12 md:w-16 md:h-16 bg-slate-200/50 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-slate-800 group-hover:text-white transition-all duration-500">
+            <Users size={28} className="text-slate-400 md:size-8 transition-colors" />
           </div>
-          <p className="font-bold text-slate-400 text-[0.6rem] md:text-xs uppercase tracking-[0.3em] mb-2">Kolaborasi</p>
-          <p className="font-black text-slate-800 text-base md:text-lg tracking-tight">Kelompok</p>
+          <p className="font-bold text-slate-400 text-[0.6rem] md:text-[0.65rem] uppercase tracking-[0.2em] mb-1">Kolaborasi</p>
+          <p className="font-black text-slate-800 text-sm md:text-base tracking-tight">Kelompok</p>
         </div>
         
-        <div className="bento-card p-6 md:p-10 flex flex-col items-center justify-center bg-white/80 backdrop-blur-md shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] rounded-[2.5rem] border border-white group hover:translate-y-[-8px] transition-all duration-500">
-          <div className="w-16 h-16 md:w-20 md:h-20 bg-amber-50 rounded-3xl flex items-center justify-center mb-6 group-hover:bg-amber-500 group-hover:text-white transition-all duration-500 shadow-inner">
-            <Scale size={32} className="md:size-10" />
+        <div className="bento-card p-5 md:p-8 flex flex-col items-center justify-center bg-white/80 backdrop-blur-md shadow-sm rounded-3xl border border-white group hover:translate-y-[-4px] transition-all duration-500">
+          <div className="w-12 h-12 md:w-16 md:h-16 bg-amber-50 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-amber-500 group-hover:text-white transition-all duration-500 shadow-inner">
+            <Scale size={28} className="md:size-8" />
           </div>
-          <p className="font-bold text-slate-400 text-[0.6rem] md:text-xs uppercase tracking-[0.3em] mb-2">Data</p>
-          <p className="font-black text-slate-800 text-base md:text-lg tracking-tight">Akurat</p>
+          <p className="font-bold text-slate-400 text-[0.6rem] md:text-[0.65rem] uppercase tracking-[0.2em] mb-1">Data</p>
+          <p className="font-black text-slate-800 text-sm md:text-base tracking-tight">Akurat</p>
         </div>
       </motion.div>
     </div>
@@ -647,35 +648,35 @@ const LoginPage = ({
       <LabBackground variant={role === 'admin' ? 'blue' : 'light'} />
       <motion.div 
         key={role}
-        initial={{ y: 40, opacity: 0, scale: 0.95 }}
+        initial={{ y: 20, opacity: 0, scale: 0.98 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, type: "spring" }}
-        className="bg-white/90 backdrop-blur-3xl p-10 md:p-16 rounded-[4rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] w-full max-w-xl border border-white/50 relative z-10"
+        className="bg-white/90 backdrop-blur-3xl p-8 md:p-12 rounded-3xl shadow-xl w-full max-w-lg border border-white/50 relative z-10"
       >
-        <div className="flex flex-col items-center text-center mb-12">
+        <div className="flex flex-col items-center text-center mb-10">
           <motion.div 
-            whileHover={{ rotate: role === 'admin' ? -10 : 10 }}
+            whileHover={{ rotate: role === 'admin' ? -5 : 5 }}
             className={cn(
-              "w-24 h-24 rounded-[2.5rem] flex items-center justify-center text-white shadow-2xl mb-8 mb-6 transition-all duration-500",
-              role === 'admin' ? "bg-slate-900 border-4 border-slate-700" : "bg-primary border-4 border-blue-400"
+              "w-20 h-20 rounded-2xl flex items-center justify-center text-white shadow-lg mb-6 transition-all duration-500",
+              role === 'admin' ? "bg-slate-900 border-2 border-slate-700" : "bg-primary border-2 border-blue-400"
             )}>
-            {role === 'admin' ? <Shield size={42} /> : <Droplets size={42} />}
+            {role === 'admin' ? <Shield size={36} /> : <Droplets size={36} />}
           </motion.div>
           
-          <h2 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight tracking-tighter mb-2">
+          <h2 className="text-xl md:text-2xl font-black text-slate-900 leading-tight tracking-tighter mb-1">
             Laboratorium <span className={role === 'admin' ? "text-slate-700" : "text-primary"}>Virtual</span>
           </h2>
-          <p className="text-slate-400 text-sm font-black uppercase tracking-[0.4em]">Archimedes Learning System</p>
+          <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Archimedes Learning System</p>
         </div>
 
         {/* Improved Role Toggle */}
-        <div className="bg-slate-100/80 p-2 rounded-[2rem] flex mb-12 border border-slate-200 shadow-inner">
+        <div className="bg-slate-100/80 p-1.5 rounded-2xl flex mb-10 border border-slate-200">
           <button 
             type="button"
             onClick={() => setRole('student')}
             className={cn(
-              "flex-1 py-4 rounded-[1.5rem] text-[0.75rem] font-black uppercase tracking-widest transition-all duration-300",
-              role === 'student' ? "bg-white text-primary shadow-[0_10px_20px_rgba(0,0,0,0.05)]" : "text-slate-400 hover:text-slate-600"
+              "flex-1 py-3 rounded-xl text-[0.7rem] font-black uppercase tracking-widest transition-all duration-300",
+              role === 'student' ? "bg-white text-primary shadow-sm" : "text-slate-400 hover:text-slate-600"
             )}
           >
             Siswa / Kelompok
@@ -684,65 +685,65 @@ const LoginPage = ({
             type="button"
             onClick={() => setRole('admin')}
             className={cn(
-              "flex-1 py-4 rounded-[1.5rem] text-[0.75rem] font-black uppercase tracking-widest transition-all duration-300",
-              role === 'admin' ? "bg-slate-900 text-white shadow-[0_10px_20px_rgba(0,0,0,0.2)]" : "text-slate-400 hover:text-slate-600"
+              "flex-1 py-3 rounded-xl text-[0.7rem] font-black uppercase tracking-widest transition-all duration-300",
+              role === 'admin' ? "bg-slate-900 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
             )}
           >
             Administrator
           </button>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8 text-left">
+        <form onSubmit={handleSubmit} className="space-y-6 md:space-y-7 text-left">
           {error && (
             <motion.div 
               initial={{ x: -10, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              className="bg-red-50 text-red-600 p-6 rounded-3xl border border-red-100 flex items-center gap-4 shadow-sm"
+              className="bg-red-50 text-red-600 p-5 rounded-2xl border border-red-100 flex items-center gap-3"
             >
-              <AlertTriangle size={24} className="shrink-0" />
+              <AlertTriangle size={20} className="shrink-0" />
               <p className="text-sm font-bold">{error}</p>
             </motion.div>
           )}
           
-          <div className="space-y-3">
-            <label className="block text-[0.75rem] font-black text-slate-500 uppercase tracking-[0.2em] ml-2">
+          <div className="space-y-2">
+            <label className="block text-[0.7rem] font-black text-slate-500 uppercase tracking-widest ml-1">
               {role === 'student' ? 'Identitas Kelompok' : 'Email Administrator'}
             </label>
             <div className="relative group">
-               <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
-                 {role === 'student' ? <Users size={24} /> : <Mail size={24} />}
+               <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+                 {role === 'student' ? <Users size={20} /> : <Mail size={20} />}
                </div>
                <input 
                 type={role === 'student' ? "text" : "email"}
                 value={identifier}
                 onChange={e => setIdentifier(e.target.value)}
-                className="w-full p-6 pl-16 bg-slate-50 border-2 border-slate-100 focus:border-primary focus:bg-white rounded-[2rem] outline-none transition-all font-bold text-slate-800 text-lg shadow-sm"
-                placeholder={role === 'student' ? "Masukkan Nama Kelompok Anda" : "admin@lab.ac.id"}
+                className="w-full p-4 pl-14 bg-slate-50 border-2 border-slate-100 focus:border-primary focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-800 shadow-sm"
+                placeholder={role === 'student' ? "Nama Kelompok" : "admin@lab.ac.id"}
                 required
               />
             </div>
           </div>
           
-          <div className="space-y-3">
-            <label className="block text-[0.75rem] font-black text-slate-500 uppercase tracking-[0.2em] ml-2">Sandi Pengamanan</label>
+          <div className="space-y-2">
+            <label className="block text-[0.7rem] font-black text-slate-500 uppercase tracking-widest ml-1">Sandi Pengamanan</label>
             <div className="relative group">
-               <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
-                 <Lock size={24} />
+               <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+                 <Lock size={20} />
                </div>
                <input 
                 type={showPassword ? "text" : "password"} 
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full p-6 pl-16 pr-16 bg-slate-50 border-2 border-slate-100 focus:border-primary focus:bg-white rounded-[2rem] outline-none transition-all font-bold text-slate-800 text-lg shadow-sm"
+                className="w-full p-4 pl-14 pr-14 bg-slate-50 border-2 border-slate-100 focus:border-primary focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-800 shadow-sm"
                 placeholder="••••••••••••"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
+                className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
               >
-                {showPassword ? <EyeOff size={24} /> : <Eye size={24} />}
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>
@@ -750,14 +751,14 @@ const LoginPage = ({
           <Button 
             disabled={loading} 
             className={cn(
-              "w-full py-8 text-2xl font-black rounded-[2rem] shadow-2xl transition-all active:scale-95 mt-4",
-              role === 'admin' ? "bg-slate-900 hover:bg-black shadow-slate-900/30" : "bg-primary hover:bg-blue-700 shadow-primary/30"
+              "w-full py-4 text-lg font-black rounded-2xl shadow-lg mt-2",
+              role === 'admin' ? "bg-slate-900 hover:bg-black" : "bg-primary hover:bg-blue-700"
             )}
           >
             {loading ? (
-              <RefreshCw className="animate-spin" size={28} />
+              <RefreshCw className="animate-spin" size={20} />
             ) : (
-              <>Masuk Laboratorium <ArrowRight size={28} /></>
+              <>Masuk Laboratorium <ArrowRight size={20} /></>
             )}
           </Button>
 
@@ -871,19 +872,19 @@ const RegisterPage = ({ setView }: { setView: (v: View) => void }) => {
       <motion.div 
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="bg-white/95 backdrop-blur-xl p-10 md:p-14 rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] w-full max-w-xl border border-white/20 relative z-10"
+        className="bg-white/95 backdrop-blur-xl p-8 md:p-10 rounded-3xl shadow-xl w-full max-w-lg border border-white/20 relative z-10"
       >
-        <div className="flex items-center gap-4 mb-8">
-          <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg rotate-[5deg]">
-            <UserPlus size={28} />
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg rotate-[5deg]">
+            <UserPlus size={24} />
           </div>
           <div>
-            <h2 className="text-xl font-black text-slate-900 leading-tight">Daftar Kelompok</h2>
-            <p className="text-blue-500 text-xs font-black uppercase tracking-[0.2em]">Registrasi Kelompok Baru</p>
+            <h2 className="text-lg font-black text-slate-900 leading-tight">Daftar Kelompok</h2>
+            <p className="text-blue-500 text-[0.6rem] font-black uppercase tracking-wider">Registrasi Kelompok Baru</p>
           </div>
         </div>
         
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 md:gap-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 md:gap-5">
           {error && <div className="col-span-2 text-red-500 text-xs md:text-sm font-bold bg-red-50 p-3 rounded-lg border border-red-100">{error}</div>}
           
           <div className="col-span-2 md:col-span-1">
@@ -952,8 +953,8 @@ const RegisterPage = ({ setView }: { setView: (v: View) => void }) => {
           </div>
           
           <div className="col-span-2 space-y-4 mt-6">
-            <Button disabled={loading} className="w-full py-5 text-xl font-black bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-600/30 rounded-2xl active:scale-95 transition-all">
-              {loading ? 'Mendaftarkan...' : 'Daftar & Masuk Lab'} <CheckCircle2 size={20} />
+            <Button disabled={loading} className="w-full py-4 text-lg font-black bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-600/30 rounded-2xl active:scale-95 transition-all">
+              {loading ? 'Mendaftarkan...' : 'Daftar & Masuk Lab'} <CheckCircle2 size={18} />
             </Button>
             
             <div className="flex flex-col items-center gap-4">
@@ -1153,9 +1154,9 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
     <div className="min-h-screen bg-bg relative overflow-hidden">
       <LabBackground variant="light" />
       <div className="relative z-10">
-        <header className="bg-white/80 backdrop-blur-3xl px-8 md:px-12 py-6 md:py-8 border-b border-white flex justify-between items-center sticky top-0 z-50 shadow-sm transition-all">
-          <div className="flex items-center gap-6">
-            <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-3xl flex items-center justify-center p-2 shadow-xl border border-slate-100 rotate-[-5deg] hover:rotate-0 transition-transform">
+        <header className="bg-white/80 backdrop-blur-3xl px-6 md:px-8 py-4 md:py-6 border-b border-white flex justify-between items-center sticky top-0 z-50 shadow-sm transition-all">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-white rounded-2xl flex items-center justify-center p-2 shadow-lg border border-slate-100 rotate-[-5deg] hover:rotate-0 transition-transform">
               <img 
                 src={APP_CONFIG.university.logo} 
                 alt="USK Logo" 
@@ -1163,137 +1164,137 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
               />
             </div>
             <div>
-              <h1 className="text-base md:text-xl font-black text-slate-900 tracking-tighter leading-none mb-1">Pusat Kendali Admin</h1>
-              <p className="text-[0.65rem] md:text-[0.75rem] uppercase font-black text-primary tracking-[0.3em] opacity-70">Sistem Manajemen Praktikum Virtual</p>
+              <h1 className="text-sm md:text-lg font-black text-slate-900 tracking-tighter leading-none mb-1">Pusat Kendali Admin</h1>
+              <p className="text-[0.6rem] md:text-[0.65rem] uppercase font-black text-primary tracking-widest opacity-70">Sistem Manajemen Praktikum Virtual</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-4 md:gap-8">
+          <div className="flex items-center gap-3 md:gap-6">
             <button 
               onClick={resetState}
-              className="w-14 h-14 md:w-16 md:h-16 bg-red-50 text-red-600 rounded-2xl md:rounded-3xl hover:bg-red-600 hover:text-white transition-all flex items-center justify-center shadow-sm hover:shadow-xl group"
+              className="w-12 h-12 md:w-14 md:h-14 bg-red-50 text-red-600 rounded-xl md:rounded-2xl hover:bg-red-600 hover:text-white transition-all flex items-center justify-center shadow-sm hover:shadow-lg group"
             >
-              <LogOut size={24} className="group-hover:translate-x-1 transition-transform" />
+              <LogOut size={20} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </header>
 
-        <main className="max-w-[100rem] mx-auto p-8 md:p-12 w-full">
-          {/* Stats Grid - Upscaled */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mb-12">
-            <div className="bento-card border-white/50 p-10 md:p-12 bg-white/80 backdrop-blur-xl shadow-2xl relative group overflow-hidden">
-               <div className="absolute top-0 right-0 p-8 text-slate-100 group-hover:text-primary/10 transition-colors">
-                  <Users size={64} />
+        <main className="max-w-7xl mx-auto p-6 md:p-8 w-full">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+            <div className="bento-card border-white/50 p-6 md:p-8 bg-white/80 backdrop-blur-xl shadow-lg relative group overflow-hidden">
+               <div className="absolute top-0 right-0 p-4 text-slate-100 group-hover:text-primary/10 transition-colors">
+                  <Users size={48} />
                </div>
-               <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-4 relative z-10">Total Kelompok</p>
-               <div className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter relative z-10">{stats.totalGroups}</div>
-               <div className="mt-6 flex items-center gap-2 text-success relative z-10">
-                  <Activity size={16} />
-                  <span className="text-[0.7rem] font-black uppercase">Data Terkini</span>
+               <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-2 relative z-10">Total Kelompok</p>
+               <div className="text-xl md:text-2xl font-black text-slate-900 tracking-tighter relative z-10">{stats.totalGroups}</div>
+               <div className="mt-4 flex items-center gap-2 text-success relative z-10">
+                  <Activity size={12} />
+                  <span className="text-[0.6rem] font-black uppercase">Data Terkini</span>
                </div>
             </div>
             
-            <div className="bento-card border-white/50 p-10 md:p-12 bg-white/80 backdrop-blur-xl shadow-2xl relative group overflow-hidden">
-               <div className="absolute top-0 right-0 p-8 text-slate-100 group-hover:text-blue-500/10 transition-colors">
-                  <User size={64} />
+            <div className="bento-card border-white/50 p-6 md:p-8 bg-white/80 backdrop-blur-xl shadow-lg relative group overflow-hidden">
+               <div className="absolute top-0 right-0 p-4 text-slate-100 group-hover:text-blue-500/10 transition-colors">
+                  <User size={48} />
                </div>
-               <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-4 relative z-10">Total Peserta</p>
-               <div className="text-2xl md:text-3xl font-black text-primary tracking-tighter relative z-10">{stats.totalStudents}</div>
-               <div className="mt-6 flex items-center gap-2 text-primary relative z-10">
-                  <CheckCircle2 size={16} />
-                  <span className="text-[0.7rem] font-black uppercase">Siswa Terverifikasi</span>
-               </div>
-            </div>
-
-            <div className="bento-card border-white/50 p-10 md:p-12 bg-white/80 backdrop-blur-xl shadow-2xl relative group overflow-hidden">
-               <div className="absolute top-0 right-0 p-8 text-slate-100 group-hover:text-green-500/10 transition-colors">
-                  <Trophy size={64} />
-               </div>
-               <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-4 relative z-10">Tuntas Praktikum</p>
-               <div className="text-2xl md:text-3xl font-black text-success tracking-tighter relative z-10">{stats.completedAll}</div>
-               <div className="mt-6 flex items-center gap-2 text-success relative z-10">
-                  <Award size={16} />
-                  <span className="text-[0.7rem] font-black uppercase">Reward Tersedia</span>
+               <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-2 relative z-10">Total Peserta</p>
+               <div className="text-xl md:text-2xl font-black text-primary tracking-tighter relative z-10">{stats.totalStudents}</div>
+               <div className="mt-4 flex items-center gap-2 text-primary relative z-10">
+                  <CheckCircle2 size={12} />
+                  <span className="text-[0.6rem] font-black uppercase">Siswa Terverifikasi</span>
                </div>
             </div>
 
-            <div className="bento-card border-white/50 p-10 md:p-12 bg-white/80 backdrop-blur-xl shadow-2xl relative group overflow-hidden">
-               <div className="absolute top-0 right-0 p-8 text-slate-100 group-hover:text-orange-500/10 transition-colors">
-                  <BookOpen size={64} />
+            <div className="bento-card border-white/50 p-6 md:p-8 bg-white/80 backdrop-blur-xl shadow-lg relative group overflow-hidden">
+               <div className="absolute top-0 right-0 p-4 text-slate-100 group-hover:text-green-500/10 transition-colors">
+                  <Trophy size={48} />
                </div>
-               <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-4 relative z-10">Skor Rata-rata</p>
-               <div className="text-2xl md:text-3xl font-black text-orange-500 tracking-tighter relative z-10">
-                 {stats.avgScore} <span className="text-2xl text-slate-300">/ 100</span>
+               <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-2 relative z-10">Tuntas Praktikum</p>
+               <div className="text-xl md:text-2xl font-black text-success tracking-tighter relative z-10">{stats.completedAll}</div>
+               <div className="mt-4 flex items-center gap-2 text-success relative z-10">
+                  <Award size={12} />
+                  <span className="text-[0.6rem] font-black uppercase">Reward Tersedia</span>
                </div>
-               <div className="mt-6 flex items-center gap-2 text-orange-400 relative z-10">
-                  <TrendingUp size={16} />
-                  <span className="text-[0.7rem] font-black uppercase">Stabilitas Performa</span>
+            </div>
+
+            <div className="bento-card border-white/50 p-6 md:p-8 bg-white/80 backdrop-blur-xl shadow-lg relative group overflow-hidden">
+               <div className="absolute top-0 right-0 p-4 text-slate-100 group-hover:text-orange-500/10 transition-colors">
+                  <BookOpen size={48} />
+               </div>
+               <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-2 relative z-10">Skor Rata-rata</p>
+               <div className="text-xl md:text-2xl font-black text-orange-500 tracking-tighter relative z-10">
+                 {stats.avgScore} <span className="text-lg text-slate-300">/ 100</span>
+               </div>
+               <div className="mt-4 flex items-center gap-2 text-orange-400 relative z-10">
+                  <TrendingUp size={12} />
+                  <span className="text-[0.6rem] font-black uppercase">Stabilitas Performa</span>
                </div>
             </div>
           </div>
 
-      {/* Tabs - Upscaled */}
-      <div className="flex flex-wrap gap-4 mb-12 bg-white/50 backdrop-blur-3xl p-3 rounded-[2.5rem] w-fit border border-white shadow-xl">
+      {/* Tabs */}
+      <div className="flex flex-wrap gap-2 mb-8 bg-white/50 backdrop-blur-3xl p-2 rounded-2xl w-fit border border-white shadow-sm">
         <button 
           onClick={() => setActiveTab('ANALYTICS')}
           className={cn(
-            "px-8 md:px-10 py-4 md:py-5 rounded-[2rem] text-[0.8rem] md:text-sm font-black uppercase tracking-[0.3em] transition-all flex items-center gap-4",
-            activeTab === 'ANALYTICS' ? "bg-primary text-white shadow-2xl shadow-primary/30" : "text-slate-400 hover:text-slate-600 hover:bg-white"
+            "px-6 md:px-8 py-3 md:py-4 rounded-xl text-[0.7rem] md:text-xs font-black uppercase tracking-widest transition-all flex items-center gap-3",
+            activeTab === 'ANALYTICS' ? "bg-primary text-white shadow-lg shadow-primary/30" : "text-slate-400 hover:text-slate-600 hover:bg-white"
           )}
         >
-          <Activity size={20} /> Analitik Strategis
+          <Activity size={18} /> Analitik Strategis
         </button>
         <button 
           onClick={() => setActiveTab('GROUPS')}
           className={cn(
-            "px-8 md:px-10 py-4 md:py-5 rounded-[2rem] text-[0.8rem] md:text-sm font-black uppercase tracking-[0.3em] transition-all flex items-center gap-4",
-            activeTab === 'GROUPS' ? "bg-primary text-white shadow-2xl shadow-primary/30" : "text-slate-400 hover:text-slate-600 hover:bg-white"
+            "px-6 md:px-8 py-3 md:py-4 rounded-xl text-[0.7rem] md:text-xs font-black uppercase tracking-widest transition-all flex items-center gap-3",
+            activeTab === 'GROUPS' ? "bg-primary text-white shadow-lg shadow-primary/30" : "text-slate-400 hover:text-slate-600 hover:bg-white"
           )}
         >
-          <Users size={20} /> Manajemen Kelompok
+          <Users size={18} /> Manajemen Kelompok
         </button>
         <button 
           onClick={() => setActiveTab('STUDENTS')}
           className={cn(
-            "px-8 md:px-10 py-4 md:py-5 rounded-[2rem] text-[0.8rem] md:text-sm font-black uppercase tracking-[0.3em] transition-all flex items-center gap-4",
-            activeTab === 'STUDENTS' ? "bg-primary text-white shadow-2xl shadow-primary/30" : "text-slate-400 hover:text-slate-600 hover:bg-white"
+            "px-6 md:px-8 py-3 md:py-4 rounded-xl text-[0.7rem] md:text-xs font-black uppercase tracking-widest transition-all flex items-center gap-3",
+            activeTab === 'STUDENTS' ? "bg-primary text-white shadow-lg shadow-primary/30" : "text-slate-400 hover:text-slate-600 hover:bg-white"
           )}
         >
-          <User size={20} /> Data Siswa Individu
+          <User size={18} /> Data Siswa Individu
         </button>
       </div>
 
       {activeTab === 'ANALYTICS' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 md:gap-12 mb-12">
-           <div className="bento-card border-white/50 p-12 bg-white/90 backdrop-blur-3xl shadow-2xl">
-              <h3 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-10 flex items-center gap-4">
-                <PieChart size={24} className="text-success" /> Proporsi Penyelesaian
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 mb-8">
+           <div className="bento-card border-white/50 p-8 bg-white/90 backdrop-blur-3xl shadow-lg">
+              <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-3">
+                <PieChart size={20} className="text-success" /> Proporsi Penyelesaian
               </h3>
-              <div className="h-[350px]">
+              <div className="h-[300px]">
                 <AdminStatusPieChart stats={stats} />
               </div>
            </div>
-           <div className="bento-card border-white/50 p-12 bg-white/90 backdrop-blur-3xl shadow-2xl">
-              <h3 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-10 flex items-center gap-4">
-                <Target size={24} className="text-primary" /> Kelompok Selesai per Modul
+           <div className="bento-card border-white/50 p-8 bg-white/90 backdrop-blur-3xl shadow-lg">
+              <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-3">
+                <Target size={20} className="text-primary" /> Kelompok Selesai per Modul
               </h3>
-              <div className="h-[350px]">
+              <div className="h-[300px]">
                 <AdminCompletionChart data={getAnalyticsData()} />
               </div>
            </div>
-           <div className="bento-card border-white/50 p-12 bg-white/90 backdrop-blur-3xl shadow-2xl">
-              <h3 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-10 flex items-center gap-4">
-                <Trophy size={24} className="text-orange-500" /> Rata-rata Skor per Modul
+           <div className="bento-card border-white/50 p-8 bg-white/90 backdrop-blur-3xl shadow-lg">
+              <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-3">
+                <Trophy size={20} className="text-orange-500" /> Rata-rata Skor per Modul
               </h3>
-              <div className="h-[350px]">
+              <div className="h-[300px]">
                 <AdminScoreChart data={getAnalyticsData()} />
               </div>
            </div>
-           <div className="lg:col-span-3 bento-card border-white/50 p-12 bg-white/90 backdrop-blur-3xl shadow-2xl overflow-hidden">
-              <h3 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-10 flex items-center gap-4">
-                <Activity size={24} className="text-primary" /> Grafik Aktivitas Real-time & Interaksi Sistem
+           <div className="lg:col-span-3 bento-card border-white/50 p-8 bg-white/90 backdrop-blur-3xl shadow-lg overflow-hidden">
+              <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-3">
+                <Activity size={20} className="text-primary" /> Grafik Aktivitas Real-time & Interaksi Sistem
               </h3>
-              <div className="h-[450px]">
+              <div className="h-[400px]">
                 <AdminActivityChart data={studentsProgress} />
               </div>
            </div>
@@ -1301,38 +1302,38 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
       )}
 
       {activeTab === 'GROUPS' && (
-        <div className="bento-card border-white shadow-2xl overflow-hidden p-0 rounded-[4rem] bg-white/80 backdrop-blur-3xl">
-           <div className="p-10 md:p-14 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+        <div className="bento-card border-white shadow-xl overflow-hidden p-0 rounded-3xl bg-white/80 backdrop-blur-3xl">
+           <div className="p-8 md:p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
               <div>
-                <h3 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter flex items-center gap-6">
-                  <Anchor size={32} className="text-primary" /> Inventori Kelompok Aktif
+                <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tighter flex items-center gap-4">
+                  <Anchor size={28} className="text-primary" /> Inventori Kelompok Aktif
                 </h3>
-                <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-[0.3em] mt-2">Daftar Pengamatan Laboratorium Terintegrasi</p>
+                <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mt-1">Daftar Pengamatan Laboratorium Terintegrasi</p>
               </div>
               <button 
                 onClick={fetchProgress}
-                className="px-8 py-4 bg-white border-2 border-slate-100 rounded-[1.5rem] text-sm font-black text-slate-600 hover:border-primary/30 transition-all flex items-center gap-4 shadow-sm"
+                className="px-6 py-3 bg-white border border-slate-100 rounded-xl text-xs font-black text-slate-600 hover:border-primary/30 transition-all flex items-center gap-3 shadow-sm"
               >
-                <RefreshCw size={18} className={loading ? "animate-spin" : "text-primary"} /> Segarkan Data
+                <RefreshCw size={14} className={loading ? "animate-spin" : "text-primary"} /> Segarkan Data
               </button>
            </div>
            <div className="overflow-x-auto">
-              <table className="w-full text-left min-w-[1000px]">
+              <table className="w-full text-left min-w-[900px]">
                  <thead>
-                    <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.85rem] uppercase tracking-[0.2em] bg-slate-50/10">
-                      <th className="p-8 md:p-10">Label Kelompok</th>
-                      <th className="p-8 md:p-10">Penanggung Jawab</th>
-                      <th className="p-8 md:p-10 hidden md:table-cell">Integrasi Modul</th>
-                      <th className="p-8 md:p-10">Metrik Skor</th>
-                      <th className="p-8 md:p-10 hidden lg:table-cell">Timestamp Data</th>
-                      <th className="p-8 md:p-10 text-right">Navigasi</th>
+                    <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.75rem] uppercase tracking-widest bg-slate-50/10">
+                      <th className="p-4 md:p-5">Label Kelompok</th>
+                      <th className="p-4 md:p-5">Penanggung Jawab</th>
+                      <th className="p-4 md:p-5 hidden md:table-cell">Integrasi Modul</th>
+                      <th className="p-4 md:p-5">Metrik Skor</th>
+                      <th className="p-4 md:p-5 hidden lg:table-cell">Timestamp Data</th>
+                      <th className="p-4 md:p-5 text-right">Navigasi</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
                     {loading ? (
-                      <tr><td colSpan={6} className="p-32 text-center font-black text-slate-300 text-2xl animate-pulse">Sinkronisasi Database...</td></tr>
+                      <tr><td colSpan={6} className="p-20 text-center font-black text-slate-300 text-xl animate-pulse">Sinkronisasi Database...</td></tr>
                     ) : studentsProgress.length === 0 ? (
-                      <tr><td colSpan={6} className="p-32 text-center font-black text-slate-400 italic text-xl">Belum ada kelompok yang terverifikasi di sistem.</td></tr>
+                      <tr><td colSpan={6} className="p-20 text-center font-black text-slate-400 italic text-lg">Belum ada kelompok yang terverifikasi di sistem.</td></tr>
                     ) : [...studentsProgress].sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime()).map((p) => {
                       const completedCount = Object.keys(p.moduleProgress || {}).length;
                       const mods = Object.values(p.moduleProgress || {}) as any[];
@@ -1343,38 +1344,38 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
 
                       return (
                         <tr key={p.id} className="border-b border-slate-50 hover:bg-primary/5 transition-all group">
-                          <td className="p-8 md:p-10">
-                            <div className="font-black text-slate-900 text-base md:text-lg tracking-tighter leading-none mb-2">{p.groupName}</div>
-                            <div className="text-[0.7rem] text-slate-400 font-black uppercase tracking-widest">ID: {p.id.slice(0, 12)}</div>
+                          <td className="p-4 md:p-5">
+                            <div className="font-black text-slate-900 text-sm md:text-base tracking-tighter leading-none mb-1">{p.groupName}</div>
+                            <div className="text-[0.6rem] text-slate-400 font-black uppercase tracking-widest">ID: {p.id.slice(0, 10)}</div>
                           </td>
-                          <td className="p-8 md:p-10 font-black text-slate-700 text-md md:text-lg">{p.leaderName}</td>
-                          <td className="p-8 md:p-10 hidden md:table-cell">
-                            <div className="flex items-center gap-6">
-                              <div className="w-32 md:w-48 h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner p-0.5">
+                          <td className="p-4 md:p-5 font-black text-slate-700 text-xs md:text-sm">{p.leaderName}</td>
+                          <td className="p-4 md:p-5 hidden md:table-cell">
+                            <div className="flex items-center gap-3">
+                              <div className="w-20 md:w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden shadow-inner p-0.5">
                                  <div className="h-full bg-primary rounded-full shadow-lg" style={{ width: `${(completedCount / APP_CONFIG.modules.length) * 100}%` }} />
                               </div>
-                              <span className="font-black text-slate-900 text-[0.8rem]">{completedCount}/{APP_CONFIG.modules.length}</span>
+                              <span className="font-black text-slate-900 text-[0.65rem]">{completedCount}/{APP_CONFIG.modules.length}</span>
                             </div>
                           </td>
-                          <td className="p-8 md:p-10">
+                          <td className="p-4 md:p-5">
                              <span className={cn(
-                               "px-4 py-2 rounded-2xl font-black text-[0.8rem] shadow-sm flex items-center gap-2 w-fit",
+                               "px-2.5 py-1 rounded-lg font-black text-[0.7rem] shadow-sm flex items-center gap-2 w-fit",
                                avgScore >= 80 ? "bg-success/10 text-success border border-success/20" : 
                                avgScore > 0 ? "bg-orange-50 text-orange-600 border border-orange-100" :
                                "bg-slate-50 text-slate-300"
                              )}>
-                                {avgScore > 0 ? <><Trophy size={14} /> {avgScore}</> : 'N/A'}
+                                {avgScore > 0 ? <><Trophy size={10} /> {avgScore}</> : 'N/A'}
                              </span>
                           </td>
-                          <td className="p-8 md:p-10 hidden lg:table-cell text-slate-500 font-bold text-[0.8rem]">
+                          <td className="p-4 md:p-5 hidden lg:table-cell text-slate-500 font-bold text-[0.65rem]">
                             {p.updatedAt ? formatDate(p.updatedAt) : 'Tanpa Data'}
                           </td>
-                          <td className="p-8 md:p-10 text-right">
+                          <td className="p-4 md:p-5 text-right">
                              <button 
                               onClick={() => { setSelectedGroup(p); setViewingModuleIdx(null); }}
-                              className="w-14 h-14 bg-white border border-slate-100 hover:bg-primary hover:text-white rounded-2xl transition-all text-slate-400 hover:shadow-xl shadow-sm flex items-center justify-center mx-auto md:mr-0 group-hover:scale-110 active:scale-95"
+                              className="w-8 h-8 bg-white border border-slate-100 hover:bg-primary hover:text-white rounded-lg transition-all text-slate-400 hover:shadow-md shadow-sm flex items-center justify-center ml-auto group-hover:scale-105 active:scale-95"
                              >
-                                <Eye size={24} />
+                                <Eye size={16} />
                              </button>
                           </td>
                         </tr>
@@ -1387,59 +1388,59 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
       )}
 
       {activeTab === 'STUDENTS' && (
-        <div className="bento-card border-white shadow-2xl overflow-hidden p-0 rounded-[4rem] bg-white/80 backdrop-blur-3xl">
-           <div className="p-10 md:p-14 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+        <div className="bento-card border-white shadow-xl overflow-hidden p-0 rounded-3xl bg-white/80 backdrop-blur-3xl">
+          <div className="p-6 md:p-7 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
               <div>
-                <h3 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter flex items-center gap-6">
-                  <User size={32} className="text-primary" /> Direktori Laboran Individu
+                <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tighter flex items-center gap-3">
+                  <User size={24} className="text-primary" /> Direktori Laboran Individu
                 </h3>
-                <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-[0.3em] mt-2">Sinkronisasi {getAllIndividualStudents().length} Entitas Terdaftar</p>
+                <p className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest mt-0.5">Sinkronisasi {getAllIndividualStudents().length} Entitas Terdaftar</p>
               </div>
            </div>
            <div className="overflow-x-auto">
-              <table className="w-full text-left min-w-[1000px]">
+              <table className="w-full text-left min-w-[900px]">
                 <thead>
-                  <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.85rem] uppercase tracking-[0.2em] bg-slate-50/10">
-                    <th className="p-8 md:p-10">Nama Lengkap</th>
-                    <th className="p-8 md:p-10">Peran Operasional</th>
-                    <th className="p-8 md:p-10">Afiliasi Kelompok</th>
-                    <th className="p-8 md:p-10">Metrik Progres</th>
-                    <th className="p-8 md:p-10">Waktu Aktif</th>
-                    <th className="p-8 md:p-10 text-right">Analisis</th>
+                  <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.7rem] uppercase tracking-widest bg-slate-50/10">
+                    <th className="p-4 md:p-5">Nama Lengkap</th>
+                    <th className="p-4 md:p-5">Peran Operasional</th>
+                    <th className="p-4 md:p-5">Afiliasi Kelompok</th>
+                    <th className="p-4 md:p-5">Metrik Progres</th>
+                    <th className="p-4 md:p-5">Waktu Aktif</th>
+                    <th className="p-4 md:p-5 text-right">Analisis</th>
                   </tr>
                 </thead>
-                <tbody className="text-sm">
+                <tbody className="text-xs md:text-sm">
                   {getAllIndividualStudents().length === 0 ? (
-                    <tr><td colSpan={6} className="p-32 text-center font-black text-slate-400 italic text-xl">Database siswa masih dalam keadaan kosong.</td></tr>
+                    <tr><td colSpan={6} className="p-12 text-center font-black text-slate-400 italic text-base">Database siswa masih dalam keadaan kosong.</td></tr>
                   ) : getAllIndividualStudents().map((s, idx) => (
                     <tr key={idx} className="border-b border-slate-50 hover:bg-primary/5 transition-all group">
-                      <td className="p-8 md:p-10 font-black text-slate-900 text-lg md:text-xl tracking-tighter leading-none">{s.name}</td>
-                      <td className="p-8 md:p-10">
+                      <td className="p-4 md:p-5 font-black text-slate-900 text-sm md:text-base tracking-tighter leading-none">{s.name}</td>
+                      <td className="p-4 md:p-5">
                         <span className={cn(
-                          "px-4 py-2 rounded-xl text-[0.75rem] font-black uppercase tracking-widest border shadow-sm",
+                          "px-2.5 py-1 rounded-lg text-[0.6rem] font-black uppercase tracking-widest border shadow-sm",
                           s.role === 'Ketua' ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-slate-50 text-slate-500 border-slate-100"
                         )}>
                           {s.role}
                         </span>
                       </td>
-                      <td className="p-8 md:p-10 font-black text-slate-600 text-md">{s.groupName}</td>
-                      <td className="p-8 md:p-10">
-                        <div className="flex items-center gap-6">
-                           <div className="w-24 md:w-32 h-2.5 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                      <td className="p-4 md:p-5 font-black text-slate-600 text-[0.7rem] md:text-xs">{s.groupName}</td>
+                      <td className="p-4 md:p-5">
+                        <div className="flex items-center gap-3">
+                           <div className="w-16 md:w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden shadow-inner">
                               <div className="h-full bg-primary rounded-full shadow-lg" style={{ width: `${(s.progress / APP_CONFIG.modules.length) * 100}%` }} />
                            </div>
-                           <span className="font-black text-slate-900 text-[0.8rem]">{s.progress}/{APP_CONFIG.modules.length}</span>
+                           <span className="font-black text-slate-900 text-[0.65rem]">{s.progress}/{APP_CONFIG.modules.length}</span>
                         </div>
                       </td>
-                      <td className="p-8 md:p-10 text-slate-500 text-[0.8rem] font-bold">
+                      <td className="p-4 md:p-5 text-slate-500 text-[0.65rem] font-bold">
                         {s.lastActive ? new Date(s.lastActive).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'N/A'}
                       </td>
-                      <td className="p-8 md:p-10 text-right">
+                      <td className="p-4 md:p-5 text-right">
                         <button 
                           onClick={() => setSelectedStudent(s)}
-                          className="w-14 h-14 bg-white border border-slate-100 hover:bg-primary hover:text-white rounded-2xl transition-all text-slate-400 hover:shadow-xl shadow-sm flex items-center justify-center mx-auto md:mr-0 group-hover:scale-110 active:scale-95"
+                          className="w-8 h-8 bg-white border border-slate-100 hover:bg-primary hover:text-white rounded-lg transition-all text-slate-400 hover:shadow-md shadow-sm flex items-center justify-center ml-auto group-hover:scale-105 active:scale-95"
                         >
-                          <BarChart2 size={24} />
+                          <BarChart2 size={16} />
                         </button>
                       </td>
                     </tr>
@@ -1451,78 +1452,74 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
        )}
      </main>
 
-      {/* Student Progress Visualization Modal - Upscaled Profile View */}
+      {/* Student Progress Visualization Modal - Profile View */}
       {selectedStudent && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 md:p-12 bg-slate-900/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 bg-slate-900/80 backdrop-blur-md">
           <motion.div 
-            initial={{ scale: 0.95, opacity: 0, y: 40 }}
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            className="bg-white rounded-[4rem] w-full max-w-6xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden border-4 border-white flex flex-col p-12 md:p-16 max-h-[90vh] relative"
+            className="bg-white rounded-3xl w-full max-w-5xl shadow-2xl overflow-hidden border border-white flex flex-col p-8 md:p-12 max-h-[90vh] relative"
           >
-            <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 blur-[120px] pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-3xl pointer-events-none" />
             
-            <div className="flex justify-between items-start mb-8 relative z-10">
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center shadow-inner">
-                  <User size={32} />
+            <div className="flex justify-between items-start mb-6 relative z-10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                  <User size={24} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-slate-900 leading-none tracking-tighter mb-2">{selectedStudent.name}</h2>
-                  <div className="flex items-center gap-4">
-                    <span className="px-4 py-1.5 bg-slate-100 text-slate-500 rounded-full text-[0.7rem] font-black uppercase tracking-widest">{selectedStudent.role}</span>
-                    <span className="w-1.5 h-1.5 bg-slate-200 rounded-full" />
-                    <span className="text-base font-bold text-primary tracking-tight">{selectedStudent.groupName}</span>
+                  <h2 className="text-lg font-black text-slate-900 leading-none tracking-tighter mb-1">{selectedStudent.name}</h2>
+                  <div className="flex items-center gap-3">
+                    <span className="px-2.5 py-1 bg-slate-100 text-slate-500 rounded-full text-[0.6rem] font-black uppercase tracking-widest">{selectedStudent.role}</span>
+                    <span className="w-1 h-1 bg-slate-200 rounded-full" />
+                    <span className="text-sm font-bold text-primary tracking-tight">{selectedStudent.groupName}</span>
                   </div>
                 </div>
               </div>
               <button 
                 onClick={() => setSelectedStudent(null)}
-                className="w-12 h-12 bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all flex items-center justify-center shadow-sm"
+                className="w-10 h-10 bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 rounded-lg transition-all flex items-center justify-center shadow-sm"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 flex-1 overflow-hidden">
-               <div className="flex flex-col gap-12 overflow-y-auto pr-6 custom-scrollbar">
-                  <div className="bento-card bg-slate-50 border-none p-8 rounded-3xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-8 text-primary/5"><BarChart2 size={80} /></div>
-                    <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-8 flex items-center gap-4 relative z-10">
-                      <TrendingUp size={20} className="text-primary" /> Visualisasi Kompetensi Praktikum
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1 overflow-hidden">
+               <div className="flex flex-col gap-8 overflow-y-auto pr-4 custom-scrollbar">
+                  <div className="bento-card bg-slate-50 border-none p-6 rounded-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-6 text-primary/5"><BarChart2 size={64} /></div>
+                    <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-3 relative z-10">
+                      <TrendingUp size={16} className="text-primary" /> Visualisasi Kompetensi
                     </h3>
-                    <div className="h-[300px] relative z-10">
+                    <div className="h-[250px] relative z-10">
                       <AdminStudentScoreChart moduleProgress={selectedStudent.moduleProgress} />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-6">
-                     <div className="p-8 bg-slate-900 text-white rounded-3xl shadow-xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl group-hover:bg-white/10 transition-colors" />
-                        <p className="text-[0.7rem] font-black text-slate-400 uppercase mb-4 tracking-[0.2em] relative z-10">Total Capaian</p>
-                        <div className="flex items-end gap-3 relative z-10">
-                           <p className="text-xl font-black text-white leading-none tracking-tighter">{selectedStudent.progress}</p>
-                           <p className="text-sm font-black text-slate-500 mb-1">/ {APP_CONFIG.modules.length}</p>
+                  <div className="grid grid-cols-2 gap-4">
+                     <div className="p-6 bg-slate-900 text-white rounded-2xl shadow-lg relative overflow-hidden group">
+                        <p className="text-[0.6rem] font-black text-slate-400 uppercase mb-2 tracking-widest relative z-10">Total Capaian</p>
+                        <div className="flex items-end gap-2 relative z-10">
+                           <p className="text-lg font-black text-white leading-none tracking-tighter">{selectedStudent.progress}</p>
+                           <p className="text-xs font-black text-slate-500 mb-0.5">/ {APP_CONFIG.modules.length}</p>
                         </div>
                      </div>
-                     <div className="p-8 bg-primary text-white rounded-3xl shadow-xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl group-hover:bg-white/10 transition-colors" />
-                        <p className="text-[0.7rem] font-black text-white/50 uppercase mb-4 tracking-[0.2em] relative z-10">Status</p>
-                        <div className="flex items-center gap-4 relative z-10">
-                           <p className="text-lg font-black text-white leading-none tracking-tighter">
+                     <div className="p-6 bg-primary text-white rounded-2xl shadow-lg relative overflow-hidden group">
+                        <p className="text-[0.6rem] font-black text-white/50 uppercase mb-2 tracking-widest relative z-10">Status</p>
+                        <div className="flex items-center gap-3 relative z-10">
+                           <p className="text-base font-black text-white leading-none tracking-tighter">
                              {selectedStudent.progress === APP_CONFIG.modules.length ? 'COMPLETE' : 'ACTIVE'}
                            </p>
-                           <Activity size={24} className="opacity-40 animate-pulse text-white" />
                         </div>
                      </div>
                   </div>
                </div>
 
                <div className="flex flex-col overflow-hidden">
-                  <h3 className="text-[0.9rem] font-black text-slate-400 uppercase tracking-[0.5em] mb-10 px-4 flex items-center justify-between">
+                  <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-6 px-2 flex items-center justify-between">
                      <span>Log Progres Komprehensif</span>
-                     <span className="text-[0.7rem] lowercase font-bold opacity-40">educational engine v4.0.1</span>
                   </h3>
-                  <div className="space-y-6 overflow-y-auto pr-6 custom-scrollbar flex-1">
+                  <div className="space-y-4 overflow-y-auto pr-4 custom-scrollbar flex-1">
                     {APP_CONFIG.modules.map((m, idx) => {
                       const prog = selectedStudent.moduleProgress[m.id] as any;
                       const score = prog?.answers?.evaluationScore;
@@ -1532,36 +1529,30 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                       if (prog) {
                         if (score !== undefined) {
                           status = "Terverifikasi";
-                          statusColor = "bg-success text-white shadow-lg shadow-success/20";
+                          statusColor = "bg-success text-white shadow-sm";
                         } else {
                           status = "Tahap Pengerjaan";
-                          statusColor = "bg-orange-500 text-white shadow-lg shadow-orange-500/20";
+                          statusColor = "bg-orange-500 text-white shadow-sm";
                         }
                       }
 
                       return (
-                        <div key={m.id} className="group flex items-center justify-between p-6 bg-white border-2 border-slate-50 rounded-3xl transition-all hover:border-primary/20 hover:shadow-xl relative overflow-hidden">
-                          {status === 'Terverifikasi' && <div className="absolute left-0 top-0 bottom-0 w-2 bg-success" />}
-                          <div className="flex items-center gap-6 relative z-10">
-                            <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-xl font-black text-slate-400 group-hover:bg-primary/5 group-hover:text-primary group-hover:border-primary/10 transition-all">
+                        <div key={m.id} className="group flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl transition-all hover:border-primary/20 hover:shadow-md relative overflow-hidden">
+                          <div className="flex items-center gap-4 relative z-10">
+                            <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-sm font-black text-slate-400 group-hover:bg-primary/5 group-hover:text-primary transition-all">
                               0{idx + 1}
                             </div>
                             <div>
-                              <p className="text-base font-black text-slate-900 leading-none mb-2 tracking-tighter">{m.title}</p>
+                              <p className="text-sm font-black text-slate-900 leading-none mb-1 tracking-tighter">{m.title}</p>
                               {score !== undefined ? (
-                                <div className="flex items-center gap-3">
-                                   <div className="flex items-center gap-1.5 px-2 py-0.5 bg-orange-50 rounded-md">
-                                      <Trophy size={14} className="text-orange-500" />
-                                      <p className="text-[0.75rem] font-black text-orange-600 uppercase tracking-widest">Skor: {score}</p>
-                                   </div>
-                                </div>
+                                <p className="text-[0.65rem] font-black text-orange-600 uppercase tracking-widest">Skor: {score}</p>
                               ) : (
-                                <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-[0.2em]">{status}</p>
+                                <p className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest">{status}</p>
                               )}
                             </div>
                           </div>
                           <div className={cn(
-                            "px-5 py-2 rounded-xl text-[0.7rem] font-black uppercase tracking-widest shadow-sm relative z-10",
+                            "px-3 py-1 rounded-lg text-[0.6rem] font-black uppercase tracking-widest shadow-sm relative z-10",
                             statusColor
                           )}>
                             {status}
@@ -1573,10 +1564,10 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                </div>
             </div>
 
-            <div className="mt-16 flex justify-end relative z-20">
+            <div className="mt-8 flex justify-end relative z-20">
               <button 
                 onClick={() => setSelectedStudent(null)}
-                className="px-12 py-5 bg-slate-900 text-white font-black text-lg rounded-[2.5rem] hover:bg-slate-800 transition-all shadow-2xl shadow-slate-900/30 active:scale-95"
+                className="px-8 py-3 bg-slate-900 text-white font-black text-sm rounded-xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 active:scale-95"
               >
                 Tutup Dashboard Profil
               </button>
@@ -1585,34 +1576,34 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
         </div>
       )}
 
-      {/* Detail Modal - Group Observation Center - Upscaled */}
+      {/* Detail Modal - Group Observation Center */}
       {selectedGroup && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 md:p-12 bg-slate-900/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 bg-slate-900/80 backdrop-blur-md">
           <motion.div 
-            initial={{ scale: 0.95, opacity: 0, y: 40 }}
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            className="bg-white rounded-[4rem] w-full max-w-6xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden border-4 border-white flex flex-col max-h-[90vh] relative"
+            className="bg-white rounded-3xl w-full max-w-6xl shadow-2xl overflow-hidden border border-white flex flex-col max-h-[90vh] relative"
           >
-            <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 blur-[120px] pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-3xl pointer-events-none" />
 
-            <div className="p-10 md:p-14 border-b border-slate-100 flex justify-between items-start shrink-0 bg-white/80 backdrop-blur-xl z-20">
-              <div className="flex items-center gap-6 md:gap-10">
+            <div className="p-6 md:p-8 border-b border-slate-100 flex justify-between items-start shrink-0 bg-white/80 backdrop-blur-xl z-20">
+              <div className="flex items-center gap-4 md:gap-6">
                 {viewingModuleIdx !== null && (
                   <button 
                     onClick={() => setViewingModuleIdx(null)}
-                    className="w-16 h-16 bg-slate-100 hover:bg-primary hover:text-white rounded-[2rem] transition-all flex items-center justify-center shadow-sm"
+                    className="w-10 h-10 bg-slate-50 text-slate-400 hover:bg-primary/10 hover:text-primary rounded-xl transition-all flex items-center justify-center shadow-sm"
                   >
-                    <ChevronLeft size={32} />
+                    <ArrowLeft size={18} />
                   </button>
                 )}
                 <div>
-                  <h2 className="text-lg md:text-xl font-black text-slate-900 leading-none tracking-tighter mb-4">
-                    Pusat Data: {selectedGroup.groupName}
+                  <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tighter flex items-center gap-3">
+                    {selectedGroup.groupName}
                   </h2>
-                  <div className="flex items-center gap-4">
-                    <span className="px-4 py-1.5 bg-primary/10 text-primary rounded-full text-[0.75rem] font-black uppercase tracking-widest">Observasi Real-time</span>
-                    <span className="w-2 h-2 bg-slate-200 rounded-full" />
-                    <p className="text-lg font-black text-slate-400 tracking-tight">
+                  <div className="flex items-center gap-3">
+                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[0.65rem] font-black uppercase tracking-widest">Observasi Real-time</span>
+                    <span className="w-1.5 h-1.5 bg-slate-200 rounded-full" />
+                    <p className="text-base font-black text-slate-400 tracking-tight">
                       {viewingModuleIdx !== null ? `Modul 0${viewingModuleIdx + 1}: ${APP_CONFIG.modules[viewingModuleIdx].title}` : 'Agregasi Seluruh Laporan Praktikum'}
                     </p>
                   </div>
@@ -1620,68 +1611,68 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
               </div>
               <button 
                 onClick={() => setSelectedGroup(null)}
-                className="w-16 h-16 bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 rounded-[2rem] transition-all flex items-center justify-center shadow-sm"
+                className="w-12 h-12 bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 rounded-2xl transition-all flex items-center justify-center shadow-sm"
               >
-                <X size={32} />
+                <X size={24} />
               </button>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-10 md:p-14 custom-scrollbar relative z-10">
+            <div className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar relative z-10">
               {viewingModuleIdx !== null ? (
-                <div className="space-y-12 pb-12">
+                <div className="space-y-8 pb-8">
                   {(() => {
                     const module = APP_CONFIG.modules[viewingModuleIdx];
                     const answers = selectedGroup.moduleProgress && selectedGroup.moduleProgress[viewingModuleIdx];
                     
                     if (!answers) {
                       return (
-                        <div className="flex flex-col items-center justify-center p-16 text-center bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100">
-                          <div className="w-16 h-16 bg-slate-100 text-slate-300 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
-                            <Database size={32} />
+                        <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-50/50 rounded-2xl border-2 border-dashed border-slate-100">
+                          <div className="w-12 h-12 bg-slate-100 text-slate-300 rounded-xl flex items-center justify-center mb-4 shadow-inner">
+                            <Database size={24} />
                           </div>
-                          <h3 className="text-lg font-black text-slate-300 tracking-tight">Menunggu Sinkronisasi Data</h3>
-                          <p className="text-base text-slate-400 font-bold mt-2 max-w-sm mx-auto">Kelompok ini belum melakukan pengamatan atau menyimpan log progress untuk sesi modul ini.</p>
+                          <h3 className="text-base font-black text-slate-300 tracking-tight">Menunggu Sinkronisasi Data</h3>
+                          <p className="text-sm text-slate-400 font-bold mt-1 max-w-sm mx-auto">Kelompok ini belum melakukan pengamatan atau menyimpan log progress untuk sesi modul ini.</p>
                         </div>
                       );
                     }
 
                     return (
-                      <div className="space-y-14 animate-in fade-in slide-in-from-bottom-8 duration-700">
-                        {/* Summary Metrics - Upscaled */}
+                      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                        {/* Summary Metrics */}
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                          <div className="p-8 bg-slate-50 rounded-3xl border-2 border-white shadow-lg relative overflow-hidden group">
-                             <div className="absolute top-0 right-0 p-4 text-primary/5 group-hover:scale-110 transition-transform"><MessageSquare size={60} /></div>
-                             <label className="text-[0.7rem] font-black text-slate-400 uppercase tracking-[0.3em] block mb-4 relative z-10">Rumusan Masalah</label>
-                             <p className="text-base font-black text-slate-800 leading-tight italic relative z-10">"{answers.problemFormulation || '-'}"</p>
+                          <div className="p-6 bg-slate-50 rounded-2xl border border-white shadow-md relative overflow-hidden group">
+                             <div className="absolute top-0 right-0 p-4 text-primary/5 group-hover:scale-110 transition-transform"><MessageSquare size={48} /></div>
+                             <label className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest block mb-2 relative z-10">Rumusan Masalah</label>
+                             <p className="text-sm font-black text-slate-800 leading-tight italic relative z-10">"{answers.problemFormulation || '-'}"</p>
                           </div>
-                          <div className="p-8 bg-primary/5 rounded-3xl border-2 border-white shadow-lg relative overflow-hidden group">
-                             <div className="absolute top-0 right-0 p-4 text-primary/5 group-hover:scale-110 transition-transform"><Lightbulb size={60} /></div>
-                             <label className="text-[0.7rem] font-black text-primary/60 uppercase tracking-[0.3em] block mb-4 relative z-10">Hipotesis Kerja</label>
-                             <p className="text-base font-black text-slate-900 leading-tight italic relative z-10">"{answers.hypothesis || '-'}"</p>
+                          <div className="p-6 bg-primary/5 rounded-2xl border border-white shadow-md relative overflow-hidden group">
+                             <div className="absolute top-0 right-0 p-4 text-primary/5 group-hover:scale-110 transition-transform"><Lightbulb size={48} /></div>
+                             <label className="text-[0.6rem] font-black text-primary/60 uppercase tracking-widest block mb-2 relative z-10">Hipotesis Kerja</label>
+                             <p className="text-sm font-black text-slate-900 leading-tight italic relative z-10">"{answers.hypothesis || '-'}"</p>
                           </div>
-                          <div className="p-8 bg-orange-500 text-white rounded-3xl shadow-xl relative overflow-hidden group">
-                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-2xl rounded-full translate-x-16 -translate-y-16" />
-                             <label className="text-[0.7rem] font-black text-white/50 uppercase tracking-[0.3em] block mb-3 relative z-10">Akumulasi Skor</label>
-                             <div className="flex items-end gap-2 relative z-10">
-                                <span className="text-xl font-black tracking-tighter">{answers.evaluationScore || 0}</span>
-                                <span className="text-sm font-black text-white/40 mb-1">pts</span>
+                          <div className="p-6 bg-orange-500 text-white rounded-2xl shadow-lg relative overflow-hidden group">
+                             <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 blur-xl rounded-full translate-x-12 -translate-y-12" />
+                             <label className="text-[0.6rem] font-black text-white/50 uppercase tracking-widest block mb-2 relative z-10">Akumulasi Skor</label>
+                             <div className="flex items-end gap-1.5 relative z-10">
+                                <span className="text-lg font-black tracking-tighter">{answers.evaluationScore || 0}</span>
+                                <span className="text-[0.65rem] font-black text-white/40 mb-0.5">pts</span>
                              </div>
                           </div>
                         </div>
 
-                        {/* Data Tables - Upscaled */}
+                        {/* Data Tables */}
                         <div>
-                          <h4 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.5em] mb-10 flex items-center gap-6">
-                             <Droplets size={24} className="text-primary" /> Logaritma Pengamatan Fisika
+                          <h4 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-4">
+                             <Droplets size={18} className="text-primary" /> Logaritma Pengamatan Fisika
                           </h4>
-                          <div className="space-y-12">
+                          <div className="space-y-8">
                              {module.subExperiments ? module.subExperiments.map((sub: any) => {
                                const subData = answers.subTableData?.[sub.id] || [];
                                return (
-                                 <div key={sub.id} className="overflow-hidden rounded-[3rem] border-4 border-slate-50 shadow-2xl bg-white">
-                                   <div className="bg-slate-50/50 px-10 py-6 border-b border-slate-100 flex justify-between items-center">
-                                      <span className="text-lg font-black text-slate-900 tracking-tight">{sub.title}</span>
-                                      <div className="px-6 py-2 bg-white rounded-full text-[0.7rem] font-black text-slate-400 uppercase tracking-widest shadow-sm border border-slate-100">
+                                 <div key={sub.id} className="overflow-hidden rounded-2xl border border-slate-100 shadow-lg bg-white">
+                                   <div className="bg-slate-50/50 px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                                      <span className="text-base font-black text-slate-900 tracking-tight">{sub.title}</span>
+                                      <div className="px-4 py-1.5 bg-white rounded-full text-[0.6rem] font-black text-slate-400 uppercase tracking-widest shadow-sm border border-slate-100">
                                          {subData.length} Data Entries
                                       </div>
                                    </div>
@@ -1689,16 +1680,16 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                                       <table className="w-full">
                                         <thead>
                                           <tr className="bg-slate-50/20 border-b border-slate-50">
-                                            {sub.headers.map((h: string) => <th key={h} className="p-8 font-black text-slate-400 uppercase tracking-[0.2em] text-[0.75rem] text-center">{h}</th>)}
+                                            {sub.headers.map((h: string) => <th key={h} className="p-4 font-black text-slate-400 uppercase tracking-widest text-[0.65rem] text-center">{h}</th>)}
                                           </tr>
                                         </thead>
                                         <tbody>
                                           {subData.length > 0 ? subData.map((row: any, i: number) => (
                                             <tr key={i} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/30 transition-colors">
-                                              {sub.headers.map((h: string) => <td key={h} className="p-8 font-black text-slate-800 text-base text-center">{row[h] || '-'}</td>)}
+                                              {sub.headers.map((h: string) => <td key={h} className="p-4 font-black text-slate-800 text-sm text-center">{row[h] || '-'}</td>)}
                                             </tr>
                                           )) : (
-                                            <tr><td colSpan={sub.headers.length} className="p-20 text-center text-slate-300 font-bold italic text-xl uppercase tracking-widest">Entry Data Kosong</td></tr>
+                                            <tr><td colSpan={sub.headers.length} className="p-10 text-center text-slate-300 font-bold italic text-base uppercase tracking-widest">Entry Data Kosong</td></tr>
                                           )}
                                         </tbody>
                                       </table>
@@ -1706,23 +1697,23 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                                  </div>
                                );
                              }) : (
-                               <div className="overflow-hidden rounded-[3rem] border-4 border-slate-50 shadow-2xl bg-white">
+                               <div className="overflow-hidden rounded-2xl border border-slate-100 shadow-lg bg-white">
                                  <div className="overflow-x-auto">
                                    <table className="w-full">
                                      <thead>
                                        <tr className="bg-slate-50/50 border-b border-slate-100">
-                                          {['Benda Percobaan', 'W Berat di Udara (N)', 'W Berat di Air (N)', 'Fa Gaya Apung (N)'].map(h => <th key={h} className="p-8 font-black text-slate-400 uppercase tracking-[0.2em] text-[0.75rem] text-center">{h}</th>)}
+                                          {['Benda Percobaan', 'W Berat di Udara (N)', 'W Berat di Air (N)', 'Fa Gaya Apung (N)'].map(h => <th key={h} className="p-4 font-black text-slate-400 uppercase tracking-widest text-[0.65rem] text-center">{h}</th>)}
                                        </tr>
                                      </thead>
                                      <tbody>
                                          {answers.tableData && answers.tableData.length > 0 ? answers.tableData.map((row: any, i: number) => (
                                           <tr key={i} className="border-b border-slate-50 last:border-0 hover:bg-primary/5 transition-all">
-                                            <td className="p-8 text-center font-black text-slate-900 text-base">{row['Benda']}</td>
-                                            <td className="p-8 text-center font-black text-slate-700 text-base">{row['W di udara (N)']}</td>
-                                            <td className="p-8 text-center font-black text-slate-700 text-base">{row['W di air (N)']}</td>
-                                            <td className="p-8 text-center font-black text-primary text-lg">{row['Gaya Apung (N)']}</td>
+                                            <td className="p-4 text-center font-black text-slate-900 text-sm">{row['Benda']}</td>
+                                            <td className="p-4 text-center font-black text-slate-700 text-sm">{row['W di udara (N)']}</td>
+                                            <td className="p-4 text-center font-black text-slate-700 text-sm">{row['W di air (N)']}</td>
+                                            <td className="p-4 text-center font-black text-primary text-base">{row['Gaya Apung (N)']}</td>
                                           </tr>
-                                        )) : <tr><td colSpan={4} className="p-24 text-center text-slate-300 font-bold italic text-xl uppercase tracking-widest">Menunggu Input Data Praktikum</td></tr>}
+                                        )) : <tr><td colSpan={4} className="p-12 text-center text-slate-300 font-bold italic text-base uppercase tracking-widest">Menunggu Input Data Praktikum</td></tr>}
                                      </tbody>
                                    </table>
                                  </div>
@@ -1731,34 +1722,34 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                           </div>
                         </div>
 
-                        {/* Analysis & Conclusion - Upscaled */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                           <div className="p-12 bg-white rounded-[4rem] border-4 border-slate-50 shadow-2xl relative overflow-hidden group">
-                              <div className="absolute top-0 right-0 p-10 text-success/5 group-hover:scale-110 transition-transform"><Activity size={100} /></div>
-                              <label className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] block mb-8 flex items-center gap-4 relative z-10">
-                                <div className={cn("w-4 h-4 rounded-full", answers.hypothesisTesting?.isCorrect ? 'bg-success shadow-[0_0_15px_rgba(34,197,94,0.6)]' : 'bg-red-400 shadow-[0_0_15px_rgba(248,113,113,0.6)]')} />
+                        {/* Analysis & Conclusion */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                           <div className="p-8 bg-white rounded-3xl border border-slate-100 shadow-lg relative overflow-hidden group">
+                              <div className="absolute top-0 right-0 p-8 text-success/5 group-hover:scale-110 transition-transform"><Activity size={80} /></div>
+                              <label className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest block mb-6 flex items-center gap-3 relative z-10">
+                                <div className={cn("w-3 h-3 rounded-full", answers.hypothesisTesting?.isCorrect ? 'bg-success shadow-[0_0_10px_rgba(34,197,94,0.6)]' : 'bg-red-400 shadow-[0_0_10px_rgba(248,113,113,0.6)]')} />
                                 Uji Validitas Hipotesis
                               </label>
-                              <div className="space-y-8 relative z-10">
-                                <div className="flex items-center gap-6">
+                              <div className="space-y-6 relative z-10">
+                                <div className="flex items-center gap-4">
                                    <span className={cn(
-                                     "px-8 py-3 rounded-2xl text-lg font-black uppercase tracking-tighter border-2 shadow-sm",
-                                     answers.hypothesisTesting?.isCorrect ? "bg-success/10 text-success border-success/20" : "bg-red-50 text-red-600"
+                                     "px-4 py-2 rounded-xl text-sm font-black uppercase tracking-tight border shadow-sm",
+                                     answers.hypothesisTesting?.isCorrect ? "bg-success/10 text-success border-success/20" : "bg-red-50 text-red-600 border-red-100"
                                    )}>
                                      {answers.hypothesisTesting?.isCorrect ? 'VALIDASI SESUAI' : 'VALIDASI GAGAL'}
                                    </span>
-                                   <div className="h-[2px] flex-grow bg-slate-50" />
+                                   <div className="h-[1px] flex-grow bg-slate-100" />
                                 </div>
-                                <p className="text-xl font-black text-slate-900 leading-tight italic opacity-80">"{answers.hypothesisTesting?.reason || '-'}"</p>
+                                <p className="text-lg font-black text-slate-900 leading-tight italic opacity-80">"{answers.hypothesisTesting?.reason || '-'}"</p>
                               </div>
                            </div>
-                           <div className="p-12 bg-slate-900 rounded-[4rem] text-white shadow-[0_40px_80px_-15px_rgba(15,23,42,0.4)] relative overflow-hidden group">
-                              <div className="absolute top-0 right-0 p-10 text-white/5 opacity-40 group-hover:scale-110 transition-transform"><Lightbulb size={120} /></div>
-                              <label className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] block mb-8 flex items-center gap-4 relative z-10">
-                                <div className="w-4 h-4 rounded-full bg-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.6)]" />
+                           <div className="p-8 bg-slate-900 rounded-3xl text-white shadow-xl relative overflow-hidden group">
+                              <div className="absolute top-0 right-0 p-8 text-white/5 opacity-40 group-hover:scale-110 transition-transform"><Lightbulb size={96} /></div>
+                              <label className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest block mb-6 flex items-center gap-3 relative z-10">
+                                <div className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.6)]" />
                                 Finalisasi Kesimpulan
                               </label>
-                              <p className="text-xl font-black leading-tight italic text-slate-200 relative z-10">"{answers.conclusion || '-'}"</p>
+                              <p className="text-lg font-black leading-tight italic text-slate-200 relative z-10">"{answers.conclusion || '-'}"</p>
                            </div>
                         </div>
                       </div>
@@ -1766,43 +1757,43 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                   })()}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 h-full">
-                  <div className="lg:col-span-8 space-y-12 pb-12">
-                    {/* Identity Card - Upscaled */}
-                    <div className="p-12 bg-slate-50 rounded-[4rem] border-4 border-white shadow-xl relative group">
-                       <div className="flex items-center gap-8 mb-10">
-                          <div className="w-20 h-20 bg-white rounded-[2rem] flex items-center justify-center text-primary shadow-2xl border border-slate-100 group-hover:rotate-6 transition-transform">
-                             <Users size={40} />
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full pb-8">
+                  <div className="lg:col-span-8 space-y-8">
+                    {/* Identity Card */}
+                    <div className="p-8 bg-slate-50 rounded-3xl border border-white shadow-lg relative group">
+                       <div className="flex items-center gap-6 mb-8">
+                          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-primary shadow-lg border border-slate-100 group-hover:rotate-3 transition-transform">
+                             <Users size={32} />
                           </div>
                           <div>
-                             <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tighter leading-none mb-2">{selectedGroup.groupName}</h3>
-                             <p className="text-[0.8rem] font-black text-slate-400 uppercase tracking-[0.4em]">Struktur Delegasi Kelompok</p>
+                             <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tighter leading-none mb-1">{selectedGroup.groupName}</h3>
+                             <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest">Struktur Delegasi Kelompok</p>
                           </div>
                        </div>
                        
-                       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                           <div>
-                             <label className="text-[0.7rem] font-black text-slate-400 uppercase tracking-[0.3em] block mb-4">Ketua Eksekutif</label>
-                             <div className="p-8 bg-white rounded-[2rem] border-2 border-slate-100 font-black text-slate-900 text-2xl tracking-tight shadow-sm group-hover:border-primary/20 transition-all">
+                             <label className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest block mb-3">Ketua Eksekutif</label>
+                             <div className="p-6 bg-white rounded-2xl border border-slate-100 font-black text-slate-900 text-xl tracking-tight shadow-sm group-hover:border-primary/20 transition-all">
                                 {selectedGroup.leaderName || 'N/A'}
                              </div>
                           </div>
                           <div>
-                             <label className="text-[0.7rem] font-black text-slate-400 uppercase tracking-[0.3em] block mb-4">Unit Operasional ({selectedGroup.members?.length || 0})</label>
-                             <div className="flex flex-wrap gap-4">
+                             <label className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest block mb-3">Unit Operasional ({selectedGroup.members?.length || 0})</label>
+                             <div className="flex flex-wrap gap-2">
                                 {selectedGroup.members && selectedGroup.members.length > 0 ? selectedGroup.members.map((m: string, i: number) => (
-                                  <span key={i} className="px-6 py-4 bg-white border-2 border-slate-100 rounded-2xl text-md font-black text-slate-700 shadow-sm hover:border-primary/30 transition-all">
+                                  <span key={i} className="px-4 py-2 bg-white border border-slate-100 rounded-xl text-sm font-black text-slate-700 shadow-sm hover:border-primary/30 transition-all">
                                      {m}
                                   </span>
-                                )) : <span className="text-lg text-slate-400 italic font-bold">Kelompok tunggal terdeteksi</span>}
+                                )) : <span className="text-base text-slate-400 italic font-bold">Kelompok tunggal terdeteksi</span>}
                              </div>
                           </div>
                        </div>
                     </div>
 
                     <div>
-                       <h4 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.5em] mb-10 flex items-center gap-6">
-                          <Activity size={24} className="text-primary" /> Matriks Pencapaian Kurikulum
+                       <h4 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-4">
+                          <Activity size={18} className="text-primary" /> Matriks Pencapaian Kurikulum
                        </h4>
                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {APP_CONFIG.modules.map((m, idx) => {
@@ -1845,35 +1836,35 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                     </div>
                   </div>
                   
-                  <div className="lg:col-span-4 space-y-10 flex flex-col pb-12">
-                     <div className="bento-card border-none bg-slate-900 text-white p-12 rounded-[4rem] shadow-[0_30px_60px_-10px_rgba(15,23,42,0.3)] relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 blur-3xl group-hover:bg-white/10 transition-colors" />
-                        <label className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.4em] block mb-8 relative z-10">Evaluasi Pamungkas</label>
+                  <div className="lg:col-span-4 space-y-6 flex flex-col pb-12">
+                     <div className="bento-card border-none bg-slate-900 text-white p-8 rounded-3xl shadow-xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl group-hover:bg-white/10 transition-colors" />
+                        <label className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest block mb-6 relative z-10">Evaluasi Pamungkas</label>
                         {(() => {
                           const mods = Object.values(selectedGroup.moduleProgress || {}) as any[];
                           const latestScored = [...mods].reverse().find((m: any) => m.answers?.evaluationScore !== undefined);
                           if (latestScored) {
                             return (
-                              <div className="flex items-center gap-8 relative z-10">
-                                 <div className="w-24 h-24 bg-white/10 backdrop-blur-xl rounded-[2rem] flex items-center justify-center text-xl font-black text-amber-500 shadow-2xl border border-white/5">
+                              <div className="flex items-center gap-6 relative z-10">
+                                 <div className="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center text-lg font-black text-amber-500 shadow-xl border border-white/5">
                                     {latestScored.answers.evaluationScore}
                                  </div>
                                  <div className="shrink-0">
-                                    <div className="text-lg font-black text-white tracking-tight uppercase leading-none mb-2">Akumulasi Skor</div>
-                                    <p className="text-[0.75rem] font-black text-success mt-1 uppercase tracking-widest flex items-center gap-2">
-                                       <Award size={16} /> Sertifikasi Lulus
+                                    <div className="text-base font-black text-white tracking-tight uppercase leading-none mb-1.5">Akumulasi Skor</div>
+                                    <p className="text-[0.65rem] font-black text-success mt-0.5 uppercase tracking-widest flex items-center gap-1.5">
+                                       <Award size={14} /> Sertifikasi Lulus
                                     </p>
                                  </div>
                               </div>
                             );
                           }
                           return (
-                            <div className="flex flex-col items-center justify-center p-10 text-center border-4 border-dashed border-white/10 rounded-[3rem] relative z-10">
-                               <div className="w-16 h-16 bg-white/5 text-white/20 rounded-[2rem] flex items-center justify-center mb-6">
-                                  <FileText size={32} />
+                            <div className="flex flex-col items-center justify-center p-8 text-center border-2 border-dashed border-white/10 rounded-2xl relative z-10">
+                               <div className="w-12 h-12 bg-white/5 text-white/20 rounded-xl flex items-center justify-center mb-4">
+                                  <FileText size={24} />
                                 </div>
-                               <div className="text-white/30 font-black italic text-md uppercase tracking-[0.2em] leading-tight mb-2">Belum Terdeteksi<br/>Skor Evaluasi</div>
-                               <p className="text-[0.65rem] text-white/20 font-bold uppercase tracking-widest">Sistem Menunggu Input Guru</p>
+                               <div className="text-white/30 font-black italic text-sm uppercase tracking-widest leading-tight mb-1.5">Belum Terdeteksi<br/>Skor Evaluasi</div>
+                               <p className="text-[0.6rem] text-white/20 font-bold uppercase tracking-widest">Sistem Menunggu Input Guru</p>
                             </div>
                           );
                         })()}
@@ -1906,10 +1897,10 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
               )}
             </div>
 
-            <div className="p-10 bg-slate-50/50 border-t border-slate-100 flex justify-end relative z-20">
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end relative z-20">
                <button 
                 onClick={() => setSelectedGroup(null)}
-                className="px-16 py-6 bg-slate-900 text-white font-black text-xl rounded-[2.5rem] hover:bg-slate-800 transition-all shadow-2xl shadow-slate-900/20 active:scale-95"
+                className="px-10 py-4 bg-slate-900 text-white font-black text-lg rounded-2xl hover:bg-slate-800 transition-all shadow-lg active:scale-95"
               >
                 Kembali ke Dashboard
               </button>
@@ -2025,10 +2016,10 @@ const MainMenu = ({
   return (
     <div className="min-h-screen bg-bg flex flex-col relative overflow-hidden">
       <LabBackground variant="light" />
-      {/* Header Strip - Upscaled */}
-      <header className="bg-white/80 backdrop-blur-3xl px-8 md:px-12 py-6 md:py-8 border-b border-slate-200/50 flex justify-between items-center sticky top-0 z-20 transition-all">
-        <div className="flex items-center gap-6">
-          <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-3xl flex items-center justify-center p-2 shadow-xl border border-slate-100 overflow-hidden rotate-[-5deg] hover:rotate-0 transition-transform">
+      {/* Header Strip */}
+      <header className="bg-white/80 backdrop-blur-3xl px-6 md:px-10 py-4 md:py-6 border-b border-slate-200/50 flex justify-between items-center sticky top-0 z-20 transition-all">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 md:w-14 md:h-14 bg-white rounded-2xl flex items-center justify-center p-1.5 shadow-lg border border-slate-100 overflow-hidden rotate-[-3deg] hover:rotate-0 transition-transform">
             <img 
               src={APP_CONFIG.university.logo} 
               alt="USK Logo" 
@@ -2036,30 +2027,30 @@ const MainMenu = ({
             />
           </div>
           <div className="leading-tight">
-            <p className="text-[0.65rem] md:text-[0.75rem] uppercase font-black text-slate-400 tracking-[0.3em] mb-1">
+            <p className="text-[0.6rem] md:text-[0.65rem] uppercase font-black text-slate-400 tracking-widest mb-0.5">
               {APP_CONFIG.university.name}
             </p>
-            <p className="font-black text-slate-800 text-base md:text-xl tracking-tighter">Virtual Laboratory System</p>
+            <p className="font-black text-slate-800 text-sm md:text-lg tracking-tighter">Virtual Laboratory System</p>
           </div>
         </div>
         
-        <div className="flex items-center gap-4 md:gap-10">
+        <div className="flex items-center gap-4 md:gap-8">
           {profile?.role === 'admin' && (
-            <Button onClick={() => setView('ADMIN')} variant="primary" className="bg-slate-900 border-none px-6 py-3 text-sm font-black shadow-slate-900/20">
-              <Shield size={18} /> <span className="hidden md:inline">Admin Panel</span>
+            <Button onClick={() => setView('ADMIN')} variant="primary" className="bg-slate-900 border-none px-4 py-2 text-xs font-black shadow-md">
+              <Shield size={16} /> <span className="hidden md:inline">Admin Panel</span>
             </Button>
           )}
-          <div className="text-right hidden lg:block border-l border-slate-200 pl-10">
-            <p className="text-[0.65rem] uppercase font-black text-slate-400 tracking-[0.2em] mb-1">
+          <div className="text-right hidden lg:block border-l border-slate-200 pl-8">
+            <p className="text-[0.6rem] uppercase font-black text-slate-400 tracking-wider mb-0.5">
               {profile?.role === 'admin' ? 'Administrator' : 'Akses Terbatas untuk:'}
             </p>
-            <p className="font-black text-primary text-sm md:text-base">{appState.groupInfo?.groupName || profile?.email}</p>
+            <p className="font-black text-primary text-xs md:text-sm">{appState.groupInfo?.groupName || profile?.email}</p>
           </div>
           <button 
             onClick={resetState}
-            className="w-14 h-14 md:w-16 md:h-16 bg-red-50 text-red-600 rounded-2xl md:rounded-3xl hover:bg-red-100 transition-all flex items-center justify-center shadow-sm hover:shadow-xl group"
+            className="w-12 h-12 md:w-14 md:h-14 bg-red-50 text-red-600 rounded-xl md:rounded-2xl hover:bg-red-100 transition-all flex items-center justify-center shadow-sm hover:shadow-md group"
           >
-            <LogOut size={24} className="group-hover:translate-x-1 transition-transform" />
+            <LogOut size={20} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </header>
@@ -2067,45 +2058,45 @@ const MainMenu = ({
       {/* Bento Grid - Upscaled & Spacing */}
       <main className="flex-grow p-8 md:p-12 lg:p-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 max-w-[95rem] mx-auto w-full relative z-10">
         
-        {/* Welcome & Overview Card - Large Display */}
-        <div className="sm:col-span-2 lg:col-span-2 bento-card bg-gradient-to-br from-primary via-blue-600 to-blue-800 text-white border-transparent p-10 md:p-12 flex flex-col justify-center shadow-[0_30px_60px_-15px_rgba(59,130,246,0.4)] relative overflow-hidden group">
+        {/* Welcome & Overview Card */}
+        <div className="sm:col-span-2 lg:col-span-2 bento-card bg-gradient-to-br from-primary via-blue-600 to-blue-800 text-white border-transparent p-8 md:p-10 flex flex-col justify-center shadow-xl relative overflow-hidden group">
           <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[120%] bg-white/10 blur-3xl rounded-full rotate-45 group-hover:bg-white/20 transition-all duration-700" />
           
-          <div className="w-fit bg-white/20 text-white px-5 py-2 rounded-full text-[0.7rem] font-black uppercase tracking-widest backdrop-blur-xl mb-8 border border-white/20 relative z-10">
+          <div className="w-fit bg-white/20 text-white px-4 py-1.5 rounded-full text-[0.65rem] font-black uppercase tracking-widest backdrop-blur-xl mb-6 border border-white/20 relative z-10">
             Pusat Kendali Pengamatan
           </div>
-          <h2 className="text-xl md:text-2xl font-black mb-6 leading-tight tracking-tighter relative z-10">
+          <h2 className="text-xl md:text-2xl font-black mb-4 leading-tight tracking-tighter relative z-10">
             Halo, Kelompok <br/>
             <span className="opacity-80 italic">{appState.groupInfo?.groupName || 'Pencarian'}!</span>
           </h2>
-          <p className="text-blue-100 text-base md:text-lg font-medium leading-relaxed max-w-xl opacity-90 mb-8 relative z-10">
+          <p className="text-blue-100 text-sm md:text-base font-medium leading-relaxed max-w-xl opacity-90 mb-6 relative z-10">
             Selamat datang di laboratorium virtual. Silakan pilih modul di bawah untuk memulai analisis Gaya Archimedes kalian.
           </p>
-          <div className="mt-2 flex flex-wrap gap-6 relative z-10">
-            <div className="bg-white/10 p-6 md:p-8 rounded-[2rem] backdrop-blur-xl border border-white/20 min-w-[180px] shadow-xl">
-              <p className="text-[0.65rem] uppercase font-black opacity-60 tracking-widest mb-2">Total Progres</p>
-              <div className="flex items-end gap-3">
-                <span className="text-xl md:text-2xl font-black leading-none">{progressPercent}%</span>
-                <span className="text-xs font-black opacity-60 mb-1 uppercase tracking-widest text-white/60">Tuntas</span>
+          <div className="mt-2 flex flex-wrap gap-4 relative z-10">
+            <div className="bg-white/10 p-5 md:p-6 rounded-3xl backdrop-blur-xl border border-white/20 min-w-[150px] shadow-lg">
+              <p className="text-[0.6rem] uppercase font-black opacity-60 tracking-widest mb-1.5">Total Progres</p>
+              <div className="flex items-end gap-2">
+                <span className="text-lg md:text-xl font-black leading-none">{progressPercent}%</span>
+                <span className="text-[0.6rem] font-black opacity-60 mb-0.5 uppercase tracking-widest text-white/60">Tuntas</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Status Counter Card - Upscaled */}
-        <div className="bento-card border-white/50 p-10 flex flex-col bg-white/80 backdrop-blur-2xl shadow-xl relative group min-h-[350px]">
-          <div className="absolute top-8 right-8 w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 group-hover:text-primary transition-all group-hover:rotate-12">
-            <Target size={28} />
+        {/* Status Counter Card */}
+        <div className="bento-card border-white/50 p-8 flex flex-col bg-white/80 backdrop-blur-2xl shadow-xl relative group min-h-[350px]">
+          <div className="absolute top-6 right-6 w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 group-hover:text-primary transition-all group-hover:rotate-12">
+            <Target size={24} />
           </div>
-          <h3 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-auto">Metrik Capaian</h3>
-          <div className="flex justify-between items-end mt-20 mb-8 px-4">
+          <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-auto">Metrik Capaian</h3>
+          <div className="flex justify-between items-end mt-16 mb-6 px-2">
              <div>
-               <div className="text-3xl md:text-4xl font-black text-slate-900 leading-none tracking-tighter">{completedModules}</div>
-               <div className="text-[0.8rem] text-slate-400 font-black uppercase tracking-[0.3em] mt-4">Module Selesai</div>
+               <div className="text-2xl md:text-3xl font-black text-slate-900 leading-none tracking-tighter">{completedModules}</div>
+               <div className="text-[0.65rem] text-slate-400 font-black uppercase tracking-widest mt-2">Module Selesai</div>
              </div>
              <div className="text-right">
-               <div className="text-2xl md:text-3xl font-black text-slate-100 leading-none tracking-tighter">{totalModules}</div>
-               <div className="text-[0.8rem] text-slate-400 font-black uppercase tracking-[0.3em] mt-4">Total Target</div>
+               <div className="text-xl md:text-2xl font-black text-slate-100 leading-none tracking-tighter">{totalModules}</div>
+               <div className="text-[0.65rem] text-slate-400 font-black uppercase tracking-widest mt-2">Total Target</div>
              </div>
           </div>
           <div className="h-6 bg-slate-100 rounded-full mt-8 overflow-hidden shadow-inner p-1.5 border border-slate-200/50">
@@ -2120,34 +2111,34 @@ const MainMenu = ({
           </p>
         </div>
 
-        {/* Team Information Card - Upscaled */}
-        <div className="bento-card border-white/50 flex flex-col p-12 md:p-14 bg-white/80 backdrop-blur-2xl shadow-2xl min-h-[400px]">
-          <h3 className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-12">Detail Laboran</h3>
-          <div className="space-y-12 flex-grow">
+        {/* Team Information Card */}
+        <div className="bento-card border-white/50 flex flex-col p-8 md:p-10 bg-white/80 backdrop-blur-2xl shadow-xl min-h-[350px]">
+          <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-8">Detail Laboran</h3>
+          <div className="space-y-8 flex-grow">
             <div>
-              <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Identitas Kelompok</p>
-              <p className="text-xl md:text-2xl font-black text-primary uppercase tracking-tighter leading-none mb-2 drop-shadow-sm">{appState.groupInfo?.groupName}</p>
+              <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-3">Identitas Kelompok</p>
+              <p className="text-lg md:text-xl font-black text-primary uppercase tracking-tighter leading-none mb-1.5 drop-shadow-sm">{appState.groupInfo?.groupName}</p>
             </div>
             
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div>
-                <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Ketua Kelompok Pengamat</p>
-                <div className="flex items-center gap-6 p-6 bg-primary/5 rounded-[2.5rem] border border-primary/10 group hover:bg-primary/10 transition-colors">
-                   <div className="w-20 h-20 rounded-3xl bg-primary text-white flex items-center justify-center font-black text-3xl shadow-xl group-hover:scale-110 transition-transform">K</div>
+                <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-3">Ketua Kelompok Pengamat</p>
+                <div className="flex items-center gap-4 p-4 bg-primary/5 rounded-2xl border border-primary/10 group hover:bg-primary/10 transition-colors">
+                   <div className="w-14 h-14 rounded-xl bg-primary text-white flex items-center justify-center font-black text-xl shadow-lg group-hover:scale-110 transition-transform">K</div>
                    <div>
-                     <p className="font-black text-slate-900 text-xl md:text-2xl leading-none mb-1">{appState.groupInfo?.leaderName}</p>
-                     <p className="text-[0.7rem] font-black text-primary uppercase tracking-[0.2em]">Koordinator Utama</p>
+                     <p className="font-black text-slate-900 text-base md:text-lg leading-none mb-1">{appState.groupInfo?.leaderName}</p>
+                     <p className="text-[0.6rem] font-black text-primary uppercase tracking-widest">Koordinator Utama</p>
                    </div>
                 </div>
               </div>
 
               <div>
-                <p className="text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Daftar Anggota Aktif ({appState.groupInfo?.members.filter(m => m).length})</p>
-                <div className="grid grid-cols-1 gap-4 max-h-[250px] overflow-y-auto pr-4 custom-scrollbar">
+                <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-3">Daftar Anggota Aktif ({appState.groupInfo?.members.filter(m => m).length})</p>
+                <div className="grid grid-cols-1 gap-3 max-h-[200px] overflow-y-auto pr-3 custom-scrollbar">
                    {appState.groupInfo?.members.filter(m => m).map((m, i) => (
-                     <div key={i} className="flex items-center gap-6 p-5 bg-slate-50/50 rounded-[2rem] border border-slate-100 hover:border-primary/20 transition-all hover:bg-white hover:shadow-lg group">
-                        <div className="w-10 h-10 rounded-2xl bg-white border border-slate-100 flex items-center justify-center font-black text-sm text-slate-400 group-hover:text-primary transition-colors">{i+1}</div>
-                        <p className="font-black text-slate-700 text-lg">{m}</p>
+                     <div key={i} className="flex items-center gap-4 p-3.5 bg-slate-50/50 rounded-xl border border-slate-100 hover:border-primary/20 transition-all hover:bg-white hover:shadow-md group">
+                        <div className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center font-black text-xs text-slate-400 group-hover:text-primary transition-colors">{i+1}</div>
+                        <p className="font-black text-slate-700 text-base">{m}</p>
                      </div>
                    ))}
                 </div>
@@ -2156,14 +2147,13 @@ const MainMenu = ({
           </div>
         </div>
 
-        {/* Module Selection Section - Upscaled Heading */}
-        <div className="sm:col-span-2 lg:col-span-4 mt-20 md:mt-24 mb-6">
-          <h3 className="text-[0.8rem] md:text-xl font-black text-slate-400 uppercase tracking-[0.5em] mb-12 flex items-center gap-10">
-            <div className="w-20 h-[3px] bg-primary/30 rounded-full" />
+        <div className="sm:col-span-2 lg:col-span-4 mt-16 md:mt-20 mb-6">
+          <h3 className="text-[0.7rem] md:text-base font-black text-slate-400 uppercase tracking-widest mb-10 flex items-center gap-6">
+            <div className="w-12 h-[2px] bg-primary/30 rounded-full" />
             Kurikulum Praktikum Ke-Archimedesan
             <div className="flex-grow h-[1px] bg-slate-200/50" />
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {APP_CONFIG.modules.map((m, idx) => {
               const Icon = icons[m.icon as keyof typeof icons] || Droplets;
               const answers = getModuleAnswers(m.id);
@@ -2185,56 +2175,56 @@ const MainMenu = ({
               return (
                 <motion.div
                   key={m.id}
-                  whileHover={{ y: -24, scale: 1.02, shadow: '0 60px 120px -30px rgba(0,0,0,0.15)' }}
+                  whileHover={{ y: -12, scale: 1.01, shadow: '0 20px 40px -10px rgba(0,0,0,0.1)' }}
                   onClick={() => {
                     setActiveModuleIndex(idx);
                     setView('MODULE');
                   }}
-                  className="bento-card cursor-pointer group relative overflow-hidden bg-white/90 backdrop-blur-3xl border-4 border-white hover:border-primary/20 transition-all p-12 md:p-16 flex flex-col h-full rounded-[4rem] shadow-2xl"
+                  className="bento-card cursor-pointer group relative overflow-hidden bg-white/90 backdrop-blur-3xl border-2 border-white hover:border-primary/20 transition-all p-8 md:p-10 flex flex-col h-full rounded-3xl shadow-xl"
                 >
-                  <div className="absolute top-0 right-0 p-10">
+                  <div className="absolute top-0 right-0 p-6">
                     {isCompleted ? (
-                      <div className="px-8 py-3 bg-success text-white rounded-full flex items-center gap-4 text-[0.85rem] font-black uppercase tracking-[0.2em] shadow-2xl shadow-success/30">
-                         <CheckCircle2 size={24} /> Lulus Praktikum
+                      <div className="px-4 py-1.5 bg-success text-white rounded-full flex items-center gap-2 text-[0.65rem] font-black uppercase tracking-widest shadow-lg shadow-success/20">
+                         <CheckCircle2 size={16} /> Lulus Praktikum
                       </div>
                     ) : (
-                      <div className="px-8 py-3 bg-slate-50 text-slate-500 rounded-full flex items-center gap-4 text-[0.85rem] font-black uppercase tracking-[0.2em] border-2 border-slate-100">
-                         <PlayCircle size={24} className="group-hover:text-primary transition-colors" /> {moduleProgressPercent}% Selesai
+                      <div className="px-4 py-1.5 bg-slate-50 text-slate-500 rounded-full flex items-center gap-2 text-[0.65rem] font-black uppercase tracking-widest border border-slate-100">
+                         <PlayCircle size={16} className="group-hover:text-primary transition-colors" /> {moduleProgressPercent}% Selesai
                       </div>
                     )}
                   </div>
                   
-                  <div className="mb-0 flex-grow pt-10">
-                    <p className="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.4em] mb-6">Paket Percobaan 0{idx + 1}</p>
-                    <h4 className="text-lg md:text-xl font-black text-slate-900 leading-[0.9] mb-12 tracking-tighter group-hover:text-primary transition-colors text-balance">
+                  <div className="mb-0 flex-grow pt-6">
+                    <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-4">Paket Percobaan 0{idx + 1}</p>
+                    <h4 className="text-base md:text-lg font-black text-slate-900 leading-tight mb-8 tracking-tighter group-hover:text-primary transition-colors text-balance">
                       {m.title}
                     </h4>
-                    <div className="flex items-center gap-4 text-slate-500 mb-12 p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100">
-                       <RefreshCw size={24} className="opacity-40 animate-spin-slow text-primary" />
+                    <div className="flex items-center gap-3 text-slate-500 mb-8 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+                       <RefreshCw size={18} className="opacity-40 animate-spin-slow text-primary" />
                        <div>
-                         <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Status Sinkronisasi</p>
-                         <p className="font-black text-slate-700 text-sm">{(answers as any).updatedAt ? formatDate((answers as any).updatedAt) : 'Menunggu Akses'}</p>
+                         <p className="text-[0.55rem] font-black text-slate-400 uppercase tracking-widest mb-0.5">Status Sinkronisasi</p>
+                         <p className="font-black text-slate-700 text-xs">{(answers as any).updatedAt ? formatDate((answers as any).updatedAt) : 'Menunggu Akses'}</p>
                        </div>
                     </div>
 
-                    <div className="space-y-8">
-                       <div className="flex justify-between items-center text-[0.85rem] font-black uppercase tracking-[0.3em]">
+                    <div className="space-y-4">
+                       <div className="flex justify-between items-center text-[0.65rem] font-black uppercase tracking-widest">
                           <span className="text-slate-400">Pencapaian Langkah</span>
                           <span className="text-primary">{moduleProgressPercent}%</span>
                        </div>
-                       <div className="w-full h-5 bg-slate-100 rounded-full overflow-hidden shadow-inner p-1">
+                       <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner p-0.5">
                           <motion.div 
                             initial={{ width: 0 }}
                             animate={{ width: `${moduleProgressPercent}%` }}
-                            className="h-full bg-primary rounded-full shadow-lg" 
+                            className="h-full bg-primary rounded-full shadow-sm" 
                           />
                        </div>
                     </div>
                   </div>
 
-                  <div className="mt-16 pt-16 border-t-2 border-slate-50">
-                    <p className="text-[0.75rem] font-black text-slate-300 uppercase tracking-[0.4em] mb-8">Struktur Inkuiri Terbimbing</p>
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+                  <div className="mt-8 pt-8 border-t border-slate-50">
+                    <p className="text-[0.6rem] font-black text-slate-300 uppercase tracking-widest mb-6">Struktur Inkuiri Terbimbing</p>
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                        {[
                          { label: 'Kelompok Lab', done: answers.roleAssignments && answers.roleAssignments.some(r => r.role) },
                          { label: 'Masalah', done: !!answers.problemFormulation },
@@ -2243,20 +2233,20 @@ const MainMenu = ({
                          { label: 'Analisis', done: answers.hypothesisTesting.isCorrect !== null },
                          { label: 'Kesimpulan', done: !!answers.conclusion }
                        ].map((step, i) => (
-                         <div key={i} className="flex items-center gap-4">
-                            <div className={cn("w-4 h-4 rounded-full border-2", step.done ? "bg-success border-success shadow-[0_0_15px_rgba(34,197,94,0.4)]" : "bg-white border-slate-200")} />
-                            <span className={cn("text-[0.85rem] font-black truncate", step.done ? "text-slate-800" : "text-slate-400")}>{step.label}</span>
+                         <div key={i} className="flex items-center gap-2.5">
+                            <div className={cn("w-2.5 h-2.5 rounded-full border-2", step.done ? "bg-success border-success shadow-[0_0_10px_rgba(34,197,94,0.4)]" : "bg-white border-slate-200")} />
+                            <span className={cn("text-[0.65rem] font-black truncate", step.done ? "text-slate-800" : "text-slate-400")}>{step.label}</span>
                          </div>
                        ))}
                     </div>
                   </div>
 
-                  <div className="mt-16 flex justify-between items-center bg-slate-50/50 p-8 rounded-[3rem] hover:bg-primary/5 transition-all group/btn border border-transparent hover:border-primary/10">
-                     <span className="text-xl font-black text-primary uppercase tracking-[0.2em] group-hover/btn:translate-x-6 transition-transform flex items-center gap-5">
-                        Buka Lab <ArrowRight size={32} />
+                  <div className="mt-8 flex justify-between items-center bg-slate-50/50 p-6 rounded-[2rem] hover:bg-primary/5 transition-all group/btn border border-transparent hover:border-primary/10">
+                     <span className="text-base font-black text-primary uppercase tracking-widest group-hover/btn:translate-x-4 transition-transform flex items-center gap-4">
+                        Buka Lab <ArrowRight size={24} />
                      </span>
-                     <div className="w-20 h-20 bg-white text-slate-300 group-hover/btn:bg-primary group-hover/btn:text-white rounded-[2rem] flex items-center justify-center transition-all shadow-xl group-hover/btn:rotate-12">
-                        <ChevronRight size={48} />
+                     <div className="w-12 h-12 bg-white text-slate-300 group-hover/btn:bg-primary group-hover/btn:text-white rounded-xl flex items-center justify-center transition-all shadow-md group-hover/btn:rotate-6">
+                        <ChevronRight size={32} />
                      </div>
                   </div>
                 </motion.div>
@@ -2265,52 +2255,52 @@ const MainMenu = ({
           </div>
         </div>
 
-        {/* Bottom Features - Upscaled */}
-        <div className="sm:col-span-2 lg:col-span-4 bento-card bg-slate-900 text-white flex flex-col xl:flex-row items-center justify-between gap-12 border-transparent p-12 md:p-16 shadow-[0_50px_100px_-20px_rgba(15,23,42,0.4)] mt-12 mb-12 rounded-[5rem] overflow-hidden relative">
-           <div className="absolute top-0 right-0 w-80 h-80 bg-white opacity-[0.03] blur-[100px] pointer-events-none" />
-           <div className="flex flex-wrap justify-center md:justify-start gap-12 md:gap-20 relative z-10">
-             <div className="text-center md:text-left">
-                <p className="text-[0.65rem] opacity-50 uppercase font-black mb-3 tracking-[0.5em]">Total Titik Data</p>
-                <div className="flex items-center gap-4">
-                   <p className="text-2xl md:text-3xl font-black text-amber-500 tracking-tighter">
-                    {Object.values(appState.moduleProgress).reduce((acc: number, m: any) => acc + (m.answers?.tableData?.length || 0), 0).toString().padStart(2, '0')}
-                   </p>
-                   <div className="w-10 h-10 bg-amber-500/20 rounded-2xl flex items-center justify-center text-amber-500 shadow-xl"><Database size={24} /></div>
-                </div>
-             </div>
-             <div className="h-20 w-[2px] bg-white/10 hidden xl:block" />
-             <div className="text-center md:text-left">
-                <p className="text-[0.65rem] opacity-50 uppercase font-black mb-3 tracking-[0.5em]">Modul Tuntas</p>
-                <div className="flex items-center gap-4">
-                   <p className="text-2xl md:text-3xl font-black text-green-500 tracking-tighter">
-                    {completedModules.toString().padStart(2, '0')}
-                   </p>
-                   <div className="w-10 h-10 bg-green-500/20 rounded-2xl flex items-center justify-center text-green-500 shadow-xl"><CheckCircle2 size={24} /></div>
-                </div>
-             </div>
-             <div className="h-20 w-[2px] bg-white/10 hidden xl:block" />
-             <div className="text-center md:text-left">
-                <p className="text-[0.65rem] opacity-50 uppercase font-black mb-3 tracking-[0.5em]">Skor Capaian</p>
-                <div className="flex items-center gap-4">
-                   <p className="text-2xl md:text-3xl font-black text-blue-400 tracking-tighter">
-                    {Math.round(Object.values(appState.moduleProgress).reduce((acc: number, m: any) => acc + (m.answers?.evaluationScore || 0), 0) / (completedModules || 1))}
-                   </p>
-                   <div className="w-10 h-10 bg-blue-400/20 rounded-2xl flex items-center justify-center text-blue-400 shadow-xl"><Award size={24} /></div>
-                </div>
-             </div>
+      {/* Bottom Features */}
+      <div className="sm:col-span-2 lg:col-span-4 bento-card bg-slate-900 text-white flex flex-col xl:flex-row items-center justify-between gap-8 border-transparent p-10 md:p-12 shadow-2xl mt-12 mb-12 rounded-[3.5rem] overflow-hidden relative">
+         <div className="absolute top-0 right-0 w-80 h-80 bg-white opacity-[0.03] blur-[100px] pointer-events-none" />
+         <div className="flex flex-wrap justify-center md:justify-start gap-10 md:gap-16 relative z-10">
+           <div className="text-center md:text-left">
+              <p className="text-[0.6rem] opacity-50 uppercase font-black mb-2 tracking-widest">Total Titik Data</p>
+              <div className="flex items-center gap-3">
+                 <p className="text-xl md:text-2xl font-black text-amber-500 tracking-tighter">
+                  {Object.values(appState.moduleProgress).reduce((acc: number, m: any) => acc + (m.answers?.tableData?.length || 0), 0).toString().padStart(2, '0')}
+                 </p>
+                 <div className="w-8 h-8 bg-amber-500/20 rounded-xl flex items-center justify-center text-amber-500 shadow-lg"><Database size={18} /></div>
+              </div>
            </div>
-           
-           <div className="relative z-10 w-full xl:w-auto">
-             <Button 
-                variant="success" 
-                onClick={generateCompletePDF} 
-                className="w-full xl:w-auto px-16 py-8 text-2xl font-black rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(34,197,94,0.4)] group overflow-hidden"
-              >
-               <span className="relative z-10 flex items-center gap-6">Unduh Laporan Akhir (PDF) <Download size={32} className="group-hover:translate-y-2 transition-transform" /></span>
-               <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity" />
-             </Button>
+           <div className="h-14 w-[1px] bg-white/10 hidden xl:block" />
+           <div className="text-center md:text-left">
+              <p className="text-[0.6rem] opacity-50 uppercase font-black mb-2 tracking-widest">Modul Tuntas</p>
+              <div className="flex items-center gap-3">
+                 <p className="text-xl md:text-2xl font-black text-green-500 tracking-tighter">
+                  {completedModules.toString().padStart(2, '0')}
+                 </p>
+                 <div className="w-8 h-8 bg-green-500/20 rounded-xl flex items-center justify-center text-green-500 shadow-lg"><CheckCircle2 size={18} /></div>
+              </div>
            </div>
-        </div>
+           <div className="h-14 w-[1px] bg-white/10 hidden xl:block" />
+           <div className="text-center md:text-left">
+              <p className="text-[0.6rem] opacity-50 uppercase font-black mb-2 tracking-widest">Skor Capaian</p>
+              <div className="flex items-center gap-3">
+                 <p className="text-xl md:text-2xl font-black text-blue-400 tracking-tighter">
+                  {Math.round(Object.values(appState.moduleProgress).reduce((acc: number, m: any) => acc + (m.answers?.evaluationScore || 0), 0) / (completedModules || 1))}
+                 </p>
+                 <div className="w-8 h-8 bg-blue-400/20 rounded-xl flex items-center justify-center text-blue-400 shadow-lg"><Award size={18} /></div>
+              </div>
+           </div>
+         </div>
+         
+         <div className="relative z-10 w-full xl:w-auto">
+           <Button 
+              variant="success" 
+              onClick={generateCompletePDF} 
+              className="w-full xl:w-auto px-10 py-5 text-xl font-black rounded-3xl shadow-xl group overflow-hidden"
+            >
+             <span className="relative z-10 flex items-center gap-4">Unduh Laporan Akhir (PDF) <Download size={24} className="group-hover:translate-y-1 transition-transform" /></span>
+             <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+           </Button>
+         </div>
+      </div>
 
       </main>
 
@@ -2451,46 +2441,46 @@ const EvaluationSection = ({ module, evaluationScore, onComplete }: any) => {
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="text-center p-12 bg-white rounded-[3rem] border-4 border-slate-100 shadow-2xl space-y-8"
+        className="text-center p-8 bg-white rounded-3xl border-2 border-slate-100 shadow-xl space-y-6"
       >
         <div className={cn(
-          "w-24 h-24 rounded-3xl flex items-center justify-center mx-auto shadow-xl transition-all duration-500",
-          isWin ? "bg-green-500 text-white shadow-green-500/20" : "bg-red-500 text-white shadow-red-500/20"
+          "w-16 h-16 rounded-2xl flex items-center justify-center mx-auto shadow-lg transition-all duration-500",
+          isWin ? "bg-green-500 text-white shadow-green-500/10" : "bg-red-500 text-white shadow-red-500/10"
         )}>
-          {isWin ? <Trophy size={48} /> : <AlertTriangle size={48} />}
+          {isWin ? <Trophy size={32} /> : <AlertTriangle size={32} />}
         </div>
         
         <div>
-          <h2 className={cn("text-2xl font-black mb-2", isWin ? "text-green-600" : "text-red-600")}>
+          <h2 className={cn("text-xl font-black mb-1", isWin ? "text-green-600" : "text-red-600")}>
             {isWin ? "Misi Berhasil!" : "Misi Gagal"}
           </h2>
-          <p className="text-xl text-slate-500 font-bold">Skor Akhir Evaluasi:</p>
+          <p className="text-base text-slate-500 font-bold">Skor Akhir Evaluasi:</p>
         </div>
 
         <div className="flex flex-col items-center">
-           <div className={cn("text-4xl font-black tracking-tighter", isWin ? "text-green-500" : "text-red-500")}>
+           <div className={cn("text-3xl font-black tracking-tighter", isWin ? "text-green-500" : "text-red-500")}>
              {Math.round(displayScore)}
            </div>
-           <div className="text-sm font-bold text-slate-400 mt-2">MINIMAL 80 UNTUK LULUS</div>
+           <div className="text-[0.65rem] font-bold text-slate-400 mt-1">MINIMAL 80 UNTUK LULUS</div>
         </div>
 
-        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-           <p className="text-sm font-medium text-slate-600 leading-relaxed">
+        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+           <p className="text-[0.75rem] font-medium text-slate-600 leading-relaxed">
              {isWin 
                ? "Selamat! Kelompok Anda telah menguasai konsep pada modul ini dengan sangat baik."
                : "Maaf, skor Anda belum mencapai batas minimum 80%. Silakan pelajari kembali data pengamatan dan coba lagi."}
            </p>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
            {!isWin && (
-             <Button onClick={retryGame} className="w-full py-6 bg-red-600 hover:bg-red-700 text-lg rounded-2xl">
+             <Button onClick={retryGame} className="w-full py-4 bg-red-600 hover:bg-red-700 text-base rounded-xl border-none">
                 Coba Lagi (Reset Game)
              </Button>
            )}
            {isWin && (
-             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic flex items-center justify-center gap-2">
-                <CheckCircle2 size={14} className="text-green-500" /> Hasil tersimpan di laporan digital
+             <p className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-widest italic flex items-center justify-center gap-2">
+                <CheckCircle2 size={12} className="text-green-500" /> Hasil tersimpan di laporan digital
              </p>
            )}
         </div>
