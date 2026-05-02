@@ -49,6 +49,7 @@ import {
   User,
   Target,
   Search,
+  Server,
   BarChart2,
   PieChart,
   Activity
@@ -95,6 +96,34 @@ import {
   deleteDoc,
   onSnapshot 
 } from 'firebase/firestore';
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js';
+import { Line, Bar, Pie } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 // --- UTILS ---
 
@@ -332,7 +361,7 @@ async function generateCompletePDF(appState: AppState, getModuleAnswers: (id: st
   element.innerHTML = `
     <div style="text-align: center; margin-bottom: 40px;">
       <img src="${APP_CONFIG.university.logo}" style="width: 80px; margin-bottom: 20px;" />
-      <h1 style="margin: 0; font-size: 24px;">LAPORAN PRAKTIKUM GAYA ARCHIMEDES</h1>
+      <h1 style="margin: 0; font-size: 24px;">LAPORAN PERCOBAAN GAYA ARCHIMEDES</h1>
       <h2 style="margin: 5px 0 0 0; font-size: 18px; color: #666;">${APP_CONFIG.university.name}</h2>
     </div>
 
@@ -364,7 +393,7 @@ async function generateCompletePDF(appState: AppState, getModuleAnswers: (id: st
                   <span style="font-weight: 800; color: #1e40af;">${ra.name}</span>
                   <span style="color: #64748b; font-style: italic;">${ra.role || '-'}</span>
                 </div>
-              `).join('') || '<div style="grid-column: span 2; color: #94a3b8; font-style: italic;">Belum ada data pembagian tugas untuk modul ini</div>'}
+              `).join('') || '<div style="grid-column: span 2; color: #94a3b8; font-style: italic;">Belum ada data pembagian tugas untuk percobaan ini</div>'}
             </div>
           </div>
 
@@ -447,7 +476,7 @@ async function generateCompletePDF(appState: AppState, getModuleAnswers: (id: st
                 <p style="font-size: 11px; color: #475569;">${answers.reflection.whatLearned || '-'}</p>
               </div>
               <div style="background: #f0fdf4; border: 1px inset #bbf7d0; padding: 12px; border-radius: 12px;">
-                <p style="font-weight: 700; font-size: 9px; color: #16a34a; text-transform: uppercase; margin-bottom: 5px;">Bagaimana perasaan kelompok saat melakukan praktikum?</p>
+                <p style="font-weight: 700; font-size: 9px; color: #16a34a; text-transform: uppercase; margin-bottom: 5px;">Bagaimana perasaan kelompok saat melakukan percobaan?</p>
                 <p style="font-size: 11px; color: #475569;">${answers.reflection.feelings || '-'}</p>
               </div>
               <div style="background: #fffbeb; border: 1px inset #fef3c7; padding: 12px; border-radius: 12px;">
@@ -532,12 +561,12 @@ const LandingPage = ({ setView }: { setView: (v: View) => void }) => (
         </h2>
         
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tighter mb-8 text-balance drop-shadow-sm">
-          Praktikum<br/>
+          Percobaan<br/>
           <span className="bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">Gaya Archimedes.</span>
         </h1>
         
         <p className="text-slate-500 text-sm md:text-base font-medium mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed opacity-90">
-          LMS Interaktif berbasis <span className="text-primary font-black border-b-2 border-primary/20">Guided Inquiry</span> untuk eksplorasi hukum fisika secara mendalam.
+          <span className="font-black text-slate-900">Lembar kerja peserta didik</span> berbasis <span className="text-primary font-black border-b-2 border-primary/20">Guided Inquiry</span> untuk eksplorasi sains secara mendalam.
         </p>
         
         <Button onClick={() => setView('LOGIN')} className="w-full md:w-auto px-10 py-5 text-lg md:text-xl shadow-[0_20px_40px_-10px_rgba(59,130,246,0.5)] rounded-2xl group bg-primary hover:bg-blue-700 transition-all">
@@ -555,7 +584,7 @@ const LandingPage = ({ setView }: { setView: (v: View) => void }) => (
           <div className="w-12 h-12 md:w-16 md:h-16 bg-primary/5 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
             <Anchor size={28} className="md:size-8" />
           </div>
-          <p className="font-bold text-slate-400 text-[0.6rem] md:text-[0.65rem] uppercase tracking-[0.2em] mb-1">Praktikum</p>
+          <p className="font-bold text-slate-400 text-[0.6rem] md:text-[0.65rem] uppercase tracking-[0.2em] mb-1">Percobaan</p>
           <p className="font-black text-slate-800 text-sm md:text-base tracking-tight">Virtual</p>
         </div>
         
@@ -591,12 +620,12 @@ const LandingPage = ({ setView }: { setView: (v: View) => void }) => (
         <p className="text-lg font-black text-slate-800">{APP_CONFIG.author.lecturer}</p>
       </div>
       <div className="text-left bg-white/40 backdrop-blur-md p-6 rounded-3xl border border-white/50">
-        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Penulis & Pengembang</p>
+        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Pengembang</p>
         <p className="text-lg font-black text-slate-800">{APP_CONFIG.author.name}</p>
         <p className="text-xs font-bold text-primary mt-1">NPM: {APP_CONFIG.author.npm}</p>
       </div>
       <div className="text-left bg-white/40 backdrop-blur-md p-6 rounded-3xl border border-white/50">
-        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Laboratorium Fisika</p>
+        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Laboratorium IPA</p>
         <p className="text-lg font-black text-slate-800">{APP_CONFIG.author.course}</p>
       </div>
     </div>
@@ -664,9 +693,9 @@ const LoginPage = ({
           </motion.div>
           
           <h2 className="text-xl md:text-2xl font-black text-slate-900 leading-tight tracking-tighter mb-1">
-            Laboratorium <span className={role === 'admin' ? "text-slate-700" : "text-primary"}>Virtual</span>
+            Laboratorium IPA <span className={role === 'admin' ? "text-slate-700" : "text-primary"}>Virtual</span>
           </h2>
-          <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Archimedes Learning System</p>
+          <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Archimedes' Law Worksheet </p>
         </div>
 
         {/* Improved Role Toggle */}
@@ -679,7 +708,7 @@ const LoginPage = ({
               role === 'student' ? "bg-white text-primary shadow-sm" : "text-slate-400 hover:text-slate-600"
             )}
           >
-            Siswa / Kelompok
+            Kelompok
           </button>
           <button 
             type="button"
@@ -718,7 +747,7 @@ const LoginPage = ({
                 value={identifier}
                 onChange={e => setIdentifier(e.target.value)}
                 className="w-full p-4 pl-14 bg-slate-50 border-2 border-slate-100 focus:border-primary focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-800 shadow-sm"
-                placeholder={role === 'student' ? "Nama Kelompok" : "admin@lab.ac.id"}
+                placeholder={role === 'student' ? "Nama Kelompok" : "admin@gmail.com"}
                 required
               />
             </div>
@@ -758,7 +787,7 @@ const LoginPage = ({
             {loading ? (
               <RefreshCw className="animate-spin" size={20} />
             ) : (
-              <>Masuk Laboratorium <ArrowRight size={20} /></>
+              <>Masuk Laboratorium IPA <ArrowRight size={20} /></>
             )}
           </Button>
 
@@ -983,6 +1012,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
   const [selectedStudent, setSelectedStudent] = useState<any | null>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [activeTab, setActiveTab] = useState<'GROUPS' | 'STUDENTS' | 'ANALYTICS'>('ANALYTICS');
   const [stats, setStats] = useState({
     totalGroups: 0,
@@ -991,69 +1021,92 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
     avgScore: 0
   });
 
-    const fetchProgress = async () => {
-    try {
+  useEffect(() => {
+    let unsubscribeUsers: () => void;
+    let unsubscribeProgress: () => void;
+
+    const startRealtimeSync = async () => {
       setLoading(true);
-      
-      // Fetch all student users
-      const usersRef = collection(db, 'users');
-      const usersQuery = query(usersRef, where('role', '==', 'student'));
-      const usersSnap = await getDocs(usersQuery);
-      const studentProfiles = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      try {
+        const usersRef = collection(db, 'users');
+        const usersQuery = query(usersRef, where('role', '==', 'student'));
+        const progressRef = collection(db, 'progress');
 
-      // Fetch all progress
-      const progressRef = collection(db, 'progress');
-      const progressSnap = await getDocs(progressRef);
-      const progressDataMap: Record<string, any> = {};
-      progressSnap.docs.forEach(doc => {
-        progressDataMap[doc.id] = doc.data();
-      });
+        let latestUsers: any[] = [];
+        let latestProgress: Record<string, any> = {};
 
-      // Merge data
-      const mergedData = studentProfiles.map(profile => ({
-        ...profile,
-        ...(progressDataMap[profile.id] || { moduleProgress: {} })
-      }));
+        const updateMergedData = (users: any[], progress: Record<string, any>) => {
+          const mergedData = users.map(profile => ({
+            ...profile,
+            ...(progress[profile.id] || { moduleProgress: {} })
+          }));
 
-      setStudentsProgress(mergedData);
-      
-      // Calculate stats
-      const totalGroups = mergedData.length;
-      let totalStudents = 0;
-      mergedData.forEach((p: any) => {
-        const membersCount = (p.members?.filter((m: string) => m.trim() !== '').length || 0) + 1; // +1 for leader
-        totalStudents += membersCount;
-      });
+          setStudentsProgress(mergedData);
+          
+          const totalGroups = mergedData.length;
+          let totalStudentsCount = 0;
+          mergedData.forEach((p: any) => {
+            const membersCount = (p.members?.filter((m: string) => m.trim() !== '').length || 0) + 1;
+            totalStudentsCount += membersCount;
+          });
 
-      const completed = mergedData.filter((p: any) => Object.keys(p.moduleProgress || {}).length === APP_CONFIG.modules.length).length;
-      
-      let totalScores = 0;
-      let countScores = 0;
-      mergedData.forEach((p: any) => {
-        Object.values(p.moduleProgress || {}).forEach((mod: any) => {
-          if (mod.answers?.evaluationScore !== undefined) {
-             totalScores += mod.answers.evaluationScore;
-             countScores++;
+          const completed = mergedData.filter((p: any) => Object.keys(p.moduleProgress || {}).length === APP_CONFIG.modules.length).length;
+          
+          let totalScores = 0;
+          let countScores = 0;
+          mergedData.forEach((p: any) => {
+            Object.values(p.moduleProgress || {}).forEach((mod: any) => {
+              if (mod.answers?.evaluationScore !== undefined) {
+                 totalScores += mod.answers.evaluationScore;
+                 countScores++;
+              }
+            });
+          });
+          const avg = countScores > 0 ? (totalScores / countScores).toFixed(1) : 0;
+          
+          setStats({
+            totalGroups,
+            totalStudents: totalStudentsCount,
+            completedAll: completed,
+            avgScore: Number(avg)
+          });
+          setLoading(false);
+        };
+
+        unsubscribeUsers = onSnapshot(usersQuery, (snap) => {
+          latestUsers = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          updateMergedData(latestUsers, latestProgress);
+        }, (err) => {
+          if (err.code === 'permission-denied') {
+            handleFirestoreError(err, OperationType.LIST, 'users');
           }
         });
-      });
-      const avg = countScores > 0 ? (totalScores / countScores).toFixed(1) : 0;
-      
-      setStats({
-        totalGroups,
-        totalStudents,
-        completedAll: completed,
-        avgScore: Number(avg)
-      });
-    } catch (err: any) {
-      console.error("Error fetching admin data:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    fetchProgress();
+        unsubscribeProgress = onSnapshot(progressRef, (snap) => {
+          const progressMap: Record<string, any> = {};
+          snap.docs.forEach(doc => {
+            progressMap[doc.id] = doc.data();
+          });
+          latestProgress = progressMap;
+          updateMergedData(latestUsers, latestProgress);
+        }, (err) => {
+          if (err.code === 'permission-denied') {
+            handleFirestoreError(err, OperationType.LIST, 'progress');
+          }
+        });
+
+      } catch (err) {
+        console.error("Error setting up real-time sync:", err);
+        setLoading(false);
+      }
+    };
+
+    startRealtimeSync();
+
+    return () => {
+      if (unsubscribeUsers) unsubscribeUsers();
+      if (unsubscribeProgress) unsubscribeProgress();
+    };
   }, []);
 
   const handleResetProgress = async (studentId: string) => {
@@ -1062,14 +1115,11 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
     try {
       await deleteDoc(doc(db, 'progress', studentId));
       setSelectedGroup(null);
-      await fetchProgress();
-      alert('Progress berhasil direset.');
     } catch (err: any) {
       if (err.code === 'permission-denied') {
         handleFirestoreError(err, OperationType.DELETE, path);
       }
       console.error(err);
-      alert('Gagal mereset progress.');
     } finally {
       setIsResetting(false);
     }
@@ -1084,11 +1134,11 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
       await deleteDoc(doc(db, 'users', studentId));
       
       setSelectedGroup(null);
-      await fetchProgress();
-      alert('Akun kelompok berhasil dihapus.');
     } catch (err: any) {
       console.error("Error deleting account:", err);
-      alert('Gagal menghapus akun.');
+      if (err.code === 'permission-denied') {
+        handleFirestoreError(err, OperationType.DELETE, `users/${studentId}`);
+      }
     } finally {
       setIsDeleting(false);
     }
@@ -1165,7 +1215,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
             </div>
             <div>
               <h1 className="text-sm md:text-lg font-black text-slate-900 tracking-tighter leading-none mb-1">Pusat Kendali Admin</h1>
-              <p className="text-[0.6rem] md:text-[0.65rem] uppercase font-black text-primary tracking-widest opacity-70">Sistem Manajemen Praktikum Virtual</p>
+              <p className="text-[0.6rem] md:text-[0.65rem] uppercase font-black text-primary tracking-widest opacity-70">Sistem Manajemen Percobaan Virtual</p>
             </div>
           </div>
           
@@ -1180,6 +1230,9 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
         </header>
 
         <main className="max-w-7xl mx-auto p-6 md:p-8 w-full">
+          {/* Admin System Info Panel */}
+          <AdminSystemInfo stats={stats} loading={loading} />
+
           {/* Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
             <div className="bento-card border-white/50 p-6 md:p-8 bg-white/80 backdrop-blur-xl shadow-lg relative group overflow-hidden">
@@ -1210,7 +1263,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                <div className="absolute top-0 right-0 p-4 text-slate-100 group-hover:text-green-500/10 transition-colors">
                   <Trophy size={48} />
                </div>
-               <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-2 relative z-10">Tuntas Praktikum</p>
+               <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-2 relative z-10">Tuntas Percobaan</p>
                <div className="text-xl md:text-2xl font-black text-success tracking-tighter relative z-10">{stats.completedAll}</div>
                <div className="mt-4 flex items-center gap-2 text-success relative z-10">
                   <Award size={12} />
@@ -1276,7 +1329,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
            </div>
            <div className="bento-card border-white/50 p-8 bg-white/90 backdrop-blur-3xl shadow-lg">
               <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-3">
-                <Target size={20} className="text-primary" /> Kelompok Selesai per Modul
+                <Target size={20} className="text-primary" /> Kelompok Selesai per Percobaan
               </h3>
               <div className="h-[300px]">
                 <AdminCompletionChart data={getAnalyticsData()} />
@@ -1284,7 +1337,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
            </div>
            <div className="bento-card border-white/50 p-8 bg-white/90 backdrop-blur-3xl shadow-lg">
               <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-3">
-                <Trophy size={20} className="text-orange-500" /> Rata-rata Skor per Modul
+                <Trophy size={20} className="text-orange-500" /> Rata-rata Skor per Percobaan
               </h3>
               <div className="h-[300px]">
                 <AdminScoreChart data={getAnalyticsData()} />
@@ -1308,14 +1361,12 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                 <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tighter flex items-center gap-4">
                   <Anchor size={28} className="text-primary" /> Inventori Kelompok Aktif
                 </h3>
-                <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mt-1">Daftar Pengamatan Laboratorium Terintegrasi</p>
+                <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mt-1">Daftar Pengamatan Laboratorium IPA Terintegrasi</p>
               </div>
-              <button 
-                onClick={fetchProgress}
-                className="px-6 py-3 bg-white border border-slate-100 rounded-xl text-xs font-black text-slate-600 hover:border-primary/30 transition-all flex items-center gap-3 shadow-sm"
-              >
-                <RefreshCw size={14} className={loading ? "animate-spin" : "text-primary"} /> Segarkan Data
-              </button>
+              <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-xl text-[0.65rem] font-black text-slate-400 uppercase tracking-widest flex items-center gap-3 shadow-sm">
+                <RefreshCw size={14} className={loading ? "animate-spin" : "text-primary"} /> 
+                {loading ? 'Sinkronsasi...' : 'Real-time'}
+              </div>
            </div>
            <div className="overflow-x-auto">
               <table className="w-full text-left min-w-[900px]">
@@ -1323,8 +1374,8 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                     <tr className="border-b border-slate-100 font-black text-slate-400 text-[0.75rem] uppercase tracking-widest bg-slate-50/10">
                       <th className="p-4 md:p-5">Label Kelompok</th>
                       <th className="p-4 md:p-5">Penanggung Jawab</th>
-                      <th className="p-4 md:p-5 hidden md:table-cell">Integrasi Modul</th>
-                      <th className="p-4 md:p-5">Metrik Skor</th>
+                      <th className="p-4 md:p-5 hidden md:table-cell">Integrasi Percobaan</th>
+                      <th className="p-4 md:p-5 text-primary">Score Progress</th>
                       <th className="p-4 md:p-5 hidden lg:table-cell">Timestamp Data</th>
                       <th className="p-4 md:p-5 text-right">Navigasi</th>
                     </tr>
@@ -1404,7 +1455,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                     <th className="p-4 md:p-5">Nama Lengkap</th>
                     <th className="p-4 md:p-5">Peran Operasional</th>
                     <th className="p-4 md:p-5">Afiliasi Kelompok</th>
-                    <th className="p-4 md:p-5">Metrik Progres</th>
+                    <th className="p-4 md:p-5 text-primary">Percobaan Progress</th>
                     <th className="p-4 md:p-5">Waktu Aktif</th>
                     <th className="p-4 md:p-5 text-right">Analisis</th>
                   </tr>
@@ -1493,6 +1544,16 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                     </h3>
                     <div className="h-[250px] relative z-10">
                       <AdminStudentScoreChart moduleProgress={selectedStudent.moduleProgress} />
+                    </div>
+                  </div>
+
+                  <div className="bento-card bg-slate-50 border-none p-6 rounded-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-6 text-primary/5"><PieChart size={64} /></div>
+                    <h3 className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-3 relative z-10">
+                      <PieChart size={16} className="text-primary" /> Distribusi Skor per Modul
+                    </h3>
+                    <div className="h-[250px] relative z-10">
+                      <AdminStudentPieChart moduleProgress={selectedStudent.moduleProgress} />
                     </div>
                   </div>
 
@@ -1604,7 +1665,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                     <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[0.65rem] font-black uppercase tracking-widest">Observasi Real-time</span>
                     <span className="w-1.5 h-1.5 bg-slate-200 rounded-full" />
                     <p className="text-base font-black text-slate-400 tracking-tight">
-                      {viewingModuleIdx !== null ? `Modul 0${viewingModuleIdx + 1}: ${APP_CONFIG.modules[viewingModuleIdx].title}` : 'Agregasi Seluruh Laporan Praktikum'}
+                      {viewingModuleIdx !== null ? APP_CONFIG.modules[viewingModuleIdx].title : 'Agregasi Seluruh Laporan Percobaan'}
                     </p>
                   </div>
                 </div>
@@ -1631,7 +1692,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                             <Database size={24} />
                           </div>
                           <h3 className="text-base font-black text-slate-300 tracking-tight">Menunggu Sinkronisasi Data</h3>
-                          <p className="text-sm text-slate-400 font-bold mt-1 max-w-sm mx-auto">Kelompok ini belum melakukan pengamatan atau menyimpan log progress untuk sesi modul ini.</p>
+                          <p className="text-sm text-slate-400 font-bold mt-1 max-w-sm mx-auto">Kelompok ini belum melakukan pengamatan atau menyimpan log progress untuk sesi percobaan ini.</p>
                         </div>
                       );
                     }
@@ -1663,7 +1724,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                         {/* Data Tables */}
                         <div>
                           <h4 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-4">
-                             <Droplets size={18} className="text-primary" /> Logaritma Pengamatan Fisika
+                             <Droplets size={18} className="text-primary" /> Logaritma Pengamatan Sains
                           </h4>
                           <div className="space-y-8">
                              {module.subExperiments ? module.subExperiments.map((sub: any) => {
@@ -1713,7 +1774,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                                             <td className="p-4 text-center font-black text-slate-700 text-sm">{row['W di air (N)']}</td>
                                             <td className="p-4 text-center font-black text-primary text-base">{row['Gaya Apung (N)']}</td>
                                           </tr>
-                                        )) : <tr><td colSpan={4} className="p-12 text-center text-slate-300 font-bold italic text-base uppercase tracking-widest">Menunggu Input Data Praktikum</td></tr>}
+                                        )) : <tr><td colSpan={4} className="p-12 text-center text-slate-300 font-bold italic text-base uppercase tracking-widest">Menunggu Input Data Percobaan</td></tr>}
                                      </tbody>
                                    </table>
                                  </div>
@@ -1793,7 +1854,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
 
                     <div>
                        <h4 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-4">
-                          <Activity size={18} className="text-primary" /> Matriks Pencapaian Kurikulum
+                          <Activity size={18} className="text-primary" /> Progres Percobaan
                        </h4>
                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {APP_CONFIG.modules.map((m, idx) => {
@@ -1828,15 +1889,61 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                             );
                           })}
                        </div>
-                       <p className="text-[0.85rem] text-slate-400 font-bold italic mt-8 text-center flex items-center justify-center gap-3">
+                       <div className="text-[0.85rem] text-slate-400 font-bold italic mt-8 text-center flex items-center justify-center gap-3">
                          <div className="w-8 h-[2px] bg-slate-200" />
-                         Klik pada modul bertanda hijau untuk dekonstruksi laporan lengkap
+                         Klik pada percobaan bertanda hijau untuk dekonstruksi laporan lengkap
                          <div className="w-8 h-[2px] bg-slate-200" />
-                       </p>
+                       </div>
                     </div>
                   </div>
                   
                   <div className="lg:col-span-4 space-y-6 flex flex-col pb-12">
+                     {/* Progress Overview Pie Chart */}
+                     <div className="bento-card border-none bg-white p-8 rounded-3xl shadow-xl relative overflow-hidden group">
+                        <label className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest block mb-4">Overall Progress</label>
+                        <div className="h-48 flex items-center justify-center relative">
+                           {(() => {
+                             const totalModules = APP_CONFIG.modules.length;
+                             const completedModules = Object.keys(selectedGroup.moduleProgress || {}).length;
+                             const remainingModules = totalModules - completedModules;
+                             
+                             const pieData = {
+                               labels: ['Selesai', 'Belum'],
+                               datasets: [
+                                 {
+                                   data: [completedModules, remainingModules],
+                                   backgroundColor: ['#3b82f6', '#f1f5f9'],
+                                   borderWidth: 0,
+                                   cutout: '70%'
+                                 },
+                               ],
+                             };
+
+                             const options = {
+                               plugins: {
+                                 legend: { display: false },
+                                 tooltip: {
+                                   callbacks: {
+                                     label: (context: any) => `${context.label}: ${context.raw} Percobaan`
+                                   }
+                                 }
+                               },
+                               maintainAspectRatio: false
+                             };
+
+                             return (
+                               <>
+                                 <Pie data={pieData} options={options} />
+                                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                    <span className="text-3xl font-black text-slate-900">{Math.round((completedModules / totalModules) * 100)}%</span>
+                                    <span className="text-[0.5rem] font-black text-slate-400 uppercase tracking-widest">Selesai</span>
+                                 </div>
+                               </>
+                             );
+                           })()}
+                        </div>
+                     </div>
+
                      <div className="bento-card border-none bg-slate-900 text-white p-8 rounded-3xl shadow-xl relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl group-hover:bg-white/10 transition-colors" />
                         <label className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest block mb-6 relative z-10">Evaluasi Pamungkas</label>
@@ -1899,10 +2006,11 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
 
             <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end relative z-20">
                <button 
+                disabled={isResetting || isDeleting}
                 onClick={() => setSelectedGroup(null)}
-                className="px-10 py-4 bg-slate-900 text-white font-black text-lg rounded-2xl hover:bg-slate-800 transition-all shadow-lg active:scale-95"
+                className="px-10 py-4 bg-slate-900 text-white font-black text-lg rounded-2xl hover:bg-slate-800 transition-all shadow-lg active:scale-95 disabled:grayscale disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Kembali ke Dashboard
+                {isResetting || isDeleting ? 'Sinkronisasi...' : 'Kembali ke Dashboard'}
               </button>
             </div>
           </motion.div>
@@ -1911,7 +2019,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
 
       {/* Reset Confirmation Modal */}
       {resetTarget && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <motion.div 
              initial={{ scale: 0.9, opacity: 0 }}
              animate={{ scale: 1, opacity: 1 }}
@@ -1922,7 +2030,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
              </div>
              <h3 className="text-xl font-black text-slate-900 text-center mb-2">Konfirmasi Reset</h3>
              <p className="text-sm text-slate-500 text-center font-medium leading-relaxed mb-8">
-                Apakah Anda yakin ingin menghapus seluruh progress untuk kelompok <span className="font-bold text-slate-900">{resetTarget.groupName}</span>? Tindakan ini tidak dapat dibatalkan.
+                Apakah kalian yakin ingin menghapus seluruh progress untuk kelompok <span className="font-bold text-slate-900">{resetTarget.groupName}</span>? Tindakan ini tidak dapat dibatalkan.
              </p>
              <div className="flex gap-3">
                 <Button 
@@ -1933,13 +2041,14 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                    Batal
                 </Button>
                 <Button 
+                  disabled={isResetting}
                   className="flex-1 py-4 bg-red-600 hover:bg-red-700 shadow-lg shadow-red-500/20"
-                  onClick={() => {
-                    handleResetProgress(resetTarget.id);
+                  onClick={async () => {
+                    await handleResetProgress(resetTarget.id);
                     setResetTarget(null);
                   }}
                 >
-                   Ya, Reset
+                   {isResetting ? 'Mereset...' : 'Ya, Reset'}
                 </Button>
              </div>
           </motion.div>
@@ -1948,19 +2057,33 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
 
       {/* Delete Confirmation Modal */}
       {deleteTarget && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <motion.div 
              initial={{ scale: 0.9, opacity: 0 }}
              animate={{ scale: 1, opacity: 1 }}
-             className="bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-2xl border-2 border-red-100"
+             className="bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-2xl border-4 border-red-500/20"
           >
              <div className="w-16 h-16 bg-red-600 text-white rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-lg shadow-red-500/20">
                 <Trash2 size={32} />
              </div>
              <h3 className="text-xl font-black text-slate-900 text-center mb-2">Hapus Akun Permanen</h3>
-             <p className="text-sm text-slate-500 text-center font-medium leading-relaxed mb-8">
-                Apakah Anda yakin ingin menghapus akun kelompok <span className="font-bold text-slate-900">{deleteTarget.groupName}</span>? Seluruh data profil dan progres akan hilang selamanya.
+             <p className="text-sm text-red-700 bg-red-50 p-6 rounded-2xl border border-red-100 text-center font-bold leading-relaxed mb-6">
+                TINDAKAN KRITIKAL: Anda akan melenyapkan kelompok <span className="font-black text-red-900 underline underline-offset-4">{deleteTarget.groupName}</span> secara permanen. Progres dan akun tidak akan bisa dipulihkan.
              </p>
+             
+             <div className="bg-red-50 border border-red-100 rounded-xl p-4 mb-8">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input 
+                    type="checkbox" 
+                    checked={confirmDelete}
+                    onChange={(e) => setConfirmDelete(e.target.checked)}
+                  />
+                  <span className="text-[0.7rem] font-bold text-red-700 leading-snug uppercase tracking-tight">
+                    Saya mengonfirmasi sebagai Admin bahwa tindakan eliminasi data ini bersifat mutlak & tidak dapat dipulihkan.
+                  </span>
+                </label>
+             </div>
+
              <div className="flex gap-3">
                 <Button 
                   variant="ghost" 
@@ -1970,13 +2093,18 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                    Batal
                 </Button>
                 <Button 
-                  className="flex-1 py-4 bg-red-600 hover:bg-red-700 shadow-lg shadow-red-500/20"
-                  onClick={() => {
-                    handleDeleteAccount(deleteTarget.id);
-                    setDeleteTarget(null);
-                  }}
+                   disabled={!confirmDelete || isDeleting}
+                   className={cn(
+                     "flex-1 py-4 transition-all shadow-lg",
+                     confirmDelete ? "bg-red-600 hover:bg-red-700 shadow-red-500/20" : "bg-slate-100 text-slate-300 cursor-not-allowed"
+                   )}
+                   onClick={async () => {
+                     await handleDeleteAccount(deleteTarget.id);
+                     setDeleteTarget(null);
+                     setConfirmDelete(false);
+                   }}
                 >
-                   Hapus Akun
+                   {isDeleting ? 'Menghapus...' : 'Hapus Permanen'}
                 </Button>
              </div>
           </motion.div>
@@ -2030,7 +2158,7 @@ const MainMenu = ({
             <p className="text-[0.6rem] md:text-[0.65rem] uppercase font-black text-slate-400 tracking-widest mb-0.5">
               {APP_CONFIG.university.name}
             </p>
-            <p className="font-black text-slate-800 text-sm md:text-lg tracking-tighter">Virtual Laboratory System</p>
+            <p className="font-black text-slate-800 text-sm md:text-lg tracking-tighter">Magister Pendidikan IPA</p>
           </div>
         </div>
         
@@ -2063,14 +2191,14 @@ const MainMenu = ({
           <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[120%] bg-white/10 blur-3xl rounded-full rotate-45 group-hover:bg-white/20 transition-all duration-700" />
           
           <div className="w-fit bg-white/20 text-white px-4 py-1.5 rounded-full text-[0.65rem] font-black uppercase tracking-widest backdrop-blur-xl mb-6 border border-white/20 relative z-10">
-            Pusat Kendali Pengamatan
+            Dashboard
           </div>
           <h2 className="text-xl md:text-2xl font-black mb-4 leading-tight tracking-tighter relative z-10">
             Halo, Kelompok <br/>
             <span className="opacity-80 italic">{appState.groupInfo?.groupName || 'Pencarian'}!</span>
           </h2>
           <p className="text-blue-100 text-sm md:text-base font-medium leading-relaxed max-w-xl opacity-90 mb-6 relative z-10">
-            Selamat datang di laboratorium virtual. Silakan pilih modul di bawah untuk memulai analisis Gaya Archimedes kalian.
+            Selamat datang di laboratorium IPA virtual. Silakan pilih percobaan di bawah untuk memulai analisis Gaya Archimedes kalian.
           </p>
           <div className="mt-2 flex flex-wrap gap-4 relative z-10">
             <div className="bg-white/10 p-5 md:p-6 rounded-3xl backdrop-blur-xl border border-white/20 min-w-[150px] shadow-lg">
@@ -2088,15 +2216,42 @@ const MainMenu = ({
           <div className="absolute top-6 right-6 w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 group-hover:text-primary transition-all group-hover:rotate-12">
             <Target size={24} />
           </div>
-          <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-auto">Metrik Capaian</h3>
-          <div className="flex justify-between items-end mt-16 mb-6 px-2">
+          <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-6">Overall Progress</h3>
+          
+          <div className="flex-grow flex items-center justify-center mb-6">
+            <div className="w-40 h-40 relative">
+               {(() => {
+                 const pieData = {
+                   labels: ['Selesai', 'Belum'],
+                   datasets: [
+                     {
+                       data: [completedModules, totalModules - completedModules],
+                       backgroundColor: ['#3b82f6', '#f1f5f9'],
+                       borderWidth: 0,
+                       cutout: '75%'
+                     },
+                   ],
+                 };
+                 const options = {
+                   plugins: { legend: { display: false } },
+                   maintainAspectRatio: false
+                 };
+                 return <Pie data={pieData} options={options} />;
+               })()}
+               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-2xl font-black text-slate-900">{progressPercent}%</span>
+                  <span className="text-[0.5rem] font-black text-slate-400 uppercase tracking-widest leading-none">Complete</span>
+               </div>
+            </div>
+          </div>
+
+          <div className="flex justify-between items-end mb-6 px-2">
              <div>
                <div className="text-2xl md:text-3xl font-black text-slate-900 leading-none tracking-tighter">{completedModules}</div>
-               <div className="text-[0.65rem] text-slate-400 font-black uppercase tracking-widest mt-2">Module Selesai</div>
+               <div className="text-[0.65rem] text-slate-400 font-black uppercase tracking-widest mt-2">Percobaan Selesai</div>
              </div>
              <div className="text-right">
                <div className="text-xl md:text-2xl font-black text-slate-100 leading-none tracking-tighter">{totalModules}</div>
-               <div className="text-[0.65rem] text-slate-400 font-black uppercase tracking-widest mt-2">Total Target</div>
              </div>
           </div>
           <div className="h-6 bg-slate-100 rounded-full mt-8 overflow-hidden shadow-inner p-1.5 border border-slate-200/50">
@@ -2106,14 +2261,11 @@ const MainMenu = ({
                className="h-full bg-primary rounded-full shadow-[0_0_25px_rgba(59,130,246,0.5)]" 
              />
           </div>
-          <p className="text-center text-[0.85rem] font-black text-slate-400 mt-10 uppercase tracking-[0.2em] opacity-60">
-            Terget Tersisa: <span className="text-primary">{totalModules - completedModules} Modul</span>
-          </p>
         </div>
 
         {/* Team Information Card */}
         <div className="bento-card border-white/50 flex flex-col p-8 md:p-10 bg-white/80 backdrop-blur-2xl shadow-xl min-h-[350px]">
-          <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-8">Detail Laboran</h3>
+          <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-8">Profil Kelompok</h3>
           <div className="space-y-8 flex-grow">
             <div>
               <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-3">Identitas Kelompok</p>
@@ -2127,7 +2279,6 @@ const MainMenu = ({
                    <div className="w-14 h-14 rounded-xl bg-primary text-white flex items-center justify-center font-black text-xl shadow-lg group-hover:scale-110 transition-transform">K</div>
                    <div>
                      <p className="font-black text-slate-900 text-base md:text-lg leading-none mb-1">{appState.groupInfo?.leaderName}</p>
-                     <p className="text-[0.6rem] font-black text-primary uppercase tracking-widest">Koordinator Utama</p>
                    </div>
                 </div>
               </div>
@@ -2150,7 +2301,7 @@ const MainMenu = ({
         <div className="sm:col-span-2 lg:col-span-4 mt-16 md:mt-20 mb-6">
           <h3 className="text-[0.7rem] md:text-base font-black text-slate-400 uppercase tracking-widest mb-10 flex items-center gap-6">
             <div className="w-12 h-[2px] bg-primary/30 rounded-full" />
-            Kurikulum Praktikum Ke-Archimedesan
+            Percobaan Archimedes
             <div className="flex-grow h-[1px] bg-slate-200/50" />
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
@@ -2185,7 +2336,7 @@ const MainMenu = ({
                   <div className="absolute top-0 right-0 p-6">
                     {isCompleted ? (
                       <div className="px-4 py-1.5 bg-success text-white rounded-full flex items-center gap-2 text-[0.65rem] font-black uppercase tracking-widest shadow-lg shadow-success/20">
-                         <CheckCircle2 size={16} /> Lulus Praktikum
+                         <CheckCircle2 size={16} /> Lulus Percobaan
                       </div>
                     ) : (
                       <div className="px-4 py-1.5 bg-slate-50 text-slate-500 rounded-full flex items-center gap-2 text-[0.65rem] font-black uppercase tracking-widest border border-slate-100">
@@ -2199,17 +2350,9 @@ const MainMenu = ({
                     <h4 className="text-base md:text-lg font-black text-slate-900 leading-tight mb-8 tracking-tighter group-hover:text-primary transition-colors text-balance">
                       {m.title}
                     </h4>
-                    <div className="flex items-center gap-3 text-slate-500 mb-8 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                       <RefreshCw size={18} className="opacity-40 animate-spin-slow text-primary" />
-                       <div>
-                         <p className="text-[0.55rem] font-black text-slate-400 uppercase tracking-widest mb-0.5">Status Sinkronisasi</p>
-                         <p className="font-black text-slate-700 text-xs">{(answers as any).updatedAt ? formatDate((answers as any).updatedAt) : 'Menunggu Akses'}</p>
-                       </div>
-                    </div>
-
                     <div className="space-y-4">
                        <div className="flex justify-between items-center text-[0.65rem] font-black uppercase tracking-widest">
-                          <span className="text-slate-400">Pencapaian Langkah</span>
+                          <span className="text-slate-400">Progress Langkah</span>
                           <span className="text-primary">{moduleProgressPercent}%</span>
                        </div>
                        <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner p-0.5">
@@ -2223,14 +2366,14 @@ const MainMenu = ({
                   </div>
 
                   <div className="mt-8 pt-8 border-t border-slate-50">
-                    <p className="text-[0.6rem] font-black text-slate-300 uppercase tracking-widest mb-6">Struktur Inkuiri Terbimbing</p>
+                    <p className="text-[0.6rem] font-black text-slate-300 uppercase tracking-widest mb-6">Sintaks Inkuiri Terbimbing</p>
                     <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                        {[
                          { label: 'Kelompok Lab', done: answers.roleAssignments && answers.roleAssignments.some(r => r.role) },
                          { label: 'Masalah', done: !!answers.problemFormulation },
                          { label: 'Hipotesis', done: !!answers.hypothesis },
-                         { label: 'Oberservasi', done: answers.tableData.length > 0 || (answers.subTableData && Object.values(answers.subTableData).some(d => d.length > 0)) },
-                         { label: 'Analisis', done: answers.hypothesisTesting.isCorrect !== null },
+                         { label: 'Pengumpulan Data', done: answers.tableData.length > 0 || (answers.subTableData && Object.values(answers.subTableData).some(d => d.length > 0)) },
+                         { label: 'Uji Hipotesis', done: answers.hypothesisTesting.isCorrect !== null },
                          { label: 'Kesimpulan', done: !!answers.conclusion }
                        ].map((step, i) => (
                          <div key={i} className="flex items-center gap-2.5">
@@ -2270,7 +2413,7 @@ const MainMenu = ({
            </div>
            <div className="h-14 w-[1px] bg-white/10 hidden xl:block" />
            <div className="text-center md:text-left">
-              <p className="text-[0.6rem] opacity-50 uppercase font-black mb-2 tracking-widest">Modul Tuntas</p>
+              <p className="text-[0.6rem] opacity-50 uppercase font-black mb-2 tracking-widest">Percobaan Tuntas</p>
               <div className="flex items-center gap-3">
                  <p className="text-xl md:text-2xl font-black text-green-500 tracking-tighter">
                   {completedModules.toString().padStart(2, '0')}
@@ -2304,16 +2447,16 @@ const MainMenu = ({
 
       </main>
 
-      <footer className="px-12 py-10 bg-white/50 backdrop-blur-3xl border-t border-slate-200/50 flex flex-col md:flex-row justify-between items-center gap-8 text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.5em] relative z-10 mt-auto">
-        <span>© 2026 Guided Inquiry Integrated LMS • Archimedes Science Prototype v2.5.4</span>
+      <footer className="px-12 py-10 bg-white/50 backdrop-blur-3xl border-t border-slate-200/50 flex flex-col justify-center items-center text-center gap-8 text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.5em] relative z-10 mt-auto">
+        <span>Magister Pendidikan IPA</span>
         <div className="flex flex-wrap items-center justify-center gap-10">
            <span className="flex items-center gap-3">
              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.6)]" /> 
-             Cloud Synchronization Active
+             Pengembangan Praktikum IPA
            </span>
            <span className="flex items-center gap-3">
              <div className="w-3 h-3 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)]" /> 
-             Secure Lab Protocol
+             Syifa Annisa Sirait (250920017100001)
            </span>
         </div>
       </footer>
@@ -2401,7 +2544,7 @@ const EvaluationSection = ({ module, evaluationScore, onComplete }: any) => {
     if (isCorrect) {
       setLocalScore(s => s + (100 / questions.length));
       setFeedback('RIGHT');
-      setModalData({ type: 'RIGHT', message: "Luar Biasa! Jawaban kamu benar." });
+      setModalData({ type: 'RIGHT', message: "Luar Biasa! Jawaban kalian benar." });
     } else {
       setFeedback('WRONG');
       setModalData({ type: 'WRONG', message: "Yah, Belum Tepat. Semangat belajar lagi!" });
@@ -2467,8 +2610,8 @@ const EvaluationSection = ({ module, evaluationScore, onComplete }: any) => {
         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
            <p className="text-[0.75rem] font-medium text-slate-600 leading-relaxed">
              {isWin 
-               ? "Selamat! Kelompok Anda telah menguasai konsep pada modul ini dengan sangat baik."
-               : "Maaf, skor Anda belum mencapai batas minimum 80%. Silakan pelajari kembali data pengamatan dan coba lagi."}
+               ? "Selamat! Kelompok kalian telah menguasai konsep pada percobaan ini dengan sangat baik."
+               : "Maaf, skor kalian belum mencapai batas minimum 80%. Silakan pelajari kembali data pengamatan dan coba lagi."}
            </p>
         </div>
 
@@ -2488,7 +2631,7 @@ const EvaluationSection = ({ module, evaluationScore, onComplete }: any) => {
     );
   }
 
-  if (!question) return <div className="text-center p-20 text-slate-400 font-bold">Tidak ada evaluasi untuk modul ini.</div>;
+  if (!question) return <div className="text-center p-20 text-slate-400 font-bold">Tidak ada evaluasi untuk percobaan ini.</div>;
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -2652,7 +2795,7 @@ const ObjectivesSection = ({ module }: any) => (
   <div className="space-y-12">
     <div className="text-center">
       <h2 className="text-3xl font-black text-slate-900 mb-4">Tujuan Pembelajaran</h2>
-      <p className="text-xl text-slate-500 font-medium">Melalui praktikum ini, Anda diharapkan mampu mencapai poin-poin berikut:</p>
+      <p className="text-xl text-slate-500 font-medium">Melalui percobaan ini, kalian diharapkan mampu mencapai tujuan berikut:</p>
     </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {module.objectives.map((o: string, i: number) => (
@@ -2716,7 +2859,7 @@ const TextSection = ({ title, description, value, onChange, icon, isLast, onFini
       value={value}
       onChange={e => onChange(e.target.value)}
       className="w-full min-h-[250px] md:min-h-[300px] p-6 md:p-10 bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl md:rounded-[3rem] text-base md:text-xl font-medium outline-none transition-all shadow-inner leading-relaxed resize-none"
-      placeholder="Ketik jawaban kamu di sini..."
+      placeholder="Ketik jawaban kalian di sini..."
     />
     {isLast && (
       <div className="flex justify-center pb-8">
@@ -2855,7 +2998,7 @@ const DataSection = ({ module, data, subTableData, onDataChange, onSubDataChange
     <div className="space-y-8 md:space-y-12">
       <div className="text-center">
         <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4 px-4">Mengumpulkan Data</h2>
-        <p className="text-lg md:text-xl text-slate-500 font-medium px-6">Lakukan pengamatan menggunakan simulasi PhET untuk memperoleh data praktikum.</p>
+        <p className="text-lg md:text-xl text-slate-500 font-medium px-6">Lakukan pengamatan menggunakan simulasi PhET untuk memperoleh data percobaan.</p>
       </div>
 
       {module.subExperiments && (
@@ -2919,7 +3062,7 @@ const DataSection = ({ module, data, subTableData, onDataChange, onSubDataChange
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
             <h3 className="text-2xl md:text-3xl font-black text-slate-800 mb-2">Tabel Hasil Pengamatan: {activeSub?.title || ''}</h3>
-            <p className="text-slate-500 text-sm md:font-medium">Input data yang Anda peroleh dari simulasi di atas.</p>
+            <p className="text-slate-500 text-sm md:font-medium">Input data yang kalian peroleh dari simulasi di atas.</p>
           </div>
           <Button variant="secondary" onClick={addRow} className="w-full md:w-auto rounded-xl md:rounded-2xl px-6 py-4 border-dashed border-2 hover:border-primary text-sm md:text-base">
             <TableIcon size={20} /> Tambah Data Benda
@@ -2982,7 +3125,7 @@ const DataSection = ({ module, data, subTableData, onDataChange, onSubDataChange
         <div className="bg-slate-50 p-12 rounded-[3rem] border border-slate-100">
           <div className="mb-12 text-center md:text-left">
             <h3 className="text-3xl font-black text-slate-800 mb-2">Dinamika Gaya Archimedes</h3>
-            <p className="text-slate-500 font-medium">Grafik akan terupdate secara real-time berdasarkan data tabel yang Anda masukkan.</p>
+            <p className="text-slate-500 font-medium">Grafik akan terupdate secara real-time berdasarkan data tabel yang kalian masukkan.</p>
           </div>
           <div className="h-[400px] w-full flex items-center justify-center">
              <ArchimedesChart data={data} />
@@ -2997,7 +3140,7 @@ const UjiSection = ({ hypothesis, value, onChange }: any) => (
   <div className="space-y-12 max-w-4xl mx-auto">
     <div className="text-center">
       <h2 className="text-3xl font-black text-slate-900 mb-4">Menguji Hipotesis</h2>
-      <p className="text-xl text-slate-500 font-medium">Apakah hasil pengamatan Anda sesuai dengan hipotesis awal?</p>
+      <p className="text-xl text-slate-500 font-medium">Apakah hasil pengamatan kalian sesuai dengan hipotesis awal?</p>
     </div>
     
     <div className="bento-card bg-primary/5 border-primary/20 flex items-start gap-8 shadow-inner p-10">
@@ -3005,7 +3148,7 @@ const UjiSection = ({ hypothesis, value, onChange }: any) => (
          <Lightbulb size={32} />
        </div>
        <div>
-         <p className="text-[0.65rem] font-black text-primary uppercase tracking-[0.2em] mb-2">Hipotesis Anda:</p>
+         <p className="text-[0.65rem] font-black text-primary uppercase tracking-[0.2em] mb-2">Hipotesis kalian:</p>
          <p className="text-2xl font-bold text-slate-800 italic leading-relaxed">"{hypothesis || '--- Belum diisi ---'}"</p>
        </div>
     </div>
@@ -3050,7 +3193,7 @@ const UjiSection = ({ hypothesis, value, onChange }: any) => (
         value={value.reason}
         onChange={e => onChange({ ...value, reason: e.target.value })}
         className="w-full min-h-[150px] p-8 bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-[2.5rem] text-lg font-medium outline-none transition-all shadow-inner resize-none"
-        placeholder="Berikan alasan mengapa data tersebut mendukung atau menolak hipotesis Anda..."
+        placeholder="Berikan alasan mengapa data tersebut mendukung atau menolak hipotesis kalian..."
       />
     </div>
   </div>
@@ -3088,7 +3231,7 @@ const RoleAssignmentSection = ({
       <div className="text-center">
         <p className="text-[0.6rem] font-black text-primary uppercase tracking-[0.2em] mb-4">Langkah 01</p>
         <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4">Pembagian Tugas Kelompok</h2>
-        <p className="text-lg md:text-xl text-slate-500 font-medium">Tentukan peran setiap anggota kelompok untuk modul <span className="text-slate-900 font-bold">"{moduleTitle}"</span></p>
+        <p className="text-lg md:text-xl text-slate-500 font-medium">Tentukan peran setiap anggota kelompok untuk percobaan <span className="text-slate-900 font-bold">"{moduleTitle}"</span></p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -3112,7 +3255,7 @@ const RoleAssignmentSection = ({
 
             <div className="space-y-3">
               <label className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary" /> Peran dalam Praktikum
+                <div className="w-1.5 h-1.5 rounded-full bg-primary" /> Peran dalam Percobaan
               </label>
               <div className="relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-primary pointer-events-none group-focus-within:scale-110 transition-transform">
@@ -3159,19 +3302,19 @@ const RoleAssignmentSection = ({
         <Button 
           onClick={onNext}
           disabled={assignments.some(a => !a.role)}
-          className="w-full md:w-auto px-12 py-6 text-2xl rounded-2xl bg-primary hover:bg-primary/90 shadow-xl shadow-primary/30 flex items-center gap-3 disabled:opacity-50"
+          className="w-full md:w-auto px-12 py-6 text-2xl rounded-2xl bg-primary hover:bg-primary/90 shadow-xl shadow-primary/30 flex items-center gap-3 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
         >
-          Konfirmasi & Mulai <ArrowRight size={24} />
+          {assignments.some(a => !a.role) ? "Lengkapi Pembagian Tugas" : "Konfirmasi & Mulai"} <ArrowRight size={24} />
         </Button>
       </div>
     </div>
   );
 };
 
-const ReflectionSection = ({ value, onChange, onFinish }: any) => {
+const ReflectionSection = ({ value, onChange, onFinish, isValid }: any) => {
   const fields = [
     { key: 'whatLearned', label: 'Apa yang paling penting kami pelajari hari ini?', icon: <BookOpen className="text-pink-500" /> },
-    { key: 'feelings', label: 'Bagaimana perasaan kelompok saat melakukan praktikum?', icon: <Heart className="text-green-500" /> },
+    { key: 'feelings', label: 'Bagaimana perasaan kelompok saat melakukan percobaan?', icon: <Heart className="text-green-500" /> },
     { key: 'difficulties', label: 'Kesulitan apa yang kami hadapi dan bagaimana kami mengatasinya?', icon: <AlertCircle className="text-amber-500" /> },
     { key: 'nextSteps', label: 'Apa yang ingin kami pelajari lebih lanjut?', icon: <ArrowRightCircle className="text-blue-500" /> },
   ];
@@ -3182,7 +3325,7 @@ const ReflectionSection = ({ value, onChange, onFinish }: any) => {
     <div className="space-y-12 max-w-4xl mx-auto pb-20">
       <div className="text-center">
         <h2 className="text-3xl font-black text-slate-900 mb-4">Refleksi Belajar</h2>
-        <p className="text-xl text-slate-500 font-medium">Lengkapi refleksi kelompok Anda untuk mengakhiri praktikum ini.</p>
+        <p className="text-xl text-slate-500 font-medium">Lengkapi refleksi kelompok kalian untuk mengakhiri percobaan ini.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -3209,14 +3352,21 @@ const ReflectionSection = ({ value, onChange, onFinish }: any) => {
             <ClipboardCheck size={32} />
          </div>
          <div>
-            <h4 className="text-xl font-bold text-blue-900">Praktikum Selesai!</h4>
-            <p className="text-blue-700 text-sm opacity-80 italic">Pastikan seluruh data sudah terisi dengan benar. Evaluasi dan refleksi Anda akan terekam dalam laporan praktikum digital.</p>
+            <h4 className="text-xl font-bold text-blue-900">Percobaan Selesai!</h4>
+            <p className="text-blue-700 text-sm opacity-80 italic">Pastikan seluruh data sudah terisi dengan benar. Evaluasi dan refleksi kalian akan terekam dalam laporan percobaan digital.</p>
          </div>
       </div>
 
       <div className="flex justify-center pt-8">
-        <Button onClick={onFinish} className="w-full md:w-auto px-12 py-6 text-2xl rounded-2xl bg-green-600 hover:bg-green-700 shadow-xl shadow-green-500/30">
-          Simpan Progress & Selesai <Download />
+        <Button 
+          onClick={onFinish} 
+          disabled={!isValid}
+          className={cn(
+            "w-full md:w-auto px-12 py-6 text-2xl rounded-2xl bg-green-600 hover:bg-green-700 shadow-xl shadow-green-500/30 flex items-center gap-3",
+            !isValid && "opacity-50 grayscale cursor-not-allowed"
+          )}
+        >
+          {isValid ? "Simpan Progress & Selesai" : "Lengkapi Seluruh Refleksi"} <Download />
         </Button>
       </div>
     </div>
@@ -3240,6 +3390,41 @@ const ModuleView = ({
   const steps = ['Tugas', 'Tujuan', 'Orientasi', 'Masalah', 'Hipotesis', 'Data', 'Uji', 'Kesimpulan', 'Evaluasi', 'Refleksi'];
   const [step, setStep] = useState(0);
   const answers = getModuleAnswers(module.id);
+
+  const isStepValid = (stepIdx: number) => {
+    switch(stepIdx) {
+      case 0: // Tugas
+        return answers.roleAssignments && answers.roleAssignments.length > 0 && !answers.roleAssignments.some(a => !a.role);
+      case 1: // Tujuan
+      case 2: // Orientasi
+        return true;
+      case 3: // Masalah
+        return (answers.problemFormulation?.trim().length || 0) > 5;
+      case 4: // Hipotesis
+        return (answers.hypothesis?.trim().length || 0) > 5;
+      case 5: // Data
+        if (!answers.tableData || answers.tableData.length === 0) return false;
+        return answers.tableData.every(row => 
+          Object.entries(row).some(([key, val]) => key !== 'id' && val !== '')
+        );
+      case 6: // Uji
+        return answers.hypothesisTesting?.isCorrect !== null && (answers.hypothesisTesting?.reason?.trim().length || 0) > 5;
+      case 7: // Kesimpulan
+        return (answers.conclusion?.trim().length || 0) > 5;
+      case 8: // Evaluasi
+        return answers.evaluationScore !== undefined;
+      case 9: // Refleksi
+        const ref: any = answers.reflection || {};
+        return (ref.whatLearned?.trim().length || 0) > 5 && 
+               (ref.feelings?.trim().length || 0) > 5 && 
+               (ref.difficulties?.trim().length || 0) > 5 && 
+               (ref.nextSteps?.trim().length || 0) > 5;
+      default:
+        return true;
+    }
+  };
+
+  const currentStepValid = isStepValid(step);
 
   return (
     <div className="min-h-screen bg-bg flex flex-col relative overflow-hidden">
@@ -3265,7 +3450,7 @@ const ModuleView = ({
           </motion.button>
           <div className="leading-tight">
             <p className="text-[0.55rem] md:text-[0.65rem] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-2">
-              Modul {activeModuleIndex + 1}
+              Percobaan {activeModuleIndex + 1}
               <span className="md:hidden px-1.5 py-0.5 bg-slate-100 rounded text-[0.5rem] text-slate-500">{step + 1}/{steps.length}</span>
             </p>
             <p className="font-extrabold text-slate-800 text-xs md:text-sm truncate max-w-[120px] md:max-w-none">{module.title}</p>
@@ -3273,20 +3458,28 @@ const ModuleView = ({
         </div>
         
         <div className="hidden xl:flex items-center gap-1">
-          {steps.map((s, i) => (
-            <React.Fragment key={s}>
-              <div 
-                onClick={() => setStep(i)}
-                className={cn(
-                  "px-4 py-2 rounded-[0.75rem] text-[0.65rem] font-black cursor-pointer transition-all uppercase tracking-widest whitespace-nowrap",
-                  step === i ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-slate-100 text-slate-400 hover:bg-slate-200"
-                )}
-              >
-                {i + 1}. {s}
-              </div>
-              {i < steps.length - 1 && <div className="w-1 h-[2px] bg-slate-100" />}
-            </React.Fragment>
-          ))}
+          {steps.map((s, i) => {
+            // Can only jump to steps that were reached/completed
+            const canJump = i <= step || (i === step + 1 && currentStepValid);
+            
+            return (
+              <React.Fragment key={s}>
+                <div 
+                  onClick={() => {
+                    if (canJump) setStep(i);
+                  }}
+                  className={cn(
+                    "px-4 py-2 rounded-[0.75rem] text-[0.65rem] font-black cursor-pointer transition-all uppercase tracking-widest whitespace-nowrap",
+                    step === i ? "bg-primary text-white shadow-lg shadow-primary/20" : 
+                    canJump ? "bg-slate-100 text-slate-400 hover:bg-slate-200" : "bg-slate-50 text-slate-200 cursor-not-allowed opacity-50"
+                  )}
+                >
+                  {i + 1}. {s}
+                </div>
+                {i < steps.length - 1 && <div className="w-1 h-[2px] bg-slate-100" />}
+              </React.Fragment>
+            );
+          })}
         </div>
 
         <div className="flex items-center gap-2">
@@ -3341,7 +3534,7 @@ const ModuleView = ({
             {step === 3 && (
               <TextSection 
                 title="Merumuskan Masalah" 
-                description="Berdasarkan video orientasi, tuliskan pertanyaan ilmiah atau masalah yang ingin Anda teliti."
+                description="Berdasarkan video orientasi, tuliskan pertanyaan ilmiah atau masalah yang ingin kalian teliti."
                 value={answers.problemFormulation}
                 onChange={(v: string) => updateModuleAnswers(module.id, { problemFormulation: v })}
                 icon={<HelpCircle className="text-blue-600" />}
@@ -3350,7 +3543,7 @@ const ModuleView = ({
             {step === 4 && (
               <TextSection 
                 title="Merumuskan Hipotesis" 
-                description="Berikan jawaban sementara atau dugaan Anda terhadap rumusan masalah di atas."
+                description="Berikan jawaban sementara atau dugaan kalian terhadap rumusan masalah di atas."
                 value={answers.hypothesis}
                 onChange={(v: string) => updateModuleAnswers(module.id, { hypothesis: v })}
                 icon={<Lightbulb className="text-purple-600" />}
@@ -3378,7 +3571,7 @@ const ModuleView = ({
             {step === 7 && (
               <TextSection 
                 title="Kesimpulan" 
-                description="Apa yang dapat Anda simpulkan dari seluruh rangkaian praktikum yang telah dilakukan?"
+                description="Apa yang dapat kalian simpulkan dari seluruh rangkaian percobaan yang telah dilakukan?"
                 value={answers.conclusion}
                 onChange={(v: string) => updateModuleAnswers(module.id, { conclusion: v })}
                 icon={<CheckCircle2 className="text-green-600" />}
@@ -3395,6 +3588,7 @@ const ModuleView = ({
               <ReflectionSection 
                 value={answers.reflection}
                 onChange={(v: any) => updateModuleAnswers(module.id, { reflection: v })}
+                isValid={currentStepValid}
                 onFinish={() => {
                   updateModuleAnswers(module.id, {});
                   setView('MENU');
@@ -3426,12 +3620,23 @@ const ModuleView = ({
           </div>
         </div>
         {step !== 0 && step !== steps.length - 1 && (
-          <Button onClick={() => {
-            if (step < steps.length - 1) setStep(s => s + 1);
-            else setView('MENU');
-          }}>
-            {step === steps.length - 1 ? 'Selesai Modul' : 'Lanjut'} <ChevronRight />
-          </Button>
+          <div className="flex flex-col items-end gap-2">
+            {!currentStepValid && (
+              <span className="text-[0.6rem] font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full uppercase tracking-widest animate-pulse">
+                Lengkapi Data untuk Melanjutkan
+              </span>
+            )}
+            <Button 
+              disabled={!currentStepValid}
+              onClick={() => {
+                if (step < steps.length - 1) setStep(s => s + 1);
+                else setView('MENU');
+              }}
+              className={cn(!currentStepValid && "opacity-50 grayscale cursor-not-allowed")}
+            >
+              {step === steps.length - 1 ? 'Selesai Percobaan' : 'Lanjut'} <ChevronRight />
+            </Button>
+          </div>
         )}
       </footer>
     </div>
@@ -3537,42 +3742,18 @@ export default function App() {
             console.error(err);
           });
         } else {
-          // Listen for student profile
+          // Listen for student profile in real-time
           const profilePath = `users/${fbUser.uid}`;
-          try {
-            const userDoc = await getDoc(profileRef);
-            if (userDoc.exists()) {
-              processProfileProgress(userDoc.data() as UserProfile);
-            } else {
-              // It might be being created right now (during registration)
-              // We set a small interval to poll for it
-              let attempts = 0;
-              const interval = setInterval(async () => {
-                attempts++;
-                try {
-                  const d = await getDoc(profileRef);
-                  if (d.exists()) {
-                    processProfileProgress(d.data() as UserProfile);
-                    clearInterval(interval);
-                  }
-                } catch (e: any) {
-                  if (e.code === 'permission-denied') {
-                    handleFirestoreError(e, OperationType.GET, profilePath);
-                  }
-                  console.error(e);
-                }
-                if (attempts >= 20) {
-                  console.error("Profile polling timed out");
-                  clearInterval(interval);
-                }
-              }, 1000);
+          unsubscribeProfile = onSnapshot(profileRef, (docSnap) => {
+            if (docSnap.exists()) {
+              processProfileProgress(docSnap.data() as UserProfile);
             }
-          } catch (err: any) {
+          }, (err) => {
             if (err.code === 'permission-denied') {
               handleFirestoreError(err, OperationType.GET, profilePath);
             }
             console.error(err);
-          }
+          });
         }
         setLoadingProfile(false);
       } else {
@@ -3688,33 +3869,6 @@ export default function App() {
 }
 
 // --- HELPER CHART COMPONENT ---
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-} from 'chart.js';
-import { Line, Bar, Pie } from 'react-chartjs-2';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-);
 
 function AdminCompletionChart({ data }: any) {
   const chartData = {
@@ -3900,6 +4054,39 @@ function AdminStatusPieChart({ stats }: { stats: any }) {
   return <Pie data={chartData} options={options} />;
 }
 
+function AdminSystemInfo({ stats, loading }: { stats: any, loading: boolean }) {
+  return (
+    <div className="bento-card border-none p-6 md:p-8 bg-slate-900 text-white mb-8 relative overflow-hidden shadow-2xl">
+      <div className="absolute top-0 right-0 p-10 text-white/5 opacity-50 pointer-events-none"><Server size={120} /></div>
+      <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+        <div className="max-w-md">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary border border-primary/30 text-[0.6rem] font-bold uppercase tracking-widest mb-4 backdrop-blur-md">
+             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" /> Status Sistem Live
+          </div>
+          <h2 className="text-xl md:text-2xl font-black tracking-tighter mb-2">Informasi Operasional Laboratorium</h2>
+          <p className="text-slate-400 text-[0.7rem] md:text-xs font-medium leading-relaxed">
+            Monitor seluruh aktivitas laboratorium IPA virtual secara real-time. Kelola progress kelompok, verifikasi data observasi, dan lakukan dekonstruksi laporan siswa langsung dari dasbor pusat.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full md:w-auto bg-white/5 p-6 rounded-[2rem] backdrop-blur-sm border border-white/5">
+          <div>
+            <p className="text-[0.55rem] font-black text-slate-400 uppercase tracking-widest mb-1">Update Terakhir</p>
+            <p className="font-black text-xs md:text-sm">{loading ? 'Sinkronisasi...' : new Date().toLocaleTimeString('id-ID')}</p>
+          </div>
+          <div>
+            <p className="text-[0.55rem] font-black text-slate-400 uppercase tracking-widest mb-1">Integrasi DB</p>
+            <p className="font-black text-xs md:text-sm text-success">Terhubung</p>
+          </div>
+          <div className="hidden md:block">
+            <p className="text-[0.55rem] font-black text-slate-400 uppercase tracking-widest mb-1">Sesi Aktif</p>
+            <p className="font-black text-xs md:text-sm">{stats.totalGroups} Kelompok</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AdminStudentScoreChart({ moduleProgress }: { moduleProgress: any }) {
   const chartData = {
     labels: APP_CONFIG.modules.map(m => m.title),
@@ -3947,7 +4134,7 @@ function AdminStudentScoreChart({ moduleProgress }: { moduleProgress: any }) {
         ticks: { 
           font: { weight: 'bold' as const, size: 10 },
           callback: function(value: any, index: number) {
-            return `Modul ${index + 1}`;
+            return `Percobaan ${index + 1}`;
           }
         }
       }
@@ -3955,4 +4142,71 @@ function AdminStudentScoreChart({ moduleProgress }: { moduleProgress: any }) {
   };
 
   return <Bar data={chartData} options={options} />;
+}
+
+function AdminStudentPieChart({ moduleProgress }: { moduleProgress: any }) {
+  const scores = APP_CONFIG.modules.map((m) => {
+    const mod = moduleProgress[m.id];
+    return mod?.answers?.evaluationScore || 0;
+  });
+
+  const hasScores = scores.some(s => s > 0);
+
+  const chartData = {
+    labels: APP_CONFIG.modules.map(m => m.title),
+    datasets: [
+      {
+        data: hasScores ? scores : [1], 
+        backgroundColor: [
+          'rgba(59, 130, 246, 0.6)', 
+          'rgba(34, 197, 94, 0.6)', 
+          'rgba(249, 115, 22, 0.6)',
+          'rgba(168, 85, 247, 0.6)',
+          'rgba(239, 68, 68, 0.6)',
+        ],
+        borderColor: [
+          'rgb(59, 130, 246)',
+          'rgb(34, 197, 94)',
+          'rgb(249, 115, 22)',
+          'rgb(168, 85, 247)',
+          'rgb(239, 68, 68)',
+        ],
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+        labels: {
+          padding: 15,
+          font: { weight: 'bold' as const, size: 9 },
+          usePointStyle: true,
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: (context: any) => {
+            if (!hasScores) return 'Belum ada skor';
+            return ` Skor: ${context.raw}`;
+          }
+        }
+      }
+    },
+  };
+
+  return (
+    <div className="relative w-full h-full flex flex-col items-center justify-center">
+      {!hasScores && (
+        <div className="absolute inset-0 flex items-center justify-center z-10 bg-white/50 backdrop-blur-[2px] rounded-xl text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest text-center px-4">
+          Data Skor Belum Tersedia
+        </div>
+      )}
+      <Pie data={chartData} options={options} />
+    </div>
+  );
 }

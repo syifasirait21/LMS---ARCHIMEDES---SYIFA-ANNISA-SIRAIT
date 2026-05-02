@@ -17,7 +17,7 @@ export const APP_CONFIG = {
       description: "Mengapa anggur tenggelam sementara es mengapung?",
       icon: "Anchor",
       videoUrl: "https://www.youtube.com/embed/iC4Eq0vjA0M",
-      orientationText: "Saat kamu membuat es teh manis, kamu memperhatikan bahwa es batu selalu mengapung di bagian atas gelas. Namun, saat kamu memasukkan potongan buah anggur dengan ukuran yang lebih kecil dari es batu tersebut, anggur itu justru tenggelam ke dasar gelas. Mengapa es batu yang ukurannya lebih besar bisa mengapung, sementara anggur yang lebih kecil tidak?.",
+      orientationText: "Saat kalian membuat es teh manis, kalian memperhatikan bahwa es batu selalu mengapung di bagian atas gelas. Namun, saat kalian memasukkan potongan buah anggur dengan ukuran yang lebih kecil dari es batu tersebut, anggur itu justru tenggelam ke dasar gelas.",
       phetUrl: "https://phet.colorado.edu/sims/html/buoyancy/latest/buoyancy_all.html",
       objectives: [
         "C4 (Analisis): Menganalisis hubungan massa, volume, dan massa jenis terhadap posisi benda dalam fluida.",
@@ -28,7 +28,7 @@ export const APP_CONFIG = {
         {
           id: "same-mass",
           title: "Sama Massa",
-          instruction: "Catatan: Pada setiap kegiatan, kamu boleh mengganti jenis cairan untuk membandingkan hasil pengamatan.",
+          instruction: "Catatan: Kalian boleh mengganti jenis cairan untuk membandingkan hasil pengamatan.",
           steps: [
             "Klik menu Compare di bagian bawah layar.",
             "Centang Force Values agar nilai gaya (N) terlihat.",
@@ -45,7 +45,7 @@ export const APP_CONFIG = {
         {
           id: "same-volume",
           title: "Sama Volume",
-          instruction: "Catatan: Kamu boleh mengganti jenis cairan untuk membandingkan hasil pengamatan.",
+          instruction: "Catatan: Kalian boleh mengganti jenis cairan untuk membandingkan hasil pengamatan.",
           steps: [
             "Klik menu Compare di bagian bawah layar.",
             "Centang Force Values agar nilai gaya (N) terlihat.",
@@ -62,7 +62,7 @@ export const APP_CONFIG = {
         {
           id: "same-density",
           title: "Sama Massa Jenis",
-          instruction: "Catatan: Pada setiap kegiatan, kamu boleh mengganti jenis cairan untuk membandingkan hasil pengamatan.",
+          instruction: "Catatan: PKalian boleh mengganti jenis cairan untuk membandingkan hasil pengamatan.",
           steps: [
             "Klik menu Compare di bagian bawah layar.",
             "Centang Force Values agar nilai gaya (N) terlihat.",
@@ -228,7 +228,7 @@ export const APP_CONFIG = {
         {
           id: "one-object",
           title: "Satu Benda",
-          instruction: "Catatan: Di setiap kegiatan nanti, kamu diperbolehkan mengubah jenis cairan pada panel Fluid (Air, Minyak, Madu, atau Custom) untuk melihat perbedaannya terhadap benda.",
+          instruction: "Catatan: Kalian boleh mengganti jenis cairan untuk membandingkan hasil pengamatan.",
           steps: [
             "Klik menu \"Explore\" pada bagian bawah layar simulasi PhET Buoyancy.",
             "Klik menu \" 🟥 \" pada bagian bawah layar simulasi PhET Buoyancy.",
@@ -246,7 +246,7 @@ export const APP_CONFIG = {
         {
           id: "two-objects",
           title: "Dua Benda",
-          instruction: "Catatan: Di setiap kegiatan nanti, kamu diperbolehkan mengubah jenis cairan pada panel Fluid (Air, Minyak, Madu, atau Custom) untuk melihat perbedaannya terhadap benda.",
+          instruction: "Catatan: Kalian boleh mengganti jenis cairan untuk membandingkan hasil pengamatan.",
           steps: [
             "Klik menu \"Explore\" pada bagian bawah layar simulasi PhET Buoyancy.",
             "Klik menu \" 🟦🟥 \" pada bagian bawah layar simulasi PhET Buoyancy.",
@@ -358,10 +358,10 @@ export const APP_CONFIG = {
     {
       id: "proof",
       title: "Membuktikan Gaya Apung",
-      description: "Mengapa Air Tumpah Saat Benda Dimasukkan ke Dalamnya?.",
+      description: "Mengapa Air Tumpah Saat Benda Dimasukkan ke Dalamnya?",
       icon: "Droplets",
       videoUrl: "https://www.youtube.com/embed/QGMpqZCC20I",
-      orientationText: "Bayangkan kamu sedang menuangkan air ke dalam gelas hingga benar-benar penuh. Lalu, kamu memasukkan sebuah batu kecil ke dalamnya. Tiba-tiba, air meluap dan tumpah keluar gelas.",
+      orientationText: "Bayangkan kalian sedang menuangkan air ke dalam gelas hingga benar-benar penuh. Lalu, kalian memasukkan sebuah batu kecil ke dalamnya. Tiba-tiba, air meluap dan tumpah keluar gelas.",
       phetUrl: "https://phet.colorado.edu/sims/html/buoyancy/latest/buoyancy_all.html",
       objectives: [
         "C4 (Analisis): Menganalisis hubungan antara gaya apung dengan volume fluida yang dipindahkan.",
@@ -372,7 +372,7 @@ export const APP_CONFIG = {
         {
           id: "archimedes-proof",
           title: "Lab Archimedes",
-          instruction: "Catatan: Kalian diperbolehkan mengubah jenis cairan pada panel Fluid (Air, Minyak, Madu, atau Custom) untuk melihat perbedaannya terhadap benda.",
+          instruction: "Catatan: Kalian boleh mengganti jenis cairan untuk membandingkan hasil pengamatan",
           steps: [
             "Klik menu \"Lab\" pada bagian bawah layar simulasi PhET Buoyancy.",
             "Centang kotak \"Buoyancy\" pada panel Forces di kiri bawah agar panah gaya apung muncul.",
@@ -493,7 +493,7 @@ export const APP_CONFIG = {
           type: "multiple-choice",
           category: "C4 - MENGANALISIS",
           stimulus: "Dalam sebuah diskusi kelompok, seorang siswa berpendapat: \"Jika benda dimasukkan lebih dalam ke dalam air (selama belum tenggelam seluruhnya), maka volume air yang keluar akan tetap sama karena bendanya sama.\"",
-          question: "Bagaimana pendapat anda terhadap pernyataan siswa tersebut?",
+          question: "Bagaimana pendapat kalian terhadap pernyataan siswa tersebut?",
           options: [
             "Benar, karena massa benda tidak berubah",
             "Salah, karena semakin banyak bagian benda yang masuk, semakin banyak air yang keluar",
@@ -508,7 +508,7 @@ export const APP_CONFIG = {
           type: "multiple-choice",
           category: "C5 - MENGEVALUASI",
           stimulus: "Siti menimbang air yang tumpah saat ia memasukkan batu ke wadah penuh. Ia juga merasakan batu lebih ringan saat diangkat di dalam air. Siti menyimpulkan bahwa berat air yang tumpah tersebut sama dengan besar gaya angkat ke atas yang dialami benda.",
-          question: "Bagaimana evaluasi anda terhadap kesimpulan Siti?",
+          question: "Bagaimana evaluasi kalian terhadap kesimpulan Siti?",
           options: [
             "Salah, berat air tidak ada hubungannya dengan gaya angkat",
             "Benar, karena gaya apung sebanding dengan berat fluida yang dipindahkan",
@@ -522,7 +522,7 @@ export const APP_CONFIG = {
           id: 30,
           type: "multiple-choice",
           category: "C6 - MENCIPTAKAN",
-          stimulus: "Anda diminta membuktikan Hukum Archimedes secara mandiri dengan alat sederhana di rumah: gelas, air, wadah penampung, dan timbangan digital.",
+          stimulus: "Kalian diminta membuktikan Hukum Archimedes secara mandiri dengan alat sederhana di rumah: gelas, air, wadah penampung, dan timbangan digital.",
           question: "Langkah kreasi apa yang paling tepat untuk membuktikan besarnya gaya apung?",
           options: [
             "Mengukur panjang dan lebar benda saja",
