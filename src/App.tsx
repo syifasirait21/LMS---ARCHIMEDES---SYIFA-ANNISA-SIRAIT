@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { 
   Award,
   TrendingUp,
@@ -52,7 +53,12 @@ import {
   Server,
   BarChart2,
   PieChart,
-  Activity
+  Activity,
+  Star,
+  Camera,
+  Send,
+  Sparkles,
+  Bot
 } from 'lucide-react';
 import {
   DndContext,
@@ -71,7 +77,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { APP_CONFIG } from './constants';
-import { AppState, View, GroupInfo, StudentAnswers, UserProfile, EvaluationQuestion } from './types';
+import { AppState, View, GroupInfo, StudentAnswers, UserProfile, EvaluationQuestion, MemberInfo } from './types';
 import { cn, formatDate } from './lib/utils';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -174,16 +180,33 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
   throw new Error(JSON.stringify(errInfo));
 }
 
+function sanitizeForFirestore(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(v => sanitizeForFirestore(v));
+  } else if (obj !== null && typeof obj === 'object' && !(obj instanceof Date)) {
+    const sanitized: any = {};
+    for (const key in obj) {
+      if (obj[key] !== undefined) {
+        sanitized[key] = sanitizeForFirestore(obj[key]);
+      }
+    }
+    return sanitized;
+  }
+  return obj;
+}
+
 async function saveProgressToFirebase(userId: string, appState: AppState) {
   const path = `progress/${userId}`;
   try {
-    await setDoc(doc(db, 'progress', userId), {
+    const dataToSave = sanitizeForFirestore({
       uid: userId,
       groupName: appState.groupInfo?.groupName || '',
       moduleProgress: appState.moduleProgress,
       quizResult: appState.quizResult,
       updatedAt: new Date().toISOString()
-    }, { merge: true });
+    });
+    
+    await setDoc(doc(db, 'progress', userId), dataToSave, { merge: true });
   } catch (err: any) {
     if (err.code === 'permission-denied') {
       handleFirestoreError(err, OperationType.WRITE, path);
@@ -209,7 +232,154 @@ async function loadProgressFromFirebase(userId: string) {
   return null;
 }
 
+// --- AI SERVICE ---
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+const askArchimedesAI = async (question: string, context: string) => {
+  try {
+    const prompt = `
+      Anda adalah asisten AI ahli Fisika yang membantu siswa dalam praktikum Gaya Archimedes.
+      Berikut adalah konteks materi yang sedang dipelajari siswa:
+      ${context}
+
+      Jawablah pertanyaan siswa dengan bahasa yang mudah dimengerti, edukatif, dan memotivasi. 
+      Jika pertanyaan tidak terkait fisika atau Archimedes, arahkan kembali ke materi dengan sopan.
+      
+      Pertanyaan Siswa: ${question}
+    `;
+
+    const result = await model.generateContent(prompt);
+    return result.response.text();
+  } catch (err) {
+    console.error("AI Error:", err);
+    return "Maaf, asisten AI sedang mengalami gangguan. Silakan coba beberapa saat lagi.";
+  }
+};
+
 // --- COMPONENTS ---
+
+const ArchimedesChat = ({ context }: { context: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<{ role: 'user' | 'ai', content: string }[]>([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, loading]);
+
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || loading) return;
+
+    const userMsg = input;
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+    setLoading(true);
+
+    const aiResponse = await askArchimedesAI(userMsg, context);
+    setMessages(prev => [...prev, { role: 'ai', content: aiResponse }]);
+    setLoading(false);
+  };
+
+  return (
+    <div className="fixed bottom-24 right-6 z-[100] flex flex-col items-end gap-4">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            className="w-[350px] md:w-[400px] h-[500px] bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col"
+          >
+            <div className="p-5 bg-primary text-white flex justify-between items-center shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Bot size={20} />
+                </div>
+                <div>
+                  <h3 className="font-black text-sm tracking-tight">Asisten Archimedes</h3>
+                  <p className="text-[0.6rem] font-bold text-blue-100 uppercase tracking-widest">Tanya Jawab Pintar</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="hover:bg-white/10 p-2 rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div 
+              ref={scrollRef}
+              className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar bg-slate-50/50"
+            >
+              {messages.length === 0 && (
+                <div className="h-full flex flex-col items-center justify-center text-center p-6 bg-white/50 rounded-2xl border border-dashed border-slate-200 mx-2">
+                  <Sparkles className="text-primary mb-3 opacity-40" size={32} />
+                  <h4 className="text-sm font-black text-slate-400">Bingung dengan materinya?</h4>
+                  <p className="text-xs text-slate-400 mt-2">Tanyakan apapun tentang Gaya Archimedes di sini!</p>
+                </div>
+              )}
+              {messages.map((m, i) => (
+                <div key={i} className={cn("flex flex-col", m.role === 'user' ? "items-end" : "items-start")}>
+                  <div className={cn(
+                    "max-w-[85%] p-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm",
+                    m.role === 'user' ? "bg-primary text-white rounded-tr-none" : "bg-white text-slate-800 border border-slate-200 rounded-tl-none"
+                  )}>
+                    {m.content}
+                  </div>
+                </div>
+              ))}
+              {loading && (
+                <div className="flex items-start">
+                  <div className="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none shadow-sm flex gap-2 items-center">
+                    <RefreshCw size={14} className="animate-spin text-primary" />
+                    <span className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest">Berpikir...</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <form onSubmit={handleSend} className="p-4 bg-white border-t border-slate-100 flex gap-2">
+              <input 
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                placeholder="Tanyakan sesuatu..."
+                className="flex-1 bg-slate-100 border-none rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+              />
+              <button 
+                type="submit"
+                disabled={!input.trim() || loading}
+                className="w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 hover:bg-blue-700 disabled:opacity-50 disabled:grayscale transition-all active:scale-95"
+              >
+                <Send size={18} />
+              </button>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.button
+        whileHover={{ scale: 1.1, rotate: 5 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-16 h-16 bg-primary text-white rounded-2xl shadow-2xl shadow-primary/30 flex items-center justify-center relative group overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+        {isOpen ? <X size={28} className="relative z-10" /> : <MessageSquare size={28} className="relative z-10" />}
+        {!isOpen && (
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 border-2 border-white rounded-full flex items-center justify-center text-[0.6rem] font-bold">1</span>
+        )}
+      </motion.button>
+    </div>
+  );
+};
 
 const LabBackground = ({ variant = 'blue' }: { variant?: 'blue' | 'light' }) => {
   return (
@@ -511,7 +681,10 @@ async function generateCompletePDF(appState: AppState, getModuleAnswers: (id: st
         RATA-RATA: ${Math.round(APP_CONFIG.modules.reduce((acc, m) => acc + (getModuleAnswers(m.id).evaluationScore || 0), 0) / APP_CONFIG.modules.length)} / 100
       </div>
       <div style="margin-top: 20px; font-size: 12px; color: #64748b; font-weight: bold;">
-        ANGGOTA KELOMPOK: ${[appState.groupInfo?.leaderName, ...(appState.groupInfo?.members || [])].filter(Boolean).join(', ')}
+        ANGGOTA KELOMPOK: ${[
+          appState.groupInfo?.leaderName, 
+          ...(appState.groupInfo?.members || []).map(m => typeof m === 'string' ? m : m.name)
+        ].filter(Boolean).join(', ')}
       </div>
     </div>
   `;
@@ -616,16 +789,16 @@ const LandingPage = ({ setView }: { setView: (v: View) => void }) => (
 
     <div className="mt-24 pt-12 border-t border-slate-200/50 w-full max-w-6xl flex flex-wrap justify-between gap-12 relative z-10">
       <div className="text-left bg-white/40 backdrop-blur-md p-6 rounded-3xl border border-white/50">
-        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Dosen Pengampu</p>
+        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Nama Dosen</p>
         <p className="text-lg font-black text-slate-800">{APP_CONFIG.author.lecturer}</p>
       </div>
       <div className="text-left bg-white/40 backdrop-blur-md p-6 rounded-3xl border border-white/50">
-        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Pengembang</p>
+        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Penyusun</p>
         <p className="text-lg font-black text-slate-800">{APP_CONFIG.author.name}</p>
         <p className="text-xs font-bold text-primary mt-1">NPM: {APP_CONFIG.author.npm}</p>
       </div>
       <div className="text-left bg-white/40 backdrop-blur-md p-6 rounded-3xl border border-white/50">
-        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Laboratorium IPA</p>
+        <p className="text-[0.7rem] font-black text-slate-400 uppercase tracking-widest mb-2">Mata Kuliah</p>
         <p className="text-lg font-black text-slate-800">{APP_CONFIG.author.course}</p>
       </div>
     </div>
@@ -860,7 +1033,7 @@ const RegisterPage = ({ setView }: { setView: (v: View) => void }) => {
       // Create profile in Firestore
       const profilePath = `users/${userId}`;
       try {
-        await setDoc(doc(db, 'users', userId), {
+        const profileData = sanitizeForFirestore({
           uid: userId,
           email: finalEmail,
           username: formData.groupName, // Keep original name with spaces for display
@@ -870,6 +1043,7 @@ const RegisterPage = ({ setView }: { setView: (v: View) => void }) => {
           role: role,
           createdAt: new Date().toISOString()
         });
+        await setDoc(doc(db, 'users', userId), profileData);
       } catch (err: any) {
         if (err.code === 'permission-denied') {
           handleFirestoreError(err, OperationType.CREATE, profilePath);
@@ -1046,7 +1220,10 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
           const totalGroups = mergedData.length;
           let totalStudentsCount = 0;
           mergedData.forEach((p: any) => {
-            const membersCount = (p.members?.filter((m: string) => m.trim() !== '').length || 0) + 1;
+            const membersCount = (p.members?.filter((m: any) => {
+              const name = typeof m === 'string' ? m : (m?.name || '');
+              return name.trim() !== '';
+            }).length || 0) + 1;
             totalStudentsCount += membersCount;
           });
 
@@ -1177,6 +1354,7 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
       // Add leader
       students.push({
         name: group.leaderName,
+        photoUrl: group.leaderPhotoUrl,
         role: 'Ketua',
         groupName: group.groupName,
         groupId: group.id,
@@ -1185,9 +1363,14 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
         moduleProgress: group.moduleProgress || {}
       });
       // Add members
-      (group.members || []).filter((m: string) => m.trim() !== '').forEach((m: string) => {
+      (group.members || []).forEach((m: any) => {
+        const name = typeof m === 'string' ? m : (m?.name || '');
+        const photoUrl = typeof m === 'string' ? '' : (m?.photoUrl || '');
+        if (name.trim() === '') return;
+        
         students.push({
-          name: m,
+          name: name,
+          photoUrl: photoUrl,
           role: 'Anggota',
           groupName: group.groupName,
           groupId: group.id,
@@ -1396,10 +1579,30 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                       return (
                         <tr key={p.id} className="border-b border-slate-50 hover:bg-primary/5 transition-all group">
                           <td className="p-4 md:p-5">
-                            <div className="font-black text-slate-900 text-sm md:text-base tracking-tighter leading-none mb-1">{p.groupName}</div>
-                            <div className="text-[0.6rem] text-slate-400 font-black uppercase tracking-widest">ID: {p.id.slice(0, 10)}</div>
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex-shrink-0 shadow-sm transition-transform group-hover:scale-110">
+                                {p.groupPhotoUrl ? (
+                                  <img src={p.groupPhotoUrl} alt={p.groupName} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary font-black">
+                                    {p.groupName?.charAt(0)}
+                                  </div>
+                                )}
+                              </div>
+                              <div>
+                                <div className="font-black text-slate-900 text-sm md:text-base tracking-tighter leading-none mb-1">{p.groupName}</div>
+                                <div className="text-[0.6rem] text-slate-400 font-black uppercase tracking-widest">ID: {p.id.slice(0, 8)}</div>
+                              </div>
+                            </div>
                           </td>
-                          <td className="p-4 md:p-5 font-black text-slate-700 text-xs md:text-sm">{p.leaderName}</td>
+                          <td className="p-4 md:p-5 font-black text-slate-700 text-xs md:text-sm">
+                            <div className="flex items-center gap-3">
+                              {p.leaderPhotoUrl && (
+                                <img src={p.leaderPhotoUrl} className="w-6 h-6 rounded-lg object-cover" alt="leader" />
+                              )}
+                              {p.leaderName}
+                            </div>
+                          </td>
                           <td className="p-4 md:p-5 hidden md:table-cell">
                             <div className="flex items-center gap-3">
                               <div className="w-20 md:w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden shadow-inner p-0.5">
@@ -1465,7 +1668,20 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
                     <tr><td colSpan={6} className="p-12 text-center font-black text-slate-400 italic text-base">Database siswa masih dalam keadaan kosong.</td></tr>
                   ) : getAllIndividualStudents().map((s, idx) => (
                     <tr key={idx} className="border-b border-slate-50 hover:bg-primary/5 transition-all group">
-                      <td className="p-4 md:p-5 font-black text-slate-900 text-sm md:text-base tracking-tighter leading-none">{s.name}</td>
+                      <td className="p-4 md:p-5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden flex-shrink-0">
+                            {s.photoUrl ? (
+                              <img src={s.photoUrl} alt={s.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-slate-200 text-slate-400 font-black text-xs">
+                                {s.name.charAt(0)}
+                              </div>
+                            )}
+                          </div>
+                          <div className="font-black text-slate-900 text-sm md:text-base tracking-tighter leading-none">{s.name}</div>
+                        </div>
+                      </td>
                       <td className="p-4 md:p-5">
                         <span className={cn(
                           "px-2.5 py-1 rounded-lg text-[0.6rem] font-black uppercase tracking-widest border shadow-sm",
@@ -1514,12 +1730,16 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-3xl pointer-events-none" />
             
             <div className="flex justify-between items-start mb-6 relative z-10">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
-                  <User size={24} />
+              <div className="flex items-center gap-5">
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 border-4 border-white shadow-xl flex items-center justify-center overflow-hidden shrink-0">
+                  {selectedStudent.photoUrl ? (
+                    <img src={selectedStudent.photoUrl} alt={selectedStudent.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <User size={32} className="text-primary" />
+                  )}
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-slate-900 leading-none tracking-tighter mb-1">{selectedStudent.name}</h2>
+                  <h2 className="text-xl font-black text-slate-900 leading-none tracking-tighter mb-1.5">{selectedStudent.name}</h2>
                   <div className="flex items-center gap-3">
                     <span className="px-2.5 py-1 bg-slate-100 text-slate-500 rounded-full text-[0.6rem] font-black uppercase tracking-widest">{selectedStudent.role}</span>
                     <span className="w-1 h-1 bg-slate-200 rounded-full" />
@@ -2115,6 +2335,293 @@ const AdminDashboard = ({ setView, resetState }: { setView: (v: View) => void, r
   );
 };
 
+const ProfileEditModal = ({ 
+  isOpen, 
+  onClose, 
+  profile, 
+  appState 
+}: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  profile: UserProfile | null;
+  appState: AppState;
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const leaderInputRef = useRef<HTMLInputElement>(null);
+  const memberInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const [formData, setFormData] = useState({
+    groupName: appState.groupInfo?.groupName || '',
+    groupPhotoUrl: appState.groupInfo?.groupPhotoUrl || '',
+    leaderName: appState.groupInfo?.leaderName || '',
+    leaderPhotoUrl: appState.groupInfo?.leaderPhotoUrl || '',
+    members: (appState.groupInfo?.members || []).map(m => 
+      typeof m === 'string' ? { name: m, photoUrl: '' } : { ...m }
+    )
+  });
+
+  // Sync state if appState changes (e.g. from firestore update)
+  useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        groupName: appState.groupInfo?.groupName || '',
+        groupPhotoUrl: appState.groupInfo?.groupPhotoUrl || '',
+        leaderName: appState.groupInfo?.leaderName || '',
+        leaderPhotoUrl: appState.groupInfo?.leaderPhotoUrl || '',
+        members: (appState.groupInfo?.members || []).map(m => 
+          typeof m === 'string' ? { name: m, photoUrl: '' } : { ...m }
+        )
+      });
+    }
+  }, [appState.groupInfo, isOpen]);
+
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'group' | 'leader' | number) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 500 * 1024) {
+        console.error("File too large (>500KB)");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        if (type === 'group') {
+          setFormData(prev => ({ ...prev, groupPhotoUrl: base64String }));
+        } else if (type === 'leader') {
+          setFormData(prev => ({ ...prev, leaderPhotoUrl: base64String }));
+        } else {
+          const newMembers = [...formData.members];
+          newMembers[type] = { ...newMembers[type], photoUrl: base64String };
+          setFormData(prev => ({ ...prev, members: newMembers }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!profile?.uid) return;
+    setIsSaving(true);
+    const userPath = `users/${profile.uid}`;
+    const progressPath = `progress/${profile.uid}`;
+    try {
+      const updateData = sanitizeForFirestore({
+        groupName: formData.groupName,
+        groupPhotoUrl: formData.groupPhotoUrl,
+        leaderName: formData.leaderName,
+        leaderPhotoUrl: formData.leaderPhotoUrl,
+        members: formData.members
+      });
+      await updateDoc(doc(db, 'users', profile.uid), updateData);
+      
+      const progressUpdate = sanitizeForFirestore({
+        groupName: formData.groupName,
+        updatedAt: new Date().toISOString()
+      });
+      await updateDoc(doc(db, 'progress', profile.uid), progressUpdate);
+
+      onClose();
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    } catch (err: any) {
+      console.error("Error updating profile:", err);
+      if (err.code === 'permission-denied') {
+        handleFirestoreError(err, OperationType.WRITE, userPath);
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-md"
+          />
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            className="bg-white rounded-[3rem] w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl relative z-10 flex flex-col border-[6px] border-white"
+          >
+            <div className="p-8 md:p-10 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+              <div>
+                 <h3 className="text-2xl font-black text-slate-900 tracking-tighter mb-1">Kelola Profil Kelompok</h3>
+                 <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest">Perbarui identitas dan foto tim Anda</p>
+              </div>
+              <button onClick={onClose} className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-400 hover:text-red-500 shadow-sm transition-all">
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="flex-grow overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar">
+              <div className="space-y-6">
+                <div className="flex items-center gap-4 mb-2">
+                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary"><Users size={16} /></div>
+                  <h4 className="text-[0.75rem] font-black text-slate-800 uppercase tracking-widest">Identitas Umum</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Kelompok</label>
+                    <input 
+                      type="text" 
+                      value={formData.groupName}
+                      onChange={e => setFormData({...formData, groupName: e.target.value})}
+                      className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-primary outline-none font-bold text-slate-800 transition-all"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest ml-1">Foto Kelompok</label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        value={formData.groupPhotoUrl}
+                        onChange={e => setFormData({...formData, groupPhotoUrl: e.target.value})}
+                        className="flex-grow p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-primary outline-none font-bold text-slate-800 text-xs transition-all"
+                        placeholder="Pilih file atau masukkan URL..."
+                      />
+                      <button 
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-14 h-14 bg-white border-2 border-slate-100 rounded-2xl flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-all shrink-0 shadow-sm"
+                      >
+                        <Camera size={24} />
+                      </button>
+                      <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={e => handleFileChange(e, 'group')} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center gap-4 mb-2">
+                  <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600"><Award size={16} /></div>
+                  <h4 className="text-[0.75rem] font-black text-slate-800 uppercase tracking-widest">Ketua Kelompok</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Ketua</label>
+                    <input 
+                      type="text" 
+                      value={formData.leaderName}
+                      onChange={e => setFormData({...formData, leaderName: e.target.value})}
+                      className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-primary outline-none font-bold text-slate-800 transition-all"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[0.6rem] font-black text-slate-400 uppercase tracking-widest ml-1">Foto Ketua</label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        value={formData.leaderPhotoUrl}
+                        onChange={e => setFormData({...formData, leaderPhotoUrl: e.target.value})}
+                        className="flex-grow p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-primary outline-none font-bold text-slate-800 text-xs transition-all"
+                        placeholder="Pilih file atau masukkan URL..."
+                      />
+                      <button 
+                        onClick={() => leaderInputRef.current?.click()}
+                        className="w-14 h-14 bg-white border-2 border-slate-100 rounded-2xl flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-all shrink-0 shadow-sm"
+                      >
+                        <Camera size={24} />
+                      </button>
+                      <input type="file" ref={leaderInputRef} className="hidden" accept="image/*" onChange={e => handleFileChange(e, 'leader')} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600"><UserPlus size={16} /></div>
+                  <h4 className="text-[0.75rem] font-black text-slate-800 uppercase tracking-widest">Anggota Tim</h4>
+                </div>
+                <div className="space-y-4">
+                  {formData.members.map((member, idx) => {
+                    const m = typeof member === 'string' ? { name: member, photoUrl: '' } : member;
+                    return (
+                      <div key={idx} className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 space-y-4">
+                        <div className="flex justify-between items-center px-1">
+                          <p className="text-[0.6rem] font-black text-primary uppercase tracking-widest">Anggota {idx + 1}</p>
+                          <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[0.65rem] font-black text-slate-400">{idx + 1}</div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <input 
+                            type="text" 
+                            value={m.name}
+                            onChange={e => {
+                              const newMembers = [...formData.members];
+                              const current = typeof newMembers[idx] === 'string' ? { name: newMembers[idx] as string, photoUrl: '' } : newMembers[idx] as MemberInfo;
+                              newMembers[idx] = { ...current, name: e.target.value };
+                              setFormData({...formData, members: newMembers});
+                            }}
+                            className="p-3.5 bg-white border border-slate-200 rounded-xl outline-none font-bold text-slate-700 text-sm focus:border-primary"
+                            placeholder="Nama Anggota"
+                          />
+                          <div className="flex gap-2">
+                            <input 
+                              type="text" 
+                              value={m.photoUrl || ''}
+                              onChange={e => {
+                                const newMembers = [...formData.members];
+                                const current = typeof newMembers[idx] === 'string' ? { name: newMembers[idx] as string, photoUrl: '' } : newMembers[idx] as MemberInfo;
+                                newMembers[idx] = { ...current, photoUrl: e.target.value };
+                                setFormData({...formData, members: newMembers});
+                              }}
+                              className="flex-grow p-3.5 bg-white border border-slate-200 rounded-xl outline-none font-bold text-slate-700 text-sm focus:border-primary"
+                              placeholder="Pilih file atau URL Foto"
+                            />
+                            <button 
+                              onClick={() => memberInputRefs.current[idx]?.click()}
+                              className="w-12 h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary transition-all shrink-0"
+                            >
+                              <Camera size={20} />
+                            </button>
+                            <input 
+                              type="file" 
+                              ref={el => memberInputRefs.current[idx] = el}
+                              className="hidden" 
+                              accept="image/*" 
+                              onChange={e => handleFileChange(e, idx)} 
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-8 md:p-10 bg-slate-50 border-t border-slate-100 flex gap-4">
+              <button 
+                onClick={onClose}
+                className="flex-1 py-4 bg-white border-2 border-slate-100 text-slate-400 font-black rounded-2xl hover:bg-slate-100 transition-all active:scale-95"
+              >
+                Batal
+              </button>
+              <button 
+                disabled={isSaving}
+                onClick={handleSave}
+                className="flex-[2] py-4 bg-primary text-white font-black rounded-2xl shadow-xl shadow-primary/20 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+              >
+                {isSaving ? 'Menyimpan...' : (
+                  <>Simpan Perubahan <CheckCircle2 size={24} /></>
+                )}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 const MainMenu = ({ 
   appState, 
   setActiveModuleIndex, 
@@ -2135,6 +2642,7 @@ const MainMenu = ({
   onSaveRoleAssignments: (moduleId: string, assignments: { name: string; role: string }[]) => void;
 }) => {
   const [selectedModuleForRoles, setSelectedModuleForRoles] = useState<number | null>(null);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const icons = { Anchor, Scale, Droplets };
   const totalModules = APP_CONFIG.modules.length;
@@ -2144,6 +2652,12 @@ const MainMenu = ({
   return (
     <div className="min-h-screen bg-bg flex flex-col relative overflow-hidden">
       <LabBackground variant="light" />
+      <ProfileEditModal 
+        isOpen={isProfileModalOpen} 
+        onClose={() => setIsProfileModalOpen(false)} 
+        profile={profile}
+        appState={appState}
+      />
       {/* Header Strip */}
       <header className="bg-white/80 backdrop-blur-3xl px-6 md:px-10 py-4 md:py-6 border-b border-slate-200/50 flex justify-between items-center sticky top-0 z-20 transition-all">
         <div className="flex items-center gap-4">
@@ -2170,7 +2684,7 @@ const MainMenu = ({
           )}
           <div className="text-right hidden lg:block border-l border-slate-200 pl-8">
             <p className="text-[0.6rem] uppercase font-black text-slate-400 tracking-wider mb-0.5">
-              {profile?.role === 'admin' ? 'Administrator' : 'Akses Terbatas untuk:'}
+              {profile?.role === 'admin' ? 'Administrator' : 'Kelompok saat ini:'}
             </p>
             <p className="font-black text-primary text-xs md:text-sm">{appState.groupInfo?.groupName || profile?.email}</p>
           </div>
@@ -2211,87 +2725,72 @@ const MainMenu = ({
           </div>
         </div>
 
-        {/* Status Counter Card */}
-        <div className="bento-card border-white/50 p-8 flex flex-col bg-white/80 backdrop-blur-2xl shadow-xl relative group min-h-[350px]">
-          <div className="absolute top-6 right-6 w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 group-hover:text-primary transition-all group-hover:rotate-12">
-            <Target size={24} />
-          </div>
-          <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-6">Overall Progress</h3>
-          
-          <div className="flex-grow flex items-center justify-center mb-6">
-            <div className="w-40 h-40 relative">
-               {(() => {
-                 const pieData = {
-                   labels: ['Selesai', 'Belum'],
-                   datasets: [
-                     {
-                       data: [completedModules, totalModules - completedModules],
-                       backgroundColor: ['#3b82f6', '#f1f5f9'],
-                       borderWidth: 0,
-                       cutout: '75%'
-                     },
-                   ],
-                 };
-                 const options = {
-                   plugins: { legend: { display: false } },
-                   maintainAspectRatio: false
-                 };
-                 return <Pie data={pieData} options={options} />;
-               })()}
-               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span className="text-2xl font-black text-slate-900">{progressPercent}%</span>
-                  <span className="text-[0.5rem] font-black text-slate-400 uppercase tracking-widest leading-none">Complete</span>
-               </div>
-            </div>
-          </div>
-
-          <div className="flex justify-between items-end mb-6 px-2">
-             <div>
-               <div className="text-2xl md:text-3xl font-black text-slate-900 leading-none tracking-tighter">{completedModules}</div>
-               <div className="text-[0.65rem] text-slate-400 font-black uppercase tracking-widest mt-2">Percobaan Selesai</div>
-             </div>
-             <div className="text-right">
-               <div className="text-xl md:text-2xl font-black text-slate-100 leading-none tracking-tighter">{totalModules}</div>
-             </div>
-          </div>
-          <div className="h-6 bg-slate-100 rounded-full mt-8 overflow-hidden shadow-inner p-1.5 border border-slate-200/50">
-             <motion.div 
-               initial={{ width: 0 }}
-               animate={{ width: `${progressPercent}%` }}
-               className="h-full bg-primary rounded-full shadow-[0_0_25px_rgba(59,130,246,0.5)]" 
-             />
-          </div>
-        </div>
-
         {/* Team Information Card */}
-        <div className="bento-card border-white/50 flex flex-col p-8 md:p-10 bg-white/80 backdrop-blur-2xl shadow-xl min-h-[350px]">
-          <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest mb-8">Profil Kelompok</h3>
+        <div className="sm:col-span-2 lg:col-span-2 bento-card border-white/50 flex flex-col p-8 md:p-10 bg-white/80 backdrop-blur-2xl shadow-xl min-h-[350px]">
+          <div className="flex justify-between items-center mb-8">
+            <h3 className="text-[0.75rem] font-black text-slate-400 uppercase tracking-widest">Profil Kelompok</h3>
+            <button 
+              onClick={() => setIsProfileModalOpen(true)}
+              className="text-[0.6rem] font-black text-primary px-3 py-1.5 rounded-lg bg-primary/5 hover:bg-primary/10 border border-primary/10 transition-all flex items-center gap-1.5"
+            >
+              <User size={12} /> Kelola Profil
+            </button>
+          </div>
           <div className="space-y-8 flex-grow">
-            <div>
-              <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-3">Identitas Kelompok</p>
-              <p className="text-lg md:text-xl font-black text-primary uppercase tracking-tighter leading-none mb-1.5 drop-shadow-sm">{appState.groupInfo?.groupName}</p>
+            <div className="flex items-center gap-8">
+              <div className="w-24 h-24 rounded-[2rem] bg-primary/10 border-4 border-white shadow-xl flex items-center justify-center overflow-hidden shrink-0">
+                {appState.groupInfo?.groupPhotoUrl ? (
+                  <img src={appState.groupInfo.groupPhotoUrl} alt="Group" className="w-full h-full object-cover" />
+                ) : (
+                  <Users size={40} className="text-primary" />
+                )}
+              </div>
+              <div className="flex-grow">
+                <p className="text-[0.65rem] font-black text-slate-400 tracking-widest mb-2">Kelompok saat ini</p>
+                <div className="flex items-center gap-3">
+                  <h4 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tighter leading-none drop-shadow-sm">{appState.groupInfo?.groupName}</h4>
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary"><Star size={16} /></div>
+                </div>
+              </div>
             </div>
             
-            <div className="space-y-6">
-              <div>
-                <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-3">Ketua Kelompok Pengamat</p>
-                <div className="flex items-center gap-4 p-4 bg-primary/5 rounded-2xl border border-primary/10 group hover:bg-primary/10 transition-colors">
-                   <div className="w-14 h-14 rounded-xl bg-primary text-white flex items-center justify-center font-black text-xl shadow-lg group-hover:scale-110 transition-transform">K</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-1">Ketua Kelompok</p>
+                <div className="flex items-center gap-4 p-5 bg-primary/5 rounded-3xl border border-primary/10 group hover:bg-primary/10 transition-all hover:shadow-lg hover:shadow-primary/5">
+                   <div className="w-16 h-16 rounded-2xl bg-primary text-white flex items-center justify-center font-black text-2xl shadow-lg group-hover:scale-110 transition-transform overflow-hidden ring-4 ring-white">
+                     {appState.groupInfo?.leaderPhotoUrl ? (
+                       <img src={appState.groupInfo.leaderPhotoUrl} alt="Leader" className="w-full h-full object-cover" />
+                     ) : (
+                       appState.groupInfo?.leaderName.charAt(0)
+                     )}
+                   </div>
                    <div>
-                     <p className="font-black text-slate-900 text-base md:text-lg leading-none mb-1">{appState.groupInfo?.leaderName}</p>
+                     <p className="font-black text-slate-900 text-lg leading-none mb-1.5">{appState.groupInfo?.leaderName}</p>
                    </div>
                 </div>
               </div>
 
-              <div>
-                <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-3">Daftar Anggota Aktif ({appState.groupInfo?.members.filter(m => m).length})</p>
-                <div className="grid grid-cols-1 gap-3 max-h-[200px] overflow-y-auto pr-3 custom-scrollbar">
-                   {appState.groupInfo?.members.filter(m => m).map((m, i) => (
-                     <div key={i} className="flex items-center gap-4 p-3.5 bg-slate-50/50 rounded-xl border border-slate-100 hover:border-primary/20 transition-all hover:bg-white hover:shadow-md group">
-                        <div className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center font-black text-xs text-slate-400 group-hover:text-primary transition-colors">{i+1}</div>
-                        <p className="font-black text-slate-700 text-base">{m}</p>
-                     </div>
-                   ))}
+              <div className="space-y-4">
+                <p className="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest mb-1">Daftar Anggota Aktif ({appState.groupInfo?.members.filter(m => m).length})</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                   {appState.groupInfo?.members.filter(m => m).map((m, i) => {
+                     const name = typeof m === 'string' ? m : m.name;
+                     const photo = typeof m === 'string' ? null : m.photoUrl;
+                     
+                     return (
+                       <div key={i} className="flex items-center gap-4 p-3.5 bg-slate-50/50 rounded-xl border border-slate-100 hover:border-primary/20 transition-all hover:bg-white hover:shadow-md group">
+                          <div className="w-9 h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center font-black text-xs text-slate-400 group-hover:text-primary transition-colors overflow-hidden">
+                            {photo ? (
+                              <img src={photo} alt={name} className="w-full h-full object-cover" />
+                            ) : (
+                              i + 1
+                            )}
+                          </div>
+                          <p className="font-black text-slate-700 text-base">{name}</p>
+                       </div>
+                     );
+                   })}
                 </div>
               </div>
             </div>
@@ -2447,17 +2946,26 @@ const MainMenu = ({
 
       </main>
 
-      <footer className="px-12 py-10 bg-white/50 backdrop-blur-3xl border-t border-slate-200/50 flex flex-col justify-center items-center text-center gap-8 text-[0.75rem] font-black text-slate-400 uppercase tracking-[0.5em] relative z-10 mt-auto">
-        <span>Magister Pendidikan IPA</span>
-        <div className="flex flex-wrap items-center justify-center gap-10">
-           <span className="flex items-center gap-3">
-             <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.6)]" /> 
-             Pengembangan Praktikum IPA
-           </span>
-           <span className="flex items-center gap-3">
-             <div className="w-3 h-3 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)]" /> 
-             Syifa Annisa Sirait (250920017100001)
-           </span>
+      <footer className="px-12 py-8 bg-white/30 backdrop-blur-3xl border-t border-slate-200/50 flex flex-col justify-center items-center gap-8 relative z-10 mt-auto">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-0 max-w-6xl w-full">
+          <div className="flex-1 px-8 text-center">
+            <p className="text-[0.6rem] font-black text-slate-400 tracking-widest mb-2">Penyusun</p>
+            <p className="text-sm md:text-base font-black text-slate-700 tracking-tight transition-all">{APP_CONFIG.author.name}</p>
+          </div>
+          
+          <div className="hidden md:block w-[1px] h-10 bg-slate-200/80 shrink-0" />
+          
+          <div className="flex-1 px-8 text-center">
+            <p className="text-[0.6rem] font-black text-slate-400 tracking-widest mb-2">Mata Kuliah</p>
+            <p className="text-sm md:text-base font-black text-slate-700 tracking-tight transition-all">{APP_CONFIG.author.course}</p>
+          </div>
+          
+          <div className="hidden md:block w-[1px] h-10 bg-slate-200/80 shrink-0" />
+          
+          <div className="flex-1 px-8 text-center">
+            <p className="text-[0.6rem] font-black text-slate-400 tracking-widest mb-2">Nama Dosen</p>
+            <p className="text-sm md:text-base font-black text-slate-700 tracking-tight transition-all">{APP_CONFIG.author.lecturer}</p>
+          </div>
         </div>
       </footer>
     </div>
@@ -2845,31 +3353,196 @@ const OrientationSection = ({ module }: any) => (
   </div>
 );
 
-const TextSection = ({ title, description, value, onChange, icon, isLast, onFinish }: any) => (
+const TextSection = ({ title, description, value, onChange, icon }: any) => (
   <div className="space-y-8 md:space-y-12 max-w-3xl mx-auto px-4">
     <div className="text-center">
       <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-100 rounded-2xl md:rounded-[2rem] flex items-center justify-center mx-auto mb-6 md:mb-8 shadow-inner text-primary">
         {React.cloneElement(icon as React.ReactElement, { size: 32 })}
       </div>
       <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4">{title}</h2>
-      <p className="text-base md:text-xl text-slate-500 font-medium px-4">{description}</p>
+      <p className="text-base md:text-lg text-slate-500 font-medium">{description}</p>
     </div>
-    <textarea 
-      autoFocus={window.innerWidth > 768}
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      className="w-full min-h-[250px] md:min-h-[300px] p-6 md:p-10 bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl md:rounded-[3rem] text-base md:text-xl font-medium outline-none transition-all shadow-inner leading-relaxed resize-none"
-      placeholder="Ketik jawaban kalian di sini..."
-    />
-    {isLast && (
-      <div className="flex justify-center pb-8">
-        <Button onClick={onFinish} className="w-full md:w-auto px-10 py-5 md:px-12 md:py-6 text-xl md:text-2xl rounded-2xl md:rounded-[2.5rem] bg-green-600 hover:bg-green-700 shadow-xl shadow-green-500/20">
-          Selesai Belajar <Download />
-        </Button>
-      </div>
-    )}
+    <div className="relative group">
+      <StabilizedTextArea 
+        initialValue={value}
+        onChange={onChange}
+        className="w-full min-h-[300px] p-8 bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-[2rem] text-lg font-bold outline-none transition-all shadow-inner leading-relaxed resize-none"
+        placeholder="Ketikkan pemikiran kalian di sini..."
+      />
+    </div>
   </div>
 );
+
+const ColumnarTextSection = ({ title, description, values, onChange, icon }: any) => {
+  const [cols, setCols] = useState<string[]>(values && values.length > 0 ? values : ['', '', '']);
+
+  useEffect(() => {
+    if (values && values.length > 0 && JSON.stringify(values) !== JSON.stringify(cols)) {
+      setCols(values);
+    }
+  }, [values]);
+
+  const updateCol = (idx: number, val: string) => {
+    const newCols = [...cols];
+    newCols[idx] = val;
+    setCols(newCols);
+    onChange(newCols);
+  };
+
+  const addCol = () => {
+    const newCols = [...cols, ''];
+    setCols(newCols);
+    onChange(newCols);
+  };
+
+  const removeCol = (idx: number) => {
+    if (cols.length > 1) {
+      const newCols = cols.filter((_, i) => i !== idx);
+      setCols(newCols);
+      onChange(newCols);
+    }
+  };
+
+  return (
+    <div className="space-y-8 md:space-y-12 max-w-5xl mx-auto px-4 pb-12">
+      <div className="text-center">
+        <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-100 rounded-2xl md:rounded-[2rem] flex items-center justify-center mx-auto mb-6 md:mb-8 shadow-inner text-primary">
+          {React.cloneElement(icon as React.ReactElement, { size: 32 })}
+        </div>
+        <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4">{title}</h2>
+        <p className="text-base md:text-lg text-slate-500 font-medium px-4">{description}</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {cols.map((col, idx) => (
+          <div key={idx} className="relative group animate-in zoom-in-95 duration-300">
+            <div className="absolute -top-3 -right-3 z-10">
+              <button 
+                onClick={() => removeCol(idx)}
+                className="w-8 h-8 bg-white border border-slate-200 text-slate-300 hover:text-red-500 hover:border-red-100 rounded-full flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100"
+              >
+                <X size={14} />
+              </button>
+            </div>
+            <StabilizedTextArea 
+              initialValue={col}
+              onChange={(val: string) => updateCol(idx, val)}
+              className="w-full min-h-[200px] p-6 bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-3xl text-base font-bold outline-none transition-all shadow-inner leading-relaxed resize-none"
+              placeholder={`Point ${idx + 1}...`}
+            />
+          </div>
+        ))}
+        <button 
+          onClick={addCol}
+          className="w-full min-h-[200px] border-4 border-dashed border-slate-100 rounded-3xl flex flex-col items-center justify-center gap-3 text-slate-300 hover:text-primary hover:border-primary/20 hover:bg-primary/5 transition-all group"
+        >
+          <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:rotate-90 transition-transform">
+            <XCircle className="rotate-45" size={24} />
+          </div>
+          <span className="text-[0.7rem] font-extrabold uppercase tracking-widest">Tambah Kolom</span>
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const StabilizedTableInput = ({ initialValue, onCommit, type = 'text', readOnly = false, placeholder = '' }: any) => {
+  const [localValue, setLocalValue] = useState(initialValue);
+  const lastCommittedValue = useRef(initialValue);
+
+  useEffect(() => {
+    setLocalValue(initialValue);
+    lastCommittedValue.current = initialValue;
+  }, [initialValue]);
+
+  // Auto-save while typing with 1s debounce
+  useEffect(() => {
+    if (localValue === lastCommittedValue.current) return;
+    
+    const timer = setTimeout(() => {
+      onCommit(localValue);
+      lastCommittedValue.current = localValue;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, [localValue, onCommit]);
+
+  return (
+    <input 
+      type={type} 
+      value={localValue || ''}
+      readOnly={readOnly}
+      placeholder={placeholder}
+      onChange={e => setLocalValue(e.target.value)}
+      onBlur={() => {
+        if (localValue !== lastCommittedValue.current) {
+          onCommit(localValue);
+          lastCommittedValue.current = localValue;
+        }
+      }}
+      className="w-full p-3 md:p-4 bg-transparent focus:bg-white rounded-xl outline-none font-bold text-slate-800 transition-all border-2 border-transparent focus:border-primary/20 text-xs md:text-sm text-center"
+    />
+  );
+};
+
+const StabilizedTextArea = ({ initialValue, onChange, className, placeholder }: any) => {
+  const [localValue, setLocalValue] = useState(initialValue);
+  const lastCommittedValue = useRef(initialValue);
+
+  useEffect(() => {
+    setLocalValue(initialValue);
+    lastCommittedValue.current = initialValue;
+  }, [initialValue]);
+
+  useEffect(() => {
+    if (localValue === lastCommittedValue.current) return;
+
+    const timer = setTimeout(() => {
+      onChange(localValue);
+      lastCommittedValue.current = localValue;
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [localValue, onChange]);
+
+  return (
+    <textarea
+      value={localValue || ''}
+      onChange={e => setLocalValue(e.target.value)}
+      onBlur={() => {
+        if (localValue !== lastCommittedValue.current) {
+          onChange(localValue);
+          lastCommittedValue.current = localValue;
+        }
+      }}
+      className={className}
+      placeholder={placeholder}
+    />
+  );
+};
+
+const StabilizedTableSelect = ({ value, options, onCommit }: any) => {
+  const [localVal, setLocalVal] = useState(value);
+
+  useEffect(() => {
+    setLocalVal(value);
+  }, [value]);
+
+  return (
+    <select
+      value={localVal || ''}
+      onChange={e => {
+        setLocalVal(e.target.value);
+        onCommit(e.target.value);
+      }}
+      className="w-full p-3 md:p-4 bg-transparent focus:bg-white rounded-xl outline-none font-bold text-slate-800 transition-all border-2 border-transparent focus:border-primary/20 text-xs md:text-sm text-center appearance-none cursor-pointer"
+    >
+      {options.map((opt: any) => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
+  );
+};
 
 const DataSection = ({ module, data, subTableData, onDataChange, onSubDataChange }: any) => {
   const [activeSubId, setActiveSubId] = useState(module.subExperiments?.[0]?.id || null);
@@ -3087,22 +3760,20 @@ const DataSection = ({ module, data, subTableData, onDataChange, onSubDataChange
                   {currentHeaders.map(h => (
                     <td key={h} className="p-1 md:p-2 border-r border-slate-100 last:border-r-0">
                       {h === 'Posisi Benda' ? (
-                        <select
-                          value={row[h] || ''}
-                          onChange={e => updateCell(row.id, h, e.target.value)}
-                          className="w-full p-3 md:p-4 bg-transparent focus:bg-white rounded-xl outline-none font-bold text-slate-800 transition-all border-2 border-transparent focus:border-primary/20 text-xs md:text-sm text-center appearance-none cursor-pointer"
-                        >
-                          <option value="">Pilih...</option>
-                          <option value="Terapung">Terapung</option>
-                          <option value="Melayang">Melayang</option>
-                          <option value="Tenggelam">Tenggelam</option>
-                        </select>
+                        <StabilizedTableSelect 
+                          value={row[h]}
+                          onCommit={(v: string) => updateCell(row.id, h, v)}
+                          options={[
+                            { value: '', label: 'Pilih...' },
+                            { value: 'Terapung', label: 'Terapung' },
+                            { value: 'Melayang', label: 'Melayang' },
+                            { value: 'Tenggelam', label: 'Tenggelam' }
+                          ]}
+                        />
                       ) : (
-                        <input 
-                          type="text" 
-                          value={h === 'Percobaan' && !row[h] ? (idx + 1).toString() : (row[h] || '')}
-                          onChange={e => updateCell(row.id, h, e.target.value)}
-                          className="w-full p-3 md:p-4 bg-transparent focus:bg-white rounded-xl outline-none font-bold text-slate-800 transition-all border-2 border-transparent focus:border-primary/20 text-xs md:text-sm text-center"
+                        <StabilizedTableInput 
+                          initialValue={h === 'Percobaan' && !row[h] ? (idx + 1).toString() : (row[h] || '')}
+                          onCommit={(v: string) => updateCell(row.id, h, v)}
                           placeholder={h === 'Percobaan' ? (idx + 1).toString() : "..."}
                           readOnly={h === 'Percobaan'}
                         />
@@ -3189,9 +3860,9 @@ const UjiSection = ({ hypothesis, value, onChange }: any) => (
 
     <div className="space-y-4">
       <label className="block text-xl font-black text-slate-800 ml-4">Alasan Ilmiah:</label>
-      <textarea 
-        value={value.reason}
-        onChange={e => onChange({ ...value, reason: e.target.value })}
+      <StabilizedTextArea 
+        initialValue={value.reason}
+        onChange={(val: string) => onChange({ ...value, reason: val })}
         className="w-full min-h-[150px] p-8 bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-[2.5rem] text-lg font-medium outline-none transition-all shadow-inner resize-none"
         placeholder="Berikan alasan mengapa data tersebut mendukung atau menolak hipotesis kalian..."
       />
@@ -3212,7 +3883,10 @@ const RoleAssignmentSection = ({
   onChange: (assignments: { name: string; role: string }[]) => void;
   onNext: () => void;
 }) => {
-  const allMembers = [groupInfo?.leaderName, ...(groupInfo?.members || [])].filter(Boolean) as string[];
+  const allMembers = [
+    groupInfo?.leaderName, 
+    ...(groupInfo?.members || []).map(m => typeof m === 'string' ? m : m.name)
+  ].filter(Boolean) as string[];
   const [assignments, setAssignments] = useState<{ name: string; role: string }[]>(() => {
     if (value && value.length > 0) return value;
     return allMembers.map(name => ({ name, role: '' }));
@@ -3337,9 +4011,9 @@ const ReflectionSection = ({ value, onChange, onFinish, isValid }: any) => {
               </div>
               <label className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-widest">{field.label}</label>
             </div>
-            <textarea
-              value={reflection[field.key as keyof typeof reflection] || ''}
-              onChange={(e) => onChange({ ...reflection, [field.key]: e.target.value })}
+            <StabilizedTextArea
+              initialValue={reflection[field.key as keyof typeof reflection] || ''}
+              onChange={(val: string) => onChange({ ...reflection, [field.key]: val })}
               className="w-full min-h-[120px] p-6 bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl text-sm font-medium outline-none transition-all shadow-inner resize-none leading-relaxed"
               placeholder="Tuliskan di sini..."
             />
@@ -3378,30 +4052,44 @@ const ModuleView = ({
   setView, 
   appState,
   getModuleAnswers, 
-  updateModuleAnswers 
+  updateModuleAnswers,
+  updateModuleStep 
 }: { 
   activeModuleIndex: number; 
   setView: (v: View) => void;
   appState: AppState;
   getModuleAnswers: (id: string) => StudentAnswers;
   updateModuleAnswers: (id: string, ans: Partial<StudentAnswers>) => void;
+  updateModuleStep: (id: string, step: number) => void;
 }) => {
   const module = APP_CONFIG.modules[activeModuleIndex];
   const steps = ['Tugas', 'Tujuan', 'Orientasi', 'Masalah', 'Hipotesis', 'Data', 'Uji', 'Kesimpulan', 'Evaluasi', 'Refleksi'];
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(appState.moduleProgress[module.id]?.currentStep || 0);
   const answers = getModuleAnswers(module.id);
+
+  // Sync step changes to appState
+  useEffect(() => {
+    if (appState.moduleProgress[module.id]?.currentStep !== step) {
+      updateModuleAnswers(module.id, { currentStep: step } as any);
+      // We need a dedicated step update to avoid circular dependency or missing updates
+      updateModuleStep(module.id, step);
+    }
+  }, [step]);
 
   const isStepValid = (stepIdx: number) => {
     switch(stepIdx) {
       case 0: // Tugas
-        return answers.roleAssignments && answers.roleAssignments.length > 0 && !answers.roleAssignments.some(a => !a.role);
+        const totalMembers = [appState.groupInfo?.leaderName, ...(appState.groupInfo?.members || [])].filter(Boolean).length;
+        return answers.roleAssignments && 
+               answers.roleAssignments.length === totalMembers && 
+               !answers.roleAssignments.some(a => !a.role);
       case 1: // Tujuan
       case 2: // Orientasi
         return true;
       case 3: // Masalah
-        return (answers.problemFormulation?.trim().length || 0) > 5;
+        return answers.problemFormulations && answers.problemFormulations.some(v => v.trim().length > 3);
       case 4: // Hipotesis
-        return (answers.hypothesis?.trim().length || 0) > 5;
+        return answers.hypotheses && answers.hypotheses.some(v => v.trim().length > 3);
       case 5: // Data
         if (!answers.tableData || answers.tableData.length === 0) return false;
         return answers.tableData.every(row => 
@@ -3511,7 +4199,7 @@ const ModuleView = ({
       </header>
 
       {/* Content Area */}
-      <main className="flex-grow p-6 py-12 md:p-12 lg:p-20 overflow-y-auto relative z-10">
+      <main className="flex-grow p-6 py-12 md:p-12 lg:p-20 overflow-y-auto relative z-10 pb-32">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
@@ -3532,20 +4220,20 @@ const ModuleView = ({
             {step === 1 && <ObjectivesSection module={module} />}
             {step === 2 && <OrientationSection module={module} />}
             {step === 3 && (
-              <TextSection 
+              <ColumnarTextSection 
                 title="Merumuskan Masalah" 
-                description="Berdasarkan video orientasi, tuliskan pertanyaan ilmiah atau masalah yang ingin kalian teliti."
-                value={answers.problemFormulation}
-                onChange={(v: string) => updateModuleAnswers(module.id, { problemFormulation: v })}
+                description="Berdasarkan video orientasi, tuliskan pertanyaan ilmiah atau masalah yang ingin kalian teliti secara terperinci per poin."
+                values={answers.problemFormulations}
+                onChange={(v: string[]) => updateModuleAnswers(module.id, { problemFormulations: v })}
                 icon={<HelpCircle className="text-blue-600" />}
               />
             )}
             {step === 4 && (
-              <TextSection 
+              <ColumnarTextSection 
                 title="Merumuskan Hipotesis" 
-                description="Berikan jawaban sementara atau dugaan kalian terhadap rumusan masalah di atas."
-                value={answers.hypothesis}
-                onChange={(v: string) => updateModuleAnswers(module.id, { hypothesis: v })}
+                description="Berikan jawaban sementara atau dugaan ilmiah kalian terhadap setiap rumusan masalah yang sudah kalian buat."
+                values={answers.hypotheses}
+                onChange={(v: string[]) => updateModuleAnswers(module.id, { hypotheses: v })}
                 icon={<Lightbulb className="text-purple-600" />}
               />
             )}
@@ -3563,7 +4251,7 @@ const ModuleView = ({
             )}
             {step === 6 && (
               <UjiSection 
-                hypothesis={answers.hypothesis}
+                hypothesis={answers.hypothesis || (answers.hypotheses ? answers.hypotheses.join("\n") : "")}
                 value={answers.hypothesisTesting}
                 onChange={(v: any) => updateModuleAnswers(module.id, { hypothesisTesting: v })}
               />
@@ -3599,45 +4287,65 @@ const ModuleView = ({
         </AnimatePresence>
       </main>
 
-      <footer className="p-6 border-t border-slate-200 flex justify-between items-center bg-white/80 backdrop-blur-md">
-        <Button variant="ghost" onClick={() => setStep(s => Math.max(0, s - 1))} className={cn(step === 0 && "invisible")}>
-          <ChevronLeft /> Sebelumnya
-        </Button>
-        <div className="hidden md:flex items-center gap-8">
-          <div className="text-left">
-            <p className="text-[0.5rem] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Penyusun</p>
-            <p className="text-[0.65rem] font-bold text-slate-600 uppercase tracking-tight">{APP_CONFIG.author.name}</p>
+      {/* Floating AI Assistant */}
+      <ArchimedesChat context={`
+        Modul: ${module.title}. 
+        Tujuan: ${module.objectives.join(", ")}. 
+        Video: ${module.videoUrl}.
+        Konsep Utama: Hukum Archimedes menyatakan bahwa gaya apung (Fa) yang dialami benda sama dengan berat zat cair yang dipindahkan (W_fluida). 
+        Fa = ρ_fluida * g * V_tercelup.
+      `} />
+
+      <footer className="p-4 border-t border-slate-200 flex justify-between items-center bg-white/95 backdrop-blur-md sticky bottom-0 z-30">
+        <div className="w-1/4">
+          <Button variant="ghost" onClick={() => setStep(s => Math.max(0, s - 1))} className={cn("rounded-xl h-12 px-6 font-black text-slate-600 hover:bg-slate-100", step === 0 && "invisible")}>
+            <ChevronLeft className="mr-2" /> Sebelumnya
+          </Button>
+        </div>
+
+        <div className="hidden lg:flex flex-1 items-center justify-center gap-8">
+          <div className="text-center">
+            <p className="text-[0.5rem] font-black text-slate-400 tracking-widest mb-1">Penyusun</p>
+            <p className="text-[0.7rem] font-black text-slate-700 tracking-tight">{APP_CONFIG.author.name}</p>
           </div>
-          <div className="h-6 w-[1px] bg-slate-200" />
-          <div className="text-left">
-            <p className="text-[0.5rem] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Mata Kuliah</p>
-            <p className="text-[0.65rem] font-bold text-slate-600 uppercase tracking-tight">{APP_CONFIG.author.course}</p>
+          <div className="h-8 w-[1px] bg-slate-200/80" />
+          <div className="text-center">
+            <p className="text-[0.5rem] font-black text-slate-400 tracking-widest mb-1">Mata Kuliah</p>
+            <p className="text-[0.7rem] font-black text-slate-700 tracking-tight">{APP_CONFIG.author.course}</p>
           </div>
-          <div className="h-6 w-[1px] bg-slate-200" />
-          <div className="text-left">
-            <p className="text-[0.5rem] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Universitas</p>
-            <p className="text-[0.65rem] font-bold text-slate-600 uppercase tracking-tight text-primary">{APP_CONFIG.university.name}</p>
+          <div className="h-8 w-[1px] bg-slate-200/80" />
+          <div className="text-center text-primary">
+            <p className="text-[0.5rem] font-black text-slate-400 tracking-widest mb-1">Nama Dosen</p>
+            <p className="text-[0.7rem] font-black tracking-tight">{APP_CONFIG.author.lecturer}</p>
           </div>
         </div>
-        {step !== 0 && step !== steps.length - 1 && (
+
+        <div className="w-1/4 flex justify-end">
           <div className="flex flex-col items-end gap-2">
-            {!currentStepValid && (
-              <span className="text-[0.6rem] font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full uppercase tracking-widest animate-pulse">
-                Lengkapi Data untuk Melanjutkan
-              </span>
+            {step !== 0 && (
+              <>
+                {!currentStepValid && step !== steps.length - 1 && (
+                  <span className="text-[0.55rem] font-black text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-full tracking-widest animate-pulse border border-amber-100">
+                    Lengkapi Data
+                  </span>
+                )}
+                <Button 
+                  disabled={!currentStepValid}
+                  onClick={() => {
+                    if (step < steps.length - 1) setStep(s => s + 1);
+                    else setView('MENU');
+                  }}
+                  className={cn(
+                    "rounded-xl h-12 px-8 font-black shadow-lg transition-all",
+                    !currentStepValid ? "opacity-50 grayscale cursor-not-allowed bg-slate-200 text-slate-400 shadow-none" : "bg-primary text-white shadow-primary/20"
+                  )}
+                >
+                  {step === steps.length - 1 ? 'Selesai' : 'Lanjut'} <ChevronRight className="ml-2" />
+                </Button>
+              </>
             )}
-            <Button 
-              disabled={!currentStepValid}
-              onClick={() => {
-                if (step < steps.length - 1) setStep(s => s + 1);
-                else setView('MENU');
-              }}
-              className={cn(!currentStepValid && "opacity-50 grayscale cursor-not-allowed")}
-            >
-              {step === steps.length - 1 ? 'Selesai Percobaan' : 'Lanjut'} <ChevronRight />
-            </Button>
           </div>
-        )}
+        </div>
       </footer>
     </div>
   );
@@ -3648,6 +4356,7 @@ export default function App() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [activeModuleIndex, setActiveModuleIndex] = useState(0);
   const [appState, setAppState] = useState<AppState>({
     groupInfo: null,
@@ -3687,20 +4396,44 @@ export default function App() {
               groupInfo: {
                 groupName: snapData.groupName || '',
                 leaderName: snapData.leaderName || '',
-                members: snapData.members || []
+                leaderPhotoUrl: snapData.leaderPhotoUrl || '',
+                members: snapData.members || [],
+                groupPhotoUrl: snapData.groupPhotoUrl || ''
               }
             }));
 
             // Sync progress in real-time
             const progressRef = doc(db, 'progress', fbUser.uid);
-            unsubscribeProgress = onSnapshot(progressRef, (docSnap) => {
-              if (docSnap.exists()) {
-                const progressData = docSnap.data();
-                setAppState(prev => ({
-                  ...prev,
-                  moduleProgress: progressData.moduleProgress || {},
-                  quizResult: progressData.quizResult || null
-                }));
+            unsubscribeProgress = onSnapshot(progressRef, { includeMetadataChanges: true }, (docSnap) => {
+              // Avoid updating if the change is local and still has pending writes
+              if (!docSnap.metadata.hasPendingWrites) {
+                if (docSnap.exists()) {
+                  const progressData = docSnap.data();
+                  
+                  // Deep comparison to avoid unnecessary state updates
+                  setAppState(prev => {
+                    const newProgress = progressData.moduleProgress || {};
+                    const newQuiz = progressData.quizResult || null;
+                    
+                    if (JSON.stringify(prev.moduleProgress) === JSON.stringify(newProgress) &&
+                        JSON.stringify(prev.quizResult) === JSON.stringify(newQuiz)) {
+                      return prev;
+                    }
+                    
+                    return {
+                      ...prev,
+                      moduleProgress: newProgress,
+                      quizResult: newQuiz
+                    };
+                  });
+                } else {
+                  // Doc deleted on server, reset local progress
+                  setAppState(prev => ({
+                    ...prev,
+                    moduleProgress: {},
+                    quizResult: null
+                  }));
+                }
               }
             }, (err) => {
               if (err.code === 'permission-denied') {
@@ -3716,13 +4449,13 @@ export default function App() {
 
         // Check if admin first
         if (fbUser.email === "syifasirait21@gmail.com") {
-          const profileData: UserProfile = {
+          const profileData = sanitizeForFirestore({
             uid: fbUser.uid,
             email: fbUser.email,
             username: 'Administrator',
             role: 'admin',
             createdAt: new Date().toISOString()
-          };
+          });
           processProfileProgress(profileData);
           // Still create the doc if it doesn't exist
           const profilePath = `users/${fbUser.uid}`;
@@ -3775,97 +4508,191 @@ export default function App() {
     };
   }, []);
 
+  // Reference for the last saved state to avoid redundant saves
+  const lastSavedStateRef = useRef<string>('');
+
   // Save progress whenever it changes
   useEffect(() => {
     if (user && profile && profile.role === 'student') {
+      const currentState = JSON.stringify({ 
+        moduleProgress: appState.moduleProgress, 
+        quizResult: appState.quizResult 
+      });
+      
+      // Only save if content actually changed
+      if (currentState === lastSavedStateRef.current) return;
+
       const timer = setTimeout(() => {
         saveProgressToFirebase(user.uid, appState);
-      }, 2000); // Debounce save
+        lastSavedStateRef.current = currentState;
+      }, 1000); // 1 second debounce
       return () => clearTimeout(timer);
     }
   }, [appState.moduleProgress, appState.quizResult, user, profile]);
 
-  const resetState = async () => {
+  const handleLogout = async () => {
     try {
       await signOut(auth);
-      setView('LANDING'); // Force view change
+      setView('LANDING');
       setProfile(null);
       setAppState({
         groupInfo: null,
         moduleProgress: {},
         quizResult: null
       });
+      setIsLogoutModalOpen(false);
     } catch (error) {
       console.error("Logout error:", error);
     }
   };
 
-  const updateGroupInfo = (info: GroupInfo) => {
-    setAppState(prev => ({ ...prev, groupInfo: info }));
-    setView('MENU');
+  const confirmLogout = () => {
+    setIsLogoutModalOpen(true);
   };
 
   const getModuleAnswers = (moduleId: string): StudentAnswers => {
-    return appState.moduleProgress[moduleId]?.answers || {
-      problemFormulation: '',
-      hypothesis: '',
-      tableData: [],
-      hypothesisTesting: { isCorrect: null, reason: '' },
-      conclusion: ''
+    const data = appState.moduleProgress[moduleId]?.answers;
+    return {
+      problemFormulation: data?.problemFormulation || '',
+      hypothesis: data?.hypothesis || '',
+      problemFormulations: data?.problemFormulations || (data?.problemFormulation ? [data.problemFormulation] : ['', '', '']),
+      hypotheses: data?.hypotheses || (data?.hypothesis ? [data.hypothesis] : ['', '', '']),
+      tableData: data?.tableData || [],
+      subTableData: data?.subTableData || {},
+      hypothesisTesting: data?.hypothesisTesting || { isCorrect: null, reason: '' },
+      conclusion: data?.conclusion || '',
+      roleAssignments: data?.roleAssignments || [],
+      evaluationScore: data?.evaluationScore ?? null,
+      reflection: data?.reflection ?? null
     };
   };
 
   const updateModuleAnswers = (moduleId: string, answers: Partial<StudentAnswers>) => {
+    setAppState(prev => {
+      const currentMod = prev.moduleProgress[moduleId];
+      return {
+        ...prev,
+        moduleProgress: {
+          ...prev.moduleProgress,
+          [moduleId]: {
+            ...currentMod,
+            answers: {
+              ...getModuleAnswers(moduleId),
+              ...answers
+            },
+            updatedAt: new Date().toISOString()
+          }
+        }
+      };
+    });
+  };
+
+  const updateModuleStep = (moduleId: string, step: number) => {
     setAppState(prev => ({
       ...prev,
       moduleProgress: {
         ...prev.moduleProgress,
         [moduleId]: {
-          ...prev.moduleProgress[moduleId],
-          answers: {
-            ...getModuleAnswers(moduleId),
-            ...answers
-          },
+          ...(prev.moduleProgress[moduleId] || { answers: getModuleAnswers(moduleId) }),
+          currentStep: step,
           updatedAt: new Date().toISOString()
         }
       }
     }));
   };
 
+  const LogoutModal = () => (
+    <AnimatePresence>
+      {isLogoutModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsLogoutModalOpen(false)}
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+          />
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            className="bg-white rounded-[2.5rem] p-8 md:p-10 max-w-sm w-full shadow-2xl relative z-10 border-4 border-white"
+          >
+            <div className="w-20 h-20 bg-red-50 text-red-600 rounded-3xl flex items-center justify-center mb-8 mx-auto shadow-inner">
+              <LogOut size={36} />
+            </div>
+            
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-black text-slate-900 mb-2 tracking-tight">Konfirmasi Keluar</h3>
+              <p className="text-slate-500 font-bold text-sm leading-relaxed px-4">
+                Apakah Anda yakin ingin meninggalkan laboratorium sekarang? Sesi Anda akan diakhiri secara aman.
+              </p>
+            </div>
+
+            <div className="flex gap-4">
+              <button 
+                onClick={() => setIsLogoutModalOpen(false)}
+                className="flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-500 font-black rounded-2xl transition-all"
+              >
+                Batal
+              </button>
+              <button 
+                onClick={handleLogout}
+                className="flex-1 py-4 bg-red-600 hover:bg-red-700 text-white font-black rounded-2xl shadow-lg shadow-red-600/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+              >
+                Keluar <ChevronRight size={18} />
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+
   // --- VIEWS ---
 
   // --- RENDER ROUTER ---
   
-  switch (view) {
-    case 'LANDING': 
-      if (user && loadingProfile) return <div className="min-h-screen bg-bg flex items-center justify-center font-black text-slate-400 animate-pulse uppercase tracking-widest text-sm">Menyiapkan Dashboard...</div>;
-      return <LandingPage setView={setView} />;
-    case 'LOGIN': return <LoginPage setView={setView} />;
-    case 'REGISTER': return <RegisterPage setView={setView} />;
-    case 'ADMIN': return <AdminDashboard setView={setView} resetState={resetState} />;
-    case 'MENU': return (
-      <MainMenu 
-        appState={appState} 
-        setActiveModuleIndex={setActiveModuleIndex} 
-        setView={setView} 
-        resetState={resetState}
-        generateCompletePDF={() => generateCompletePDF(appState, getModuleAnswers)}
-        profile={profile}
-        getModuleAnswers={getModuleAnswers}
-        onSaveRoleAssignments={(moduleId, assignments) => updateModuleAnswers(moduleId, { roleAssignments: assignments })}
-      />
-    );
-    case 'MODULE': return (
-      <ModuleView 
-        activeModuleIndex={activeModuleIndex}
-        setView={setView}
-        appState={appState}
-        getModuleAnswers={getModuleAnswers}
-        updateModuleAnswers={updateModuleAnswers}
-      />
-    );
-    default: return <LandingPage setView={setView} />;
-  }
+  const renderView = () => {
+    switch (view) {
+      case 'LANDING': 
+        if (user && loadingProfile) return <div className="min-h-screen bg-bg flex items-center justify-center font-black text-slate-400 animate-pulse uppercase tracking-widest text-sm">Menyiapkan Dashboard...</div>;
+        return <LandingPage setView={setView} />;
+      case 'LOGIN': return <LoginPage setView={setView} />;
+      case 'REGISTER': return <RegisterPage setView={setView} />;
+      case 'ADMIN': return <AdminDashboard setView={setView} resetState={confirmLogout} />;
+      case 'MENU': return (
+        <MainMenu 
+          appState={appState} 
+          setActiveModuleIndex={setActiveModuleIndex} 
+          setView={setView} 
+          resetState={confirmLogout}
+          generateCompletePDF={() => generateCompletePDF(appState, getModuleAnswers)}
+          profile={profile}
+          getModuleAnswers={getModuleAnswers}
+          onSaveRoleAssignments={(moduleId, assignments) => updateModuleAnswers(moduleId, { roleAssignments: assignments })}
+        />
+      );
+      case 'MODULE': return (
+        <ModuleView 
+          activeModuleIndex={activeModuleIndex}
+          setView={setView}
+          appState={appState}
+          getModuleAnswers={getModuleAnswers}
+          updateModuleAnswers={updateModuleAnswers}
+          updateModuleStep={updateModuleStep}
+        />
+      );
+      default: return <LandingPage setView={setView} />;
+    }
+  };
+
+  return (
+    <>
+      {renderView()}
+      <LogoutModal />
+    </>
+  );
 }
 
 // --- HELPER CHART COMPONENT ---

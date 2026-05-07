@@ -1,8 +1,15 @@
 
+export interface MemberInfo {
+  name: string;
+  photoUrl?: string;
+}
+
 export interface GroupInfo {
   groupName: string;
   leaderName: string;
-  members: string[];
+  leaderPhotoUrl?: string;
+  members: (string | MemberInfo)[];
+  groupPhotoUrl?: string;
 }
 
 export interface TableRow {
@@ -16,8 +23,10 @@ export interface RoleAssignment {
 }
 
 export interface StudentAnswers {
-  problemFormulation: string;
-  hypothesis: string;
+  problemFormulations: string[];
+  hypotheses: string[];
+  problemFormulation: string; // legacy support
+  hypothesis: string; // legacy support
   tableData: TableRow[];
   subTableData?: {
     [experimentId: string]: TableRow[];
@@ -91,7 +100,9 @@ export interface UserProfile {
   username?: string;
   groupName?: string;
   leaderName?: string;
-  members?: string[];
+  leaderPhotoUrl?: string;
+  members?: (string | MemberInfo)[];
+  groupPhotoUrl?: string;
   createdAt?: string;
 }
 
